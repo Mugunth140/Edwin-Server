@@ -1,0 +1,64 @@
+import {
+  Entity,
+  PrimaryGeneratedColumn,
+  Column,
+  CreateDateColumn,
+  UpdateDateColumn,
+  ManyToOne,
+  OneToMany,
+  JoinColumn,
+} from 'typeorm';
+import { PurchaseOrderStatus } from '../../common/enums.js';
+import { Vendor } from '../../vendors/entities/vendor.entity.js';
+import { Project } from '../../projects/entities/project.entity.js';
+import { PoItem } from './po-item.entity.js';
+
+@Entity('purchase_orders')
+export class PurchaseOrder {
+  @PrimaryGeneratedColumn('uuid')
+  id: string;
+
+  @Column({ unique: true })
+  poNumber: string;
+
+  @ManyToOne(() => Vendor, { eager: true })
+  @JoinColumn({ name: 'vendorId' })
+  vendor: Vendor;
+
+  @Column()
+  vendorId: string;
+
+  @ManyToOne(() => Project)
+  @JoinColumn({ name: 'projectId' })
+  project: Project;
+
+  @Column()
+  projectId: string;
+
+  @Column({ type: 'text', nullable: true })
+  paymentTerms: string;
+
+  @Column({ type: 'enum', enum: PurchaseOrderStatus, default: PurchaseOrderStatus.DRAFT })
+  status: PurchaseOrderStatus;
+
+  @Column({ type: 'decimal', precision: 12, scale: 2, default: 0 })
+  totalAmount: number;
+
+  @OneToMany(() => PoItem, (item) => item.purchaseOrder, { cascade: true, eager: true })
+  items: PoItem[];
+
+  @Column({ default: false })
+  isDeleted: boolean;
+
+  @Column({ nullable: true })
+  createdBy: string;
+
+  @Column({ nullable: true })
+  updatedBy: string;
+
+  @CreateDateColumn()
+  createdAt: Date;
+
+  @UpdateDateColumn()
+  updatedAt: Date;
+}

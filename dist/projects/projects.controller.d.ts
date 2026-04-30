@@ -1,0 +1,31 @@
+import { ProjectsService } from './projects.service.js';
+import { CreateProjectDto } from './dto/create-project.dto.js';
+export declare class ProjectsController {
+    private readonly projectsService;
+    constructor(projectsService: ProjectsService);
+    create(dto: CreateProjectDto, req: any): Promise<import("./entities/project.entity.js").Project>;
+    findAll(): Promise<import("./entities/project.entity.js").Project[]>;
+    getDashboard(id: string): Promise<{
+        project: import("./entities/project.entity.js").Project;
+        progress: import("./entities/project-progress.entity.js").ProjectProgress[];
+        milestones: import("./entities/project-milestone.entity.js").ProjectMilestone[];
+        changeOrders: import("./entities/change-order.entity.js").ChangeOrder[];
+        attendance: import("./entities/attendance-log.entity.js").AttendanceLog[];
+        machinery: import("./entities/machinery-log.entity.js").MachineryLog[];
+        snags: import("./entities/snag-item.entity.js").SnagItem[];
+        incidents: import("./entities/safety-incident.entity.js").SafetyIncident[];
+        rfis: import("./entities/rfi.entity.js").Rfi[];
+        photos: import("./entities/site-photo.entity.js").SitePhoto[];
+    }>;
+    addProgress(id: string, body: any): Promise<import("./entities/project-progress.entity.js").ProjectProgress>;
+    addMilestone(id: string, body: any): Promise<import("./entities/project-milestone.entity.js").ProjectMilestone>;
+    updateMilestone(id: string, mid: string, body: any): Promise<import("./entities/project-milestone.entity.js").ProjectMilestone | null>;
+    addAttendance(id: string, body: any): Promise<import("./entities/attendance-log.entity.js").AttendanceLog>;
+    addSnag(id: string, body: any): Promise<import("./entities/snag-item.entity.js").SnagItem>;
+    updateSnag(id: string, snagId: string, body: any): Promise<import("./entities/snag-item.entity.js").SnagItem | null>;
+    addRfi(id: string, body: any): Promise<import("./entities/rfi.entity.js").Rfi>;
+    updateRfi(id: string, rfiId: string, body: any): Promise<import("./entities/rfi.entity.js").Rfi | null>;
+    addIncident(id: string, body: any): Promise<import("./entities/safety-incident.entity.js").SafetyIncident>;
+    addMachinery(id: string, body: any): Promise<import("./entities/machinery-log.entity.js").MachineryLog>;
+    addChangeOrder(id: string, body: any): Promise<import("./entities/change-order.entity.js").ChangeOrder>;
+}
