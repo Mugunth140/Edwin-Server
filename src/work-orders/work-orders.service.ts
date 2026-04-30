@@ -115,7 +115,7 @@ export class WorkOrdersService {
   async updateStatus(id: string, status: WorkOrderStatus, userId?: string): Promise<WorkOrder> {
     const wo = await this.findOne(id);
     wo.status = status;
-    wo.updatedBy = (userId || '') as string;
+    wo.updatedBy = userId ?? '';
     return this.woRepo.save(wo);
   }
 }
