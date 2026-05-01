@@ -54,7 +54,7 @@ import { Payment } from './payments/entities/payment.entity.js';
         host: configService.get<string>('DATABASE_HOST', 'localhost'),
         port: configService.get<number>('DATABASE_PORT', 5432),
         username: configService.get<string>('DATABASE_USERNAME', 'postgres'),
-        password: configService.get<string>('DATABASE_PASSWORD', 'postgres'),
+        password: configService.get<string>('DATABASE_PASSWORD', '8220'),
         database: configService.get<string>('DATABASE_NAME', 'edwin_erp'),
         entities: [
           User,

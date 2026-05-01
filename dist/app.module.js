@@ -64,7 +64,7 @@ exports.AppModule = AppModule = __decorate([
                     host: configService.get('DATABASE_HOST', 'localhost'),
                     port: configService.get('DATABASE_PORT', 5432),
                     username: configService.get('DATABASE_USERNAME', 'postgres'),
-                    password: configService.get('DATABASE_PASSWORD', 'postgres'),
+                    password: configService.get('DATABASE_PASSWORD', '8220'),
                     database: configService.get('DATABASE_NAME', 'edwin_erp'),
                     entities: [
                         user_entity_js_1.User,
