@@ -116,7 +116,7 @@ let WorkOrdersService = class WorkOrdersService {
     async updateStatus(id, status, userId) {
         const wo = await this.findOne(id);
         wo.status = status;
-        wo.updatedBy = userId || null;
+        wo.updatedBy = (userId || '');
         return this.woRepo.save(wo);
     }
 };
