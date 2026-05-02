@@ -9,6 +9,7 @@ import {
   Query,
   UseGuards,
   Request,
+  Version,
 } from '@nestjs/common';
 import { ApiTags, ApiOperation, ApiBearerAuth, ApiQuery } from '@nestjs/swagger';
 import { AuthGuard } from '@nestjs/passport';
@@ -20,6 +21,7 @@ import { CreateWorkOrderDto } from './dto/create-work-order.dto.js';
 import { UpdateWorkOrderStatusDto } from './dto/update-work-order.dto.js';
 
 @ApiTags('Work Orders')
+@Version('1')
 @Controller('work-orders')
 @UseGuards(AuthGuard('jwt'), RolesGuard)
 @ApiBearerAuth()

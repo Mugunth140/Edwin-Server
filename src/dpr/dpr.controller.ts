@@ -10,6 +10,7 @@ import {
   UploadedFile,
   UseInterceptors,
   Body,
+  Version,
 } from '@nestjs/common';
 import { FileInterceptor } from '@nestjs/platform-express';
 import { ApiTags, ApiOperation, ApiBearerAuth, ApiConsumes, ApiQuery } from '@nestjs/swagger';
@@ -20,6 +21,7 @@ import { Role } from '../common/enums.js';
 import { DprService } from './dpr.service.js';
 
 @ApiTags('DPR')
+@Version('1')
 @Controller('dpr')
 @UseGuards(AuthGuard('jwt'), RolesGuard)
 @ApiBearerAuth()

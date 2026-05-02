@@ -1,6 +1,6 @@
 import {
   Controller, Get, Post, Delete, Param, Query, UseGuards, Request,
-  UploadedFile, UseInterceptors, Body,
+  UploadedFile, UseInterceptors, Body, Version,
 } from '@nestjs/common';
 import { FileInterceptor } from '@nestjs/platform-express';
 import { ApiTags, ApiOperation, ApiBearerAuth, ApiConsumes, ApiQuery } from '@nestjs/swagger';
@@ -11,6 +11,7 @@ import { Role, DrawingCategory } from '../common/enums.js';
 import { DrawingsService } from './drawings.service.js';
 
 @ApiTags('Drawings')
+@Version('1')
 @Controller('drawings')
 @UseGuards(AuthGuard('jwt'), RolesGuard)
 @ApiBearerAuth()

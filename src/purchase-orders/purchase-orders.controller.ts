@@ -1,4 +1,4 @@
-import { Controller, Get, Post, Body, Param, UseGuards, Request } from '@nestjs/common';
+import { Controller, Get, Post, Body, Param, UseGuards, Request, Version } from '@nestjs/common';
 import { ApiTags, ApiOperation, ApiBearerAuth } from '@nestjs/swagger';
 import { AuthGuard } from '@nestjs/passport';
 import { RolesGuard } from '../auth/roles.guard.js';
@@ -8,6 +8,7 @@ import { PurchaseOrdersService } from './purchase-orders.service.js';
 import { CreatePurchaseOrderDto } from './dto/create-purchase-order.dto.js';
 
 @ApiTags('Purchase Orders')
+@Version('1')
 @Controller('purchase-orders')
 @UseGuards(AuthGuard('jwt'), RolesGuard)
 @ApiBearerAuth()

@@ -1,4 +1,4 @@
-import { Controller, Get, UseGuards } from '@nestjs/common';
+import { Controller, Get, UseGuards, Version } from '@nestjs/common';
 import { ApiTags, ApiOperation, ApiBearerAuth } from '@nestjs/swagger';
 import { AuthGuard } from '@nestjs/passport';
 import { RolesGuard } from '../auth/roles.guard.js';
@@ -7,6 +7,7 @@ import { Role } from '../common/enums.js';
 import { DashboardService } from './dashboard.service.js';
 
 @ApiTags('Dashboard')
+@Version('1')
 @Controller('dashboard')
 @UseGuards(AuthGuard('jwt'), RolesGuard)
 @ApiBearerAuth()

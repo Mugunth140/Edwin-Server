@@ -7,6 +7,7 @@ import {
   Param,
   UseGuards,
   Request,
+  Version,
 } from '@nestjs/common';
 import { ApiTags, ApiOperation, ApiBearerAuth } from '@nestjs/swagger';
 import { AuthGuard } from '@nestjs/passport';
@@ -17,6 +18,7 @@ import { ProjectsService } from './projects.service.js';
 import { CreateProjectDto } from './dto/create-project.dto.js';
 
 @ApiTags('Projects')
+@Version('1')
 @Controller('projects')
 @UseGuards(AuthGuard('jwt'), RolesGuard)
 @ApiBearerAuth()
