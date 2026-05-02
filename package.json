@@ -18,7 +18,8 @@
     "test:cov": "jest --coverage",
     "test:debug": "node --inspect-brk -r tsconfig-paths/register -r ts-node/register node_modules/.bin/jest --runInBand",
     "test:e2e": "jest --config ./test/jest-e2e.json",
-    "seed": "ts-node --esm src/seed.ts",
+    "seed": "npm run build && node dist/seed.js",
+    "seed:compiled": "node dist/seed.js",
     "typeorm": "typeorm-ts-node-esm",
     "migration:generate": "typeorm-ts-node-esm migration:generate -d src/data-source.ts",
     "migration:run": "typeorm-ts-node-esm migration:run -d src/data-source.ts"

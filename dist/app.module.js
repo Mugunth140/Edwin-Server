@@ -49,6 +49,15 @@ const boq_item_entity_js_1 = require("./accounts/entities/boq-item.entity.js");
 const advance_entity_js_1 = require("./accounts/entities/advance.entity.js");
 const expense_entity_js_1 = require("./expenses/entities/expense.entity.js");
 const payment_entity_js_1 = require("./payments/entities/payment.entity.js");
+function getBooleanConfig(configService, key, fallback) {
+    const value = configService.get(key);
+    if (typeof value === 'boolean')
+        return value;
+    if (typeof value === 'string' && value.trim() !== '') {
+        return ['1', 'true', 'yes', 'on'].includes(value.toLowerCase());
+    }
+    return fallback;
+}
 let AppModule = class AppModule {
 };
 exports.AppModule = AppModule;
@@ -94,8 +103,8 @@ exports.AppModule = AppModule = __decorate([
                         expense_entity_js_1.Expense,
                         payment_entity_js_1.Payment,
                     ],
-                    synchronize: process.env.NODE_ENV !== 'production',
-                    logging: process.env.NODE_ENV !== 'production',
+                    synchronize: getBooleanConfig(configService, 'TYPEORM_SYNCHRONIZE', false),
+                    logging: getBooleanConfig(configService, 'TYPEORM_LOGGING', false),
                 }),
             }),
             auth_module_js_1.AuthModule,

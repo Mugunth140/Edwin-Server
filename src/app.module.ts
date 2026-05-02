@@ -43,6 +43,20 @@ import { Advance } from './accounts/entities/advance.entity.js';
 import { Expense } from './expenses/entities/expense.entity.js';
 import { Payment } from './payments/entities/payment.entity.js';
 
+function getBooleanConfig(
+  configService: ConfigService,
+  key: string,
+  fallback: boolean,
+) {
+  const value = configService.get<string | boolean>(key);
+  if (typeof value === 'boolean') return value;
+  if (typeof value === 'string' && value.trim() !== '') {
+    return ['1', 'true', 'yes', 'on'].includes(value.toLowerCase());
+  }
+
+  return fallback;
+}
+
 @Module({
   imports: [
     ConfigModule.forRoot({ isGlobal: true }),
@@ -84,10 +98,8 @@ import { Payment } from './payments/entities/payment.entity.js';
           Expense,
           Payment,
         ],
-        // Set to true only in development for auto-schema sync
-        // NEVER use synchronize: true in production — use migrations instead
-        synchronize: process.env.NODE_ENV !== 'production',
-        logging: process.env.NODE_ENV !== 'production',
+        synchronize: getBooleanConfig(configService, 'TYPEORM_SYNCHRONIZE', false),
+        logging: getBooleanConfig(configService, 'TYPEORM_LOGGING', false),
       }),
     }),
     AuthModule,
