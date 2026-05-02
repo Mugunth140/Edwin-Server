@@ -174,7 +174,7 @@ exports.AccountsController = AccountsController = __decorate([
     (0, swagger_1.ApiTags)('Accounts'),
     (0, common_1.UseGuards)((0, passport_1.AuthGuard)('jwt'), roles_guard_js_1.RolesGuard),
     (0, swagger_1.ApiBearerAuth)(),
-    (0, common_1.Controller)(),
+    (0, common_1.Controller)({ version: '1' }),
     __metadata("design:paramtypes", [accounts_service_js_1.AccountsService])
 ], AccountsController);
 //# sourceMappingURL=accounts.controller.js.map

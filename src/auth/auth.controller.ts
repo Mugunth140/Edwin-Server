@@ -1,12 +1,11 @@
-import { Controller, Post, Body, Get, UseGuards, Request, Version } from '@nestjs/common';
+import { Controller, Post, Body, Get, UseGuards, Request } from '@nestjs/common';
 import { ApiTags, ApiOperation, ApiBearerAuth } from '@nestjs/swagger';
 import { AuthGuard } from '@nestjs/passport';
 import { AuthService } from './auth.service.js';
 import { LoginDto } from './dto/login.dto.js';
 
 @ApiTags('Auth')
-@Version('1')
-@Controller('auth')
+@Controller({ path: 'auth', version: '1' })
 export class AuthController {
   constructor(private readonly authService: AuthService) {}
 

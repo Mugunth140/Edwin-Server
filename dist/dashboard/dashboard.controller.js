@@ -37,7 +37,7 @@ __decorate([
 ], DashboardController.prototype, "getMaster", null);
 exports.DashboardController = DashboardController = __decorate([
     (0, swagger_1.ApiTags)('Dashboard'),
-    (0, common_1.Controller)('dashboard'),
+    (0, common_1.Controller)({ path: 'dashboard', version: '1' }),
     (0, common_1.UseGuards)((0, passport_1.AuthGuard)('jwt'), roles_guard_js_1.RolesGuard),
     (0, swagger_1.ApiBearerAuth)(),
     __metadata("design:paramtypes", [dashboard_service_js_1.DashboardService])

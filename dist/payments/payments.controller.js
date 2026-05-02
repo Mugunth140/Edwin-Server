@@ -71,7 +71,7 @@ __decorate([
 ], PaymentsController.prototype, "getSummary", null);
 exports.PaymentsController = PaymentsController = __decorate([
     (0, swagger_1.ApiTags)('Payments'),
-    (0, common_1.Controller)('payments'),
+    (0, common_1.Controller)({ path: 'payments', version: '1' }),
     (0, common_1.UseGuards)((0, passport_1.AuthGuard)('jwt'), roles_guard_js_1.RolesGuard),
     (0, swagger_1.ApiBearerAuth)(),
     __metadata("design:paramtypes", [payments_service_js_1.PaymentsService])

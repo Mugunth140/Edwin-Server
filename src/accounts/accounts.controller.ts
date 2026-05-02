@@ -1,4 +1,4 @@
-import { Controller, Get, Post, Patch, Body, Param, Query, UseGuards, Request, Version } from '@nestjs/common';
+import { Controller, Get, Post, Patch, Body, Param, Query, UseGuards, Request } from '@nestjs/common';
 import { ApiTags, ApiOperation, ApiBearerAuth, ApiQuery } from '@nestjs/swagger';
 import { AuthGuard } from '@nestjs/passport';
 import { RolesGuard } from '../auth/roles.guard.js';
@@ -8,10 +8,9 @@ import { AccountsService } from './accounts.service.js';
 import { CreateInvoiceDto, CreateBillDto, CreateAdvanceDto, CreateBoqDto } from './dto/accounts.dto.js';
 
 @ApiTags('Accounts')
-@Version('1')
 @UseGuards(AuthGuard('jwt'), RolesGuard)
 @ApiBearerAuth()
-@Controller()
+@Controller({ version: '1' })
 export class AccountsController {
   constructor(private readonly accountsService: AccountsService) {}
 

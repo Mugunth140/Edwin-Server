@@ -89,7 +89,7 @@ __decorate([
 ], WorkOrdersController.prototype, "updateStatus", null);
 exports.WorkOrdersController = WorkOrdersController = __decorate([
     (0, swagger_1.ApiTags)('Work Orders'),
-    (0, common_1.Controller)('work-orders'),
+    (0, common_1.Controller)({ path: 'work-orders', version: '1' }),
     (0, common_1.UseGuards)((0, passport_1.AuthGuard)('jwt'), roles_guard_js_1.RolesGuard),
     (0, swagger_1.ApiBearerAuth)(),
     __metadata("design:paramtypes", [work_orders_service_js_1.WorkOrdersService])

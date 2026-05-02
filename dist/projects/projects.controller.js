@@ -210,7 +210,7 @@ __decorate([
 ], ProjectsController.prototype, "addChangeOrder", null);
 exports.ProjectsController = ProjectsController = __decorate([
     (0, swagger_1.ApiTags)('Projects'),
-    (0, common_1.Controller)('projects'),
+    (0, common_1.Controller)({ path: 'projects', version: '1' }),
     (0, common_1.UseGuards)((0, passport_1.AuthGuard)('jwt'), roles_guard_js_1.RolesGuard),
     (0, swagger_1.ApiBearerAuth)(),
     __metadata("design:paramtypes", [projects_service_js_1.ProjectsService])

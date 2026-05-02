@@ -1,7 +1,6 @@
-import { Controller, Get, Version } from '@nestjs/common';
+import { Controller, Get } from '@nestjs/common';
 
-@Version('1')
-@Controller('/')
+@Controller()
 export class AppController {
   @Get()
   getHello(): string {

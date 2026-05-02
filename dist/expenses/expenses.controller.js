@@ -71,7 +71,7 @@ __decorate([
 ], ExpensesController.prototype, "getSummary", null);
 exports.ExpensesController = ExpensesController = __decorate([
     (0, swagger_1.ApiTags)('Expenses'),
-    (0, common_1.Controller)('expenses'),
+    (0, common_1.Controller)({ path: 'expenses', version: '1' }),
     (0, common_1.UseGuards)((0, passport_1.AuthGuard)('jwt'), roles_guard_js_1.RolesGuard),
     (0, swagger_1.ApiBearerAuth)(),
     __metadata("design:paramtypes", [expenses_service_js_1.ExpensesService])

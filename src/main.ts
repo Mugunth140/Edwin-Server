@@ -1,4 +1,4 @@
-import { NestFactory, Reflector } from '@nestjs/core';
+import { NestFactory } from '@nestjs/core';
 import { ValidationPipe, VersioningType } from '@nestjs/common';
 import { DocumentBuilder, SwaggerModule } from '@nestjs/swagger';
 import { AppModule } from './app.module.js';
@@ -36,7 +36,9 @@ async function bootstrap() {
   // Swagger setup
   const config = new DocumentBuilder()
     .setTitle('Edwin Constructions ERP API')
-    .setDescription('ERP API for managing projects, accounts, expenses, and payments')
+    .setDescription(
+      'ERP API for managing projects, accounts, expenses, and payments'
+    )
     .setVersion('1.0')
     .addBearerAuth()
     .build();

@@ -53,7 +53,7 @@ __decorate([
 ], UsersController.prototype, "findAll", null);
 exports.UsersController = UsersController = __decorate([
     (0, swagger_1.ApiTags)('Users'),
-    (0, common_1.Controller)('users'),
+    (0, common_1.Controller)({ path: 'users', version: '1' }),
     (0, common_1.UseGuards)((0, passport_1.AuthGuard)('jwt'), roles_guard_js_1.RolesGuard),
     (0, swagger_1.ApiBearerAuth)(),
     __metadata("design:paramtypes", [users_service_js_1.UsersService])

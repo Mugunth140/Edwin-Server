@@ -95,7 +95,7 @@ __decorate([
 ], DrawingsController.prototype, "softDelete", null);
 exports.DrawingsController = DrawingsController = __decorate([
     (0, swagger_1.ApiTags)('Drawings'),
-    (0, common_1.Controller)('drawings'),
+    (0, common_1.Controller)({ path: 'drawings', version: '1' }),
     (0, common_1.UseGuards)((0, passport_1.AuthGuard)('jwt'), roles_guard_js_1.RolesGuard),
     (0, swagger_1.ApiBearerAuth)(),
     __metadata("design:paramtypes", [drawings_service_js_1.DrawingsService])

@@ -97,7 +97,7 @@ __decorate([
 ], DprController.prototype, "softDelete", null);
 exports.DprController = DprController = __decorate([
     (0, swagger_1.ApiTags)('DPR'),
-    (0, common_1.Controller)('dpr'),
+    (0, common_1.Controller)({ path: 'dpr', version: '1' }),
     (0, common_1.UseGuards)((0, passport_1.AuthGuard)('jwt'), roles_guard_js_1.RolesGuard),
     (0, swagger_1.ApiBearerAuth)(),
     __metadata("design:paramtypes", [dpr_service_js_1.DprService])

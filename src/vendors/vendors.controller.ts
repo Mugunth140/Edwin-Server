@@ -1,4 +1,4 @@
-import { Controller, Get, Post, Body, UseGuards, Version } from '@nestjs/common';
+import { Controller, Get, Post, Body, UseGuards } from '@nestjs/common';
 import { ApiTags, ApiOperation, ApiBearerAuth } from '@nestjs/swagger';
 import { AuthGuard } from '@nestjs/passport';
 import { RolesGuard } from '../auth/roles.guard.js';
@@ -8,8 +8,7 @@ import { VendorsService } from './vendors.service.js';
 import { CreateVendorDto } from './dto/create-vendor.dto.js';
 
 @ApiTags('Vendors')
-@Version('1')
-@Controller('vendors')
+@Controller({ path: 'vendors', version: '1' })
 @UseGuards(AuthGuard('jwt'), RolesGuard)
 @ApiBearerAuth()
 export class VendorsController {

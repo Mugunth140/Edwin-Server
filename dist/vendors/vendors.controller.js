@@ -52,7 +52,7 @@ __decorate([
 ], VendorsController.prototype, "findAll", null);
 exports.VendorsController = VendorsController = __decorate([
     (0, swagger_1.ApiTags)('Vendors'),
-    (0, common_1.Controller)('vendors'),
+    (0, common_1.Controller)({ path: 'vendors', version: '1' }),
     (0, common_1.UseGuards)((0, passport_1.AuthGuard)('jwt'), roles_guard_js_1.RolesGuard),
     (0, swagger_1.ApiBearerAuth)(),
     __metadata("design:paramtypes", [vendors_service_js_1.VendorsService])

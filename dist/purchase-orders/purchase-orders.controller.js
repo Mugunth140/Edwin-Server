@@ -60,7 +60,7 @@ __decorate([
 ], PurchaseOrdersController.prototype, "findOne", null);
 exports.PurchaseOrdersController = PurchaseOrdersController = __decorate([
     (0, swagger_1.ApiTags)('Purchase Orders'),
-    (0, common_1.Controller)('purchase-orders'),
+    (0, common_1.Controller)({ path: 'purchase-orders', version: '1' }),
     (0, common_1.UseGuards)((0, passport_1.AuthGuard)('jwt'), roles_guard_js_1.RolesGuard),
     (0, swagger_1.ApiBearerAuth)(),
     __metadata("design:paramtypes", [purchase_orders_service_js_1.PurchaseOrdersService])

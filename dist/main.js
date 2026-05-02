@@ -19,6 +19,10 @@ async function bootstrap() {
         credentials: true,
     });
     app.setGlobalPrefix('api');
+    app.enableVersioning({
+        type: common_1.VersioningType.URI,
+        defaultVersion: '1',
+    });
     const config = new swagger_1.DocumentBuilder()
         .setTitle('Edwin Constructions ERP API')
         .setDescription('ERP API for managing projects, accounts, expenses, and payments')
