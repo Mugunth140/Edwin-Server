@@ -1,4 +1,4 @@
-import { loadEnvFile } from 'node:process';
+import * as process from 'node:process';
 import * as bcrypt from 'bcrypt';
 import {
   DataSource,
@@ -74,8 +74,11 @@ const entities = [
 ];
 
 function loadEnvironment() {
+  const loadEnv = (process as { loadEnvFile?: () => void }).loadEnvFile;
+  if (!loadEnv) return;
+
   try {
-    loadEnvFile();
+    loadEnv();
   } catch (error) {
     const nodeError = error as NodeJS.ErrnoException;
     if (nodeError.code !== 'ENOENT') {

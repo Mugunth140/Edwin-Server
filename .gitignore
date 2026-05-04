@@ -42,3 +42,4 @@ bun-debug.log*
 # If you use Bun's built-in SQLite or binary outputs
 *.sqlite
 bun.lockb
+.env
