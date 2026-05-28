@@ -11,6 +11,7 @@ export declare class PurchaseBill {
     project: Project;
     projectId: string;
     amount: number;
+    billDate: Date;
     dueDate: Date;
     paidAt: Date;
     isDeleted: boolean;

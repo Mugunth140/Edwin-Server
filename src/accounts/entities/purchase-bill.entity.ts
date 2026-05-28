@@ -43,6 +43,9 @@ export class PurchaseBill {
   amount: number;
 
   @Column({ type: 'date', nullable: true })
+  billDate: Date;
+
+  @Column({ type: 'date', nullable: true })
   dueDate: Date;
 
   @Column({ type: 'timestamp', nullable: true })

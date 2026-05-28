@@ -78,6 +78,7 @@ class CreateBillDto {
     purchaseOrderId;
     projectId;
     amount;
+    billDate;
     dueDate;
 }
 exports.CreateBillDto = CreateBillDto;
@@ -103,6 +104,12 @@ __decorate([
     (0, class_validator_1.IsNumber)(),
     __metadata("design:type", Number)
 ], CreateBillDto.prototype, "amount", void 0);
+__decorate([
+    (0, swagger_1.ApiPropertyOptional)(),
+    (0, class_validator_1.IsDateString)(),
+    (0, class_validator_1.IsOptional)(),
+    __metadata("design:type", String)
+], CreateBillDto.prototype, "billDate", void 0);
 __decorate([
     (0, swagger_1.ApiPropertyOptional)(),
     (0, class_validator_1.IsDateString)(),

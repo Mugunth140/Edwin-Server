@@ -10,6 +10,9 @@ exports.AccountsModule = void 0;
 const common_1 = require("@nestjs/common");
 const typeorm_1 = require("@nestjs/typeorm");
 const accounts_controller_js_1 = require("./accounts.controller.js");
+const invoices_controller_js_1 = require("./invoices.controller.js");
+const bills_controller_js_1 = require("./bills.controller.js");
+const other_controller_js_1 = require("./other.controller.js");
 const accounts_service_js_1 = require("./accounts.service.js");
 const sales_invoice_entity_js_1 = require("./entities/sales-invoice.entity.js");
 const invoice_item_entity_js_1 = require("./entities/invoice-item.entity.js");
@@ -17,6 +20,7 @@ const purchase_bill_entity_js_1 = require("./entities/purchase-bill.entity.js");
 const boq_item_entity_js_1 = require("./entities/boq-item.entity.js");
 const advance_entity_js_1 = require("./entities/advance.entity.js");
 const customer_entity_js_1 = require("../customers/entities/customer.entity.js");
+const purchase_order_entity_js_1 = require("../purchase-orders/entities/purchase-order.entity.js");
 let AccountsModule = class AccountsModule {
 };
 exports.AccountsModule = AccountsModule;
@@ -30,9 +34,15 @@ exports.AccountsModule = AccountsModule = __decorate([
                 boq_item_entity_js_1.BoqItem,
                 advance_entity_js_1.Advance,
                 customer_entity_js_1.Customer,
+                purchase_order_entity_js_1.PurchaseOrder,
             ]),
         ],
-        controllers: [accounts_controller_js_1.AccountsController],
+        controllers: [
+            accounts_controller_js_1.AccountsController,
+            invoices_controller_js_1.InvoicesController,
+            bills_controller_js_1.BillsController,
+            other_controller_js_1.OtherAccountsController,
+        ],
         providers: [accounts_service_js_1.AccountsService],
         exports: [accounts_service_js_1.AccountsService],
     })

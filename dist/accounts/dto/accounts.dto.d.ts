@@ -16,6 +16,7 @@ export declare class CreateBillDto {
     purchaseOrderId?: string;
     projectId?: string;
     amount: number;
+    billDate?: string;
     dueDate?: string;
 }
 export declare class CreateAdvanceDto {

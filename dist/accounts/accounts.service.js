@@ -182,13 +182,15 @@ let AccountsService = class AccountsService {
         return ledger;
     }
     async getPayables() {
-        return this.billRepo.find({ where: { isDeleted: false }, relations: ['vendor'], order: { dueDate: 'ASC' } });
+        return this.billRepo.find({ where: { isDeleted: false, paidAt: undefined }, relations: ['vendor'] });
     }
     async getReceivables() {
         return this.invoiceRepo.find({
-            where: { isDeleted: false },
-            relations: ['customer', 'project'],
-            order: { createdAt: 'DESC' },
+            where: [
+                { isDeleted: false, status: enums_js_1.InvoiceStatus.SENT },
+                { isDeleted: false, status: enums_js_1.InvoiceStatus.OVERDUE },
+            ],
+            relations: ['customer'],
         });
     }
     async getBalance() {

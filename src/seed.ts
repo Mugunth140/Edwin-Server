@@ -356,6 +356,7 @@ async function seedOperationalSampleData(
     vendorId: steelVendor.id,
     projectId: highwayProject.id,
     amount: 1_325_000,
+    billDate: new Date('2026-05-10'),
     dueDate: new Date('2026-05-15'),
     isDeleted: false,
     createdBy: admin.id,

@@ -24,6 +24,7 @@ let PurchaseBill = class PurchaseBill {
     project;
     projectId;
     amount;
+    billDate;
     dueDate;
     paidAt;
     isDeleted;
@@ -70,6 +71,10 @@ __decorate([
     (0, typeorm_1.Column)({ type: 'decimal', precision: 12, scale: 2, default: 0 }),
     __metadata("design:type", Number)
 ], PurchaseBill.prototype, "amount", void 0);
+__decorate([
+    (0, typeorm_1.Column)({ type: 'date', nullable: true }),
+    __metadata("design:type", Date)
+], PurchaseBill.prototype, "billDate", void 0);
 __decorate([
     (0, typeorm_1.Column)({ type: 'date', nullable: true }),
     __metadata("design:type", Date)
