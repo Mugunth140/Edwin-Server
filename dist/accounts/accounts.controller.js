@@ -43,6 +43,9 @@ let AccountsController = class AccountsController {
         return this.accountsService.createBill(dto, req.user.id);
     }
     findBills() { return this.accountsService.findBills(); }
+    convertPoToBill(id, req) {
+        return this.accountsService.convertPoToBill(id, req.user.id);
+    }
     createBoq(dto) { return this.accountsService.createBoq(dto); }
     findBoq(projectId) { return this.accountsService.findBoq(projectId); }
     createAdvance(dto, req) {
@@ -52,7 +55,7 @@ let AccountsController = class AccountsController {
 };
 exports.AccountsController = AccountsController;
 __decorate([
-    (0, common_1.Get)('accounts/ledger'),
+    (0, common_1.Get)('ledger'),
     (0, roles_decorator_js_1.Roles)(enums_js_1.Role.ADMIN, enums_js_1.Role.ACCOUNTS_MANAGER),
     (0, swagger_1.ApiOperation)({ summary: 'Derived transaction log' }),
     __metadata("design:type", Function),
@@ -60,7 +63,7 @@ __decorate([
     __metadata("design:returntype", void 0)
 ], AccountsController.prototype, "getLedger", null);
 __decorate([
-    (0, common_1.Get)('accounts/payables'),
+    (0, common_1.Get)('payables'),
     (0, roles_decorator_js_1.Roles)(enums_js_1.Role.ADMIN, enums_js_1.Role.ACCOUNTS_MANAGER),
     (0, swagger_1.ApiOperation)({ summary: 'Outstanding payables' }),
     __metadata("design:type", Function),
@@ -68,7 +71,7 @@ __decorate([
     __metadata("design:returntype", void 0)
 ], AccountsController.prototype, "getPayables", null);
 __decorate([
-    (0, common_1.Get)('accounts/receivables'),
+    (0, common_1.Get)('receivables'),
     (0, roles_decorator_js_1.Roles)(enums_js_1.Role.ADMIN, enums_js_1.Role.ACCOUNTS_MANAGER),
     (0, swagger_1.ApiOperation)({ summary: 'Outstanding receivables' }),
     __metadata("design:type", Function),
@@ -76,7 +79,7 @@ __decorate([
     __metadata("design:returntype", void 0)
 ], AccountsController.prototype, "getReceivables", null);
 __decorate([
-    (0, common_1.Get)('accounts/balance'),
+    (0, common_1.Get)('balance'),
     (0, roles_decorator_js_1.Roles)(enums_js_1.Role.ADMIN, enums_js_1.Role.ACCOUNTS_MANAGER),
     (0, swagger_1.ApiOperation)({ summary: 'Revenue vs cost summary' }),
     __metadata("design:type", Function),
@@ -84,7 +87,7 @@ __decorate([
     __metadata("design:returntype", void 0)
 ], AccountsController.prototype, "getBalance", null);
 __decorate([
-    (0, common_1.Post)('invoices'),
+    (0, common_1.Post)('../invoices'),
     (0, roles_decorator_js_1.Roles)(enums_js_1.Role.ADMIN, enums_js_1.Role.ACCOUNTS_MANAGER),
     (0, swagger_1.ApiOperation)({ summary: 'Create sales invoice' }),
     __param(0, (0, common_1.Body)()),
@@ -94,7 +97,7 @@ __decorate([
     __metadata("design:returntype", void 0)
 ], AccountsController.prototype, "createInvoice", null);
 __decorate([
-    (0, common_1.Get)('invoices'),
+    (0, common_1.Get)('../invoices'),
     (0, roles_decorator_js_1.Roles)(enums_js_1.Role.ADMIN, enums_js_1.Role.ACCOUNTS_MANAGER),
     (0, swagger_1.ApiOperation)({ summary: 'List invoices' }),
     (0, swagger_1.ApiQuery)({ name: 'status', required: false, enum: enums_js_1.InvoiceStatus }),
@@ -108,7 +111,7 @@ __decorate([
     __metadata("design:returntype", void 0)
 ], AccountsController.prototype, "findInvoices", null);
 __decorate([
-    (0, common_1.Patch)('invoices/:id/status'),
+    (0, common_1.Patch)('../invoices/:id/status'),
     (0, roles_decorator_js_1.Roles)(enums_js_1.Role.ADMIN, enums_js_1.Role.ACCOUNTS_MANAGER),
     (0, swagger_1.ApiOperation)({ summary: 'Update invoice status' }),
     __param(0, (0, common_1.Param)('id')),
@@ -118,7 +121,7 @@ __decorate([
     __metadata("design:returntype", void 0)
 ], AccountsController.prototype, "updateInvoiceStatus", null);
 __decorate([
-    (0, common_1.Post)('bills'),
+    (0, common_1.Post)('../bills'),
     (0, roles_decorator_js_1.Roles)(enums_js_1.Role.ADMIN, enums_js_1.Role.ACCOUNTS_MANAGER),
     (0, swagger_1.ApiOperation)({ summary: 'Create purchase bill' }),
     __param(0, (0, common_1.Body)()),
@@ -128,7 +131,7 @@ __decorate([
     __metadata("design:returntype", void 0)
 ], AccountsController.prototype, "createBill", null);
 __decorate([
-    (0, common_1.Get)('bills'),
+    (0, common_1.Get)('../bills'),
     (0, roles_decorator_js_1.Roles)(enums_js_1.Role.ADMIN, enums_js_1.Role.ACCOUNTS_MANAGER),
     (0, swagger_1.ApiOperation)({ summary: 'List bills' }),
     __metadata("design:type", Function),
@@ -136,7 +139,17 @@ __decorate([
     __metadata("design:returntype", void 0)
 ], AccountsController.prototype, "findBills", null);
 __decorate([
-    (0, common_1.Post)('boq'),
+    (0, common_1.Post)('../purchase-orders/:id/convert'),
+    (0, roles_decorator_js_1.Roles)(enums_js_1.Role.ADMIN, enums_js_1.Role.ACCOUNTS_MANAGER),
+    (0, swagger_1.ApiOperation)({ summary: 'Convert PO to bill' }),
+    __param(0, (0, common_1.Param)('id')),
+    __param(1, (0, common_1.Request)()),
+    __metadata("design:type", Function),
+    __metadata("design:paramtypes", [String, Object]),
+    __metadata("design:returntype", void 0)
+], AccountsController.prototype, "convertPoToBill", null);
+__decorate([
+    (0, common_1.Post)('../boq'),
     (0, roles_decorator_js_1.Roles)(enums_js_1.Role.ADMIN, enums_js_1.Role.ACCOUNTS_MANAGER),
     (0, swagger_1.ApiOperation)({ summary: 'Add BOQ item' }),
     __param(0, (0, common_1.Body)()),
@@ -145,7 +158,7 @@ __decorate([
     __metadata("design:returntype", void 0)
 ], AccountsController.prototype, "createBoq", null);
 __decorate([
-    (0, common_1.Get)('boq/:projectId'),
+    (0, common_1.Get)('../boq/:projectId'),
     (0, swagger_1.ApiOperation)({ summary: 'BOQ items for project' }),
     __param(0, (0, common_1.Param)('projectId')),
     __metadata("design:type", Function),
@@ -153,7 +166,7 @@ __decorate([
     __metadata("design:returntype", void 0)
 ], AccountsController.prototype, "findBoq", null);
 __decorate([
-    (0, common_1.Post)('advances'),
+    (0, common_1.Post)('../advances'),
     (0, roles_decorator_js_1.Roles)(enums_js_1.Role.ADMIN, enums_js_1.Role.ACCOUNTS_MANAGER),
     (0, swagger_1.ApiOperation)({ summary: 'Create advance payment' }),
     __param(0, (0, common_1.Body)()),
@@ -163,7 +176,7 @@ __decorate([
     __metadata("design:returntype", void 0)
 ], AccountsController.prototype, "createAdvance", null);
 __decorate([
-    (0, common_1.Get)('advances'),
+    (0, common_1.Get)('../advances'),
     (0, roles_decorator_js_1.Roles)(enums_js_1.Role.ADMIN, enums_js_1.Role.ACCOUNTS_MANAGER),
     (0, swagger_1.ApiOperation)({ summary: 'List advances' }),
     __metadata("design:type", Function),
@@ -174,7 +187,7 @@ exports.AccountsController = AccountsController = __decorate([
     (0, swagger_1.ApiTags)('Accounts'),
     (0, common_1.UseGuards)((0, passport_1.AuthGuard)('jwt'), roles_guard_js_1.RolesGuard),
     (0, swagger_1.ApiBearerAuth)(),
-    (0, common_1.Controller)({ version: '1' }),
+    (0, common_1.Controller)({ path: 'accounts', version: '1' }),
     __metadata("design:paramtypes", [accounts_service_js_1.AccountsService])
 ], AccountsController);
 //# sourceMappingURL=accounts.controller.js.map

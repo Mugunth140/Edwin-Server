@@ -4,6 +4,7 @@ import {
   Post,
   Put,
   Patch,
+  Delete,
   Body,
   Param,
   Query,
@@ -17,7 +18,7 @@ import { Roles } from '../auth/roles.decorator.js';
 import { Role, WorkOrderStatus } from '../common/enums.js';
 import { WorkOrdersService } from './work-orders.service.js';
 import { CreateWorkOrderDto } from './dto/create-work-order.dto.js';
-import { UpdateWorkOrderStatusDto } from './dto/update-work-order.dto.js';
+import { UpdateWorkOrderDto, UpdateWorkOrderStatusDto } from './dto/update-work-order.dto.js';
 
 @ApiTags('Work Orders')
 @Controller({ path: 'work-orders', version: '1' })
@@ -56,10 +57,24 @@ export class WorkOrdersController {
     return this.woService.findOne(id);
   }
 
+  @Patch(':id')
+  @Roles(Role.ADMIN, Role.ACCOUNTS_MANAGER)
+  @ApiOperation({ summary: 'Update work order' })
+  update(@Param('id') id: string, @Body() dto: UpdateWorkOrderDto, @Request() req: any) {
+    return this.woService.update(id, dto, req.user.id);
+  }
+
   @Patch(':id/status')
   @Roles(Role.ADMIN, Role.ACCOUNTS_MANAGER)
   @ApiOperation({ summary: 'Update work order status' })
   updateStatus(@Param('id') id: string, @Body() dto: UpdateWorkOrderStatusDto, @Request() req: any) {
     return this.woService.updateStatus(id, dto.status, req.user.id);
+  }
+
+  @Delete(':id')
+  @Roles(Role.ADMIN)
+  @ApiOperation({ summary: 'Delete a work order' })
+  remove(@Param('id') id: string) {
+    return this.woService.remove(id);
   }
 }

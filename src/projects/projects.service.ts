@@ -46,6 +46,18 @@ export class ProjectsService {
     return project;
   }
 
+  async update(id: string, dto: any, userId?: string): Promise<Project> {
+    const project = await this.findOne(id);
+    Object.assign(project, { ...dto, updatedBy: userId });
+    return this.projectsRepo.save(project);
+  }
+
+  async remove(id: string): Promise<void> {
+    const project = await this.findOne(id);
+    project.isDeleted = true;
+    await this.projectsRepo.save(project);
+  }
+
   async getDashboard(id: string) {
     const project = await this.findOne(id);
 

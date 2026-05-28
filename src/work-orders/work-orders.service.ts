@@ -89,6 +89,7 @@ export class WorkOrdersService {
     const qb = this.woRepo
       .createQueryBuilder('wo')
       .leftJoinAndSelect('wo.vendor', 'vendor')
+      .leftJoinAndSelect('wo.project', 'project')
       .leftJoinAndSelect('wo.items', 'items')
       .where('wo.isDeleted = false');
 
@@ -117,5 +118,60 @@ export class WorkOrdersService {
     wo.status = status;
     wo.updatedBy = userId ?? '';
     return this.woRepo.save(wo);
+  }
+
+  async update(id: string, dto: any, userId?: string): Promise<WorkOrder> {
+    const wo = await this.findOne(id);
+    const vendor = await this.vendorRepo.findOne({ where: { id: dto.vendorId || wo.vendorId } });
+    if (!vendor) throw new NotFoundException('Vendor not found');
+
+    if (dto.items) {
+      // Remove old items
+      await this.woItemRepo.delete({ workOrderId: id });
+
+      // Create new items
+      const items = dto.items.map((item: any) => {
+        const amount = item.quantity * item.rate;
+        return this.woItemRepo.create({
+          workOrderId: id,
+          description: item.description,
+          quantity: item.quantity,
+          unit: item.unit || 'nos',
+          rate: item.rate,
+          amount,
+        });
+      });
+      wo.items = await this.woItemRepo.save(items);
+    }
+
+    Object.assign(wo, {
+      ...dto,
+      items: wo.items,
+      updatedBy: userId ?? '',
+    });
+
+    // Recalculate totals
+    wo.totalAmount = wo.items.reduce((sum, item) => sum + Number(item.amount), 0);
+    const gstRate = 0.18;
+    wo.gstAmount = wo.totalAmount * gstRate;
+    const companyState = 'Tamil Nadu';
+
+    if (vendor.state && vendor.state.toLowerCase() === companyState.toLowerCase()) {
+      wo.cgstAmount = wo.gstAmount / 2;
+      wo.sgstAmount = wo.gstAmount / 2;
+      wo.igstAmount = 0;
+    } else {
+      wo.igstAmount = wo.gstAmount;
+      wo.cgstAmount = 0;
+      wo.sgstAmount = 0;
+    }
+
+    return this.woRepo.save(wo);
+  }
+
+  async remove(id: string): Promise<void> {
+    const wo = await this.findOne(id);
+    wo.isDeleted = true;
+    await this.woRepo.save(wo);
   }
 }

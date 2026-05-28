@@ -7,4 +7,6 @@ export declare class VendorsService {
     create(dto: CreateVendorDto): Promise<Vendor>;
     findAll(): Promise<Vendor[]>;
     findOne(id: string): Promise<Vendor>;
+    update(id: string, dto: any): Promise<Vendor>;
+    remove(id: string): Promise<void>;
 }

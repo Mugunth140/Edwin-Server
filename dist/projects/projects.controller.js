@@ -21,6 +21,7 @@ const roles_decorator_js_1 = require("../auth/roles.decorator.js");
 const enums_js_1 = require("../common/enums.js");
 const projects_service_js_1 = require("./projects.service.js");
 const create_project_dto_js_1 = require("./dto/create-project.dto.js");
+const update_project_dto_js_1 = require("./dto/update-project.dto.js");
 let ProjectsController = class ProjectsController {
     projectsService;
     constructor(projectsService) {
@@ -31,6 +32,12 @@ let ProjectsController = class ProjectsController {
     }
     findAll() {
         return this.projectsService.findAll();
+    }
+    update(id, dto, req) {
+        return this.projectsService.update(id, dto, req.user.id);
+    }
+    remove(id) {
+        return this.projectsService.remove(id);
     }
     getDashboard(id) {
         return this.projectsService.getDashboard(id);
@@ -87,6 +94,26 @@ __decorate([
     __metadata("design:paramtypes", []),
     __metadata("design:returntype", void 0)
 ], ProjectsController.prototype, "findAll", null);
+__decorate([
+    (0, common_1.Patch)(':id'),
+    (0, roles_decorator_js_1.Roles)(enums_js_1.Role.ADMIN),
+    (0, swagger_1.ApiOperation)({ summary: 'Update a project' }),
+    __param(0, (0, common_1.Param)('id')),
+    __param(1, (0, common_1.Body)()),
+    __param(2, (0, common_1.Request)()),
+    __metadata("design:type", Function),
+    __metadata("design:paramtypes", [String, update_project_dto_js_1.UpdateProjectDto, Object]),
+    __metadata("design:returntype", void 0)
+], ProjectsController.prototype, "update", null);
+__decorate([
+    (0, common_1.Delete)(':id'),
+    (0, roles_decorator_js_1.Roles)(enums_js_1.Role.ADMIN),
+    (0, swagger_1.ApiOperation)({ summary: 'Delete a project' }),
+    __param(0, (0, common_1.Param)('id')),
+    __metadata("design:type", Function),
+    __metadata("design:paramtypes", [String]),
+    __metadata("design:returntype", void 0)
+], ProjectsController.prototype, "remove", null);
 __decorate([
     (0, common_1.Get)(':id/dashboard'),
     (0, swagger_1.ApiOperation)({ summary: 'Get full project dashboard data' }),

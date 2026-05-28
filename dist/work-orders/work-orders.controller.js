@@ -36,8 +36,14 @@ let WorkOrdersController = class WorkOrdersController {
     findOne(id) {
         return this.woService.findOne(id);
     }
+    update(id, dto, req) {
+        return this.woService.update(id, dto, req.user.id);
+    }
     updateStatus(id, dto, req) {
         return this.woService.updateStatus(id, dto.status, req.user.id);
+    }
+    remove(id) {
+        return this.woService.remove(id);
     }
 };
 exports.WorkOrdersController = WorkOrdersController;
@@ -77,6 +83,17 @@ __decorate([
     __metadata("design:returntype", void 0)
 ], WorkOrdersController.prototype, "findOne", null);
 __decorate([
+    (0, common_1.Patch)(':id'),
+    (0, roles_decorator_js_1.Roles)(enums_js_1.Role.ADMIN, enums_js_1.Role.ACCOUNTS_MANAGER),
+    (0, swagger_1.ApiOperation)({ summary: 'Update work order' }),
+    __param(0, (0, common_1.Param)('id')),
+    __param(1, (0, common_1.Body)()),
+    __param(2, (0, common_1.Request)()),
+    __metadata("design:type", Function),
+    __metadata("design:paramtypes", [String, update_work_order_dto_js_1.UpdateWorkOrderDto, Object]),
+    __metadata("design:returntype", void 0)
+], WorkOrdersController.prototype, "update", null);
+__decorate([
     (0, common_1.Patch)(':id/status'),
     (0, roles_decorator_js_1.Roles)(enums_js_1.Role.ADMIN, enums_js_1.Role.ACCOUNTS_MANAGER),
     (0, swagger_1.ApiOperation)({ summary: 'Update work order status' }),
@@ -87,6 +104,15 @@ __decorate([
     __metadata("design:paramtypes", [String, update_work_order_dto_js_1.UpdateWorkOrderStatusDto, Object]),
     __metadata("design:returntype", void 0)
 ], WorkOrdersController.prototype, "updateStatus", null);
+__decorate([
+    (0, common_1.Delete)(':id'),
+    (0, roles_decorator_js_1.Roles)(enums_js_1.Role.ADMIN),
+    (0, swagger_1.ApiOperation)({ summary: 'Delete a work order' }),
+    __param(0, (0, common_1.Param)('id')),
+    __metadata("design:type", Function),
+    __metadata("design:paramtypes", [String]),
+    __metadata("design:returntype", void 0)
+], WorkOrdersController.prototype, "remove", null);
 exports.WorkOrdersController = WorkOrdersController = __decorate([
     (0, swagger_1.ApiTags)('Work Orders'),
     (0, common_1.Controller)({ path: 'work-orders', version: '1' }),

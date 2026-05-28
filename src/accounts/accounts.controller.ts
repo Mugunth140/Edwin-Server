@@ -10,40 +10,40 @@ import { CreateInvoiceDto, CreateBillDto, CreateAdvanceDto, CreateBoqDto } from 
 @ApiTags('Accounts')
 @UseGuards(AuthGuard('jwt'), RolesGuard)
 @ApiBearerAuth()
-@Controller({ version: '1' })
+@Controller({ path: 'accounts', version: '1' })
 export class AccountsController {
   constructor(private readonly accountsService: AccountsService) {}
 
   // --- Ledger / Summary ---
-  @Get('accounts/ledger')
+  @Get('ledger')
   @Roles(Role.ADMIN, Role.ACCOUNTS_MANAGER)
   @ApiOperation({ summary: 'Derived transaction log' })
   getLedger() { return this.accountsService.getLedger(); }
 
-  @Get('accounts/payables')
+  @Get('payables')
   @Roles(Role.ADMIN, Role.ACCOUNTS_MANAGER)
   @ApiOperation({ summary: 'Outstanding payables' })
   getPayables() { return this.accountsService.getPayables(); }
 
-  @Get('accounts/receivables')
+  @Get('receivables')
   @Roles(Role.ADMIN, Role.ACCOUNTS_MANAGER)
   @ApiOperation({ summary: 'Outstanding receivables' })
   getReceivables() { return this.accountsService.getReceivables(); }
 
-  @Get('accounts/balance')
+  @Get('balance')
   @Roles(Role.ADMIN, Role.ACCOUNTS_MANAGER)
   @ApiOperation({ summary: 'Revenue vs cost summary' })
   getBalance() { return this.accountsService.getBalance(); }
 
-  // --- Invoices ---
-  @Post('invoices')
+  // --- Invoices (Move these to a separate controller or keep with full path) ---
+  @Post('../invoices')
   @Roles(Role.ADMIN, Role.ACCOUNTS_MANAGER)
   @ApiOperation({ summary: 'Create sales invoice' })
   createInvoice(@Body() dto: CreateInvoiceDto, @Request() req: any) {
     return this.accountsService.createInvoice(dto, req.user.id);
   }
 
-  @Get('invoices')
+  @Get('../invoices')
   @Roles(Role.ADMIN, Role.ACCOUNTS_MANAGER)
   @ApiOperation({ summary: 'List invoices' })
   @ApiQuery({ name: 'status', required: false, enum: InvoiceStatus })
@@ -57,7 +57,7 @@ export class AccountsController {
     return this.accountsService.findInvoices({ status, customerId, projectId });
   }
 
-  @Patch('invoices/:id/status')
+  @Patch('../invoices/:id/status')
   @Roles(Role.ADMIN, Role.ACCOUNTS_MANAGER)
   @ApiOperation({ summary: 'Update invoice status' })
   updateInvoiceStatus(@Param('id') id: string, @Body('status') status: InvoiceStatus) {
@@ -65,37 +65,44 @@ export class AccountsController {
   }
 
   // --- Bills ---
-  @Post('bills')
+  @Post('../bills')
   @Roles(Role.ADMIN, Role.ACCOUNTS_MANAGER)
   @ApiOperation({ summary: 'Create purchase bill' })
   createBill(@Body() dto: CreateBillDto, @Request() req: any) {
     return this.accountsService.createBill(dto, req.user.id);
   }
 
-  @Get('bills')
+  @Get('../bills')
   @Roles(Role.ADMIN, Role.ACCOUNTS_MANAGER)
   @ApiOperation({ summary: 'List bills' })
   findBills() { return this.accountsService.findBills(); }
 
+  @Post('../purchase-orders/:id/convert')
+  @Roles(Role.ADMIN, Role.ACCOUNTS_MANAGER)
+  @ApiOperation({ summary: 'Convert PO to bill' })
+  convertPoToBill(@Param('id') id: string, @Request() req: any) {
+    return this.accountsService.convertPoToBill(id, req.user.id);
+  }
+
   // --- BOQ ---
-  @Post('boq')
+  @Post('../boq')
   @Roles(Role.ADMIN, Role.ACCOUNTS_MANAGER)
   @ApiOperation({ summary: 'Add BOQ item' })
   createBoq(@Body() dto: CreateBoqDto) { return this.accountsService.createBoq(dto); }
 
-  @Get('boq/:projectId')
+  @Get('../boq/:projectId')
   @ApiOperation({ summary: 'BOQ items for project' })
   findBoq(@Param('projectId') projectId: string) { return this.accountsService.findBoq(projectId); }
 
   // --- Advances ---
-  @Post('advances')
+  @Post('../advances')
   @Roles(Role.ADMIN, Role.ACCOUNTS_MANAGER)
   @ApiOperation({ summary: 'Create advance payment' })
   createAdvance(@Body() dto: CreateAdvanceDto, @Request() req: any) {
     return this.accountsService.createAdvance(dto, req.user.id);
   }
 
-  @Get('advances')
+  @Get('../advances')
   @Roles(Role.ADMIN, Role.ACCOUNTS_MANAGER)
   @ApiOperation({ summary: 'List advances' })
   findAdvances() { return this.accountsService.findAdvances(); }

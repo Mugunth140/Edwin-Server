@@ -30,4 +30,16 @@ export class CustomersService {
     if (!customer) throw new NotFoundException('Customer not found');
     return customer;
   }
+
+  async update(id: string, dto: Partial<CreateCustomerDto>): Promise<Customer> {
+    const customer = await this.findOne(id);
+    Object.assign(customer, dto);
+    return this.customersRepository.save(customer);
+  }
+
+  async softDelete(id: string): Promise<void> {
+    const customer = await this.findOne(id);
+    customer.isDeleted = true;
+    await this.customersRepository.save(customer);
+  }
 }

@@ -28,7 +28,7 @@ export class WorkOrder {
   @Column()
   vendorId: string;
 
-  @ManyToOne(() => Project)
+  @ManyToOne(() => Project, { eager: true })
   @JoinColumn({ name: 'projectId' })
   project: Project;
 

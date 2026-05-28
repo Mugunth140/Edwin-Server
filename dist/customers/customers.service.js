@@ -40,6 +40,16 @@ let CustomersService = class CustomersService {
             throw new common_1.NotFoundException('Customer not found');
         return customer;
     }
+    async update(id, dto) {
+        const customer = await this.findOne(id);
+        Object.assign(customer, dto);
+        return this.customersRepository.save(customer);
+    }
+    async softDelete(id) {
+        const customer = await this.findOne(id);
+        customer.isDeleted = true;
+        await this.customersRepository.save(customer);
+    }
 };
 exports.CustomersService = CustomersService;
 exports.CustomersService = CustomersService = __decorate([

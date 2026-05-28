@@ -25,4 +25,6 @@ export declare class WorkOrdersService {
     }>;
     findOne(id: string): Promise<WorkOrder>;
     updateStatus(id: string, status: WorkOrderStatus, userId?: string): Promise<WorkOrder>;
+    update(id: string, dto: any, userId?: string): Promise<WorkOrder>;
+    remove(id: string): Promise<void>;
 }

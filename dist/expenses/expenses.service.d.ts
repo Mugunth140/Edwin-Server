@@ -19,5 +19,8 @@ export declare class ExpensesService {
         page: number;
         limit: number;
     }>;
+    findOne(id: string): Promise<Expense>;
+    update(id: string, dto: Partial<CreateExpenseDto>): Promise<Expense>;
+    softDelete(id: string): Promise<void>;
     getSummary(): Promise<any[]>;
 }

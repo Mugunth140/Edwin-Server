@@ -9,10 +9,14 @@ var __metadata = (this && this.__metadata) || function (k, v) {
     if (typeof Reflect === "object" && typeof Reflect.metadata === "function") return Reflect.metadata(k, v);
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.UpdateWorkOrderStatusDto = void 0;
-const class_validator_1 = require("class-validator");
+exports.UpdateWorkOrderStatusDto = exports.UpdateWorkOrderDto = void 0;
 const swagger_1 = require("@nestjs/swagger");
+const class_validator_1 = require("class-validator");
+const create_work_order_dto_js_1 = require("./create-work-order.dto.js");
 const enums_js_1 = require("../../common/enums.js");
+class UpdateWorkOrderDto extends (0, swagger_1.PartialType)(create_work_order_dto_js_1.CreateWorkOrderDto) {
+}
+exports.UpdateWorkOrderDto = UpdateWorkOrderDto;
 class UpdateWorkOrderStatusDto {
     status;
 }

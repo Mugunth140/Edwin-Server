@@ -1,4 +1,4 @@
-import { Controller, Get, Post, Body, Query, UseGuards, Request } from '@nestjs/common';
+import { Controller, Get, Post, Patch, Delete, Body, Query, Param, UseGuards, Request } from '@nestjs/common';
 import { ApiTags, ApiOperation, ApiBearerAuth, ApiQuery } from '@nestjs/swagger';
 import { AuthGuard } from '@nestjs/passport';
 import { RolesGuard } from '../auth/roles.guard.js';
@@ -41,4 +41,24 @@ export class ExpensesController {
   @Get('summary')
   @ApiOperation({ summary: 'Category-wise expense totals' })
   getSummary() { return this.expensesService.getSummary(); }
+
+  @Get(':id')
+  @ApiOperation({ summary: 'Get expense by id' })
+  findOne(@Param('id') id: string) {
+    return this.expensesService.findOne(id);
+  }
+
+  @Patch(':id')
+  @Roles(Role.ADMIN, Role.ACCOUNTS_MANAGER)
+  @ApiOperation({ summary: 'Update expense' })
+  update(@Param('id') id: string, @Body() dto: Partial<CreateExpenseDto>) {
+    return this.expensesService.update(id, dto);
+  }
+
+  @Delete(':id')
+  @Roles(Role.ADMIN, Role.ACCOUNTS_MANAGER)
+  @ApiOperation({ summary: 'Delete expense' })
+  remove(@Param('id') id: string) {
+    return this.expensesService.softDelete(id);
+  }
 }

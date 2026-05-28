@@ -7,4 +7,6 @@ export declare class CustomersService {
     create(dto: CreateCustomerDto): Promise<Customer>;
     findAll(): Promise<Customer[]>;
     findOne(id: string): Promise<Customer>;
+    update(id: string, dto: Partial<CreateCustomerDto>): Promise<Customer>;
+    softDelete(id: string): Promise<void>;
 }

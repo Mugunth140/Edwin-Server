@@ -41,6 +41,25 @@ let ExpensesService = class ExpensesService {
         const [data, total] = await qb.getManyAndCount();
         return { data, total, page, limit };
     }
+    async findOne(id) {
+        const expense = await this.expensesRepo.findOne({
+            where: { id, isDeleted: false },
+            relations: ['project'],
+        });
+        if (!expense)
+            throw new common_1.NotFoundException('Expense not found');
+        return expense;
+    }
+    async update(id, dto) {
+        const expense = await this.findOne(id);
+        Object.assign(expense, dto);
+        return this.expensesRepo.save(expense);
+    }
+    async softDelete(id) {
+        const expense = await this.findOne(id);
+        expense.isDeleted = true;
+        await this.expensesRepo.save(expense);
+    }
     async getSummary() {
         const result = await this.expensesRepo
             .createQueryBuilder('e')

@@ -33,6 +33,15 @@ let ExpensesController = class ExpensesController {
         return this.expensesService.findAll({ category, projectId, dateFrom, dateTo, page, limit });
     }
     getSummary() { return this.expensesService.getSummary(); }
+    findOne(id) {
+        return this.expensesService.findOne(id);
+    }
+    update(id, dto) {
+        return this.expensesService.update(id, dto);
+    }
+    remove(id) {
+        return this.expensesService.softDelete(id);
+    }
 };
 exports.ExpensesController = ExpensesController;
 __decorate([
@@ -69,6 +78,33 @@ __decorate([
     __metadata("design:paramtypes", []),
     __metadata("design:returntype", void 0)
 ], ExpensesController.prototype, "getSummary", null);
+__decorate([
+    (0, common_1.Get)(':id'),
+    (0, swagger_1.ApiOperation)({ summary: 'Get expense by id' }),
+    __param(0, (0, common_1.Param)('id')),
+    __metadata("design:type", Function),
+    __metadata("design:paramtypes", [String]),
+    __metadata("design:returntype", void 0)
+], ExpensesController.prototype, "findOne", null);
+__decorate([
+    (0, common_1.Patch)(':id'),
+    (0, roles_decorator_js_1.Roles)(enums_js_1.Role.ADMIN, enums_js_1.Role.ACCOUNTS_MANAGER),
+    (0, swagger_1.ApiOperation)({ summary: 'Update expense' }),
+    __param(0, (0, common_1.Param)('id')),
+    __param(1, (0, common_1.Body)()),
+    __metadata("design:type", Function),
+    __metadata("design:paramtypes", [String, Object]),
+    __metadata("design:returntype", void 0)
+], ExpensesController.prototype, "update", null);
+__decorate([
+    (0, common_1.Delete)(':id'),
+    (0, roles_decorator_js_1.Roles)(enums_js_1.Role.ADMIN, enums_js_1.Role.ACCOUNTS_MANAGER),
+    (0, swagger_1.ApiOperation)({ summary: 'Delete expense' }),
+    __param(0, (0, common_1.Param)('id')),
+    __metadata("design:type", Function),
+    __metadata("design:paramtypes", [String]),
+    __metadata("design:returntype", void 0)
+], ExpensesController.prototype, "remove", null);
 exports.ExpensesController = ExpensesController = __decorate([
     (0, swagger_1.ApiTags)('Expenses'),
     (0, common_1.Controller)({ path: 'expenses', version: '1' }),

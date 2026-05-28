@@ -5,4 +5,6 @@ export declare class CustomersController {
     constructor(customersService: CustomersService);
     create(dto: CreateCustomerDto): Promise<import("./entities/customer.entity.js").Customer>;
     findAll(): Promise<import("./entities/customer.entity.js").Customer[]>;
+    update(id: string, dto: Partial<CreateCustomerDto>): Promise<import("./entities/customer.entity.js").Customer>;
+    remove(id: string): Promise<void>;
 }

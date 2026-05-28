@@ -3,6 +3,7 @@ import {
   Get,
   Post,
   Patch,
+  Delete,
   Body,
   Param,
   UseGuards,
@@ -15,6 +16,7 @@ import { Roles } from '../auth/roles.decorator.js';
 import { Role } from '../common/enums.js';
 import { ProjectsService } from './projects.service.js';
 import { CreateProjectDto } from './dto/create-project.dto.js';
+import { UpdateProjectDto } from './dto/update-project.dto.js';
 
 @ApiTags('Projects')
 @Controller({ path: 'projects', version: '1' })
@@ -34,6 +36,20 @@ export class ProjectsController {
   @ApiOperation({ summary: 'List all projects' })
   findAll() {
     return this.projectsService.findAll();
+  }
+
+  @Patch(':id')
+  @Roles(Role.ADMIN)
+  @ApiOperation({ summary: 'Update a project' })
+  update(@Param('id') id: string, @Body() dto: UpdateProjectDto, @Request() req: any) {
+    return this.projectsService.update(id, dto, req.user.id);
+  }
+
+  @Delete(':id')
+  @Roles(Role.ADMIN)
+  @ApiOperation({ summary: 'Delete a project' })
+  remove(@Param('id') id: string) {
+    return this.projectsService.remove(id);
   }
 
   @Get(':id/dashboard')

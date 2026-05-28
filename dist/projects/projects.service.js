@@ -65,6 +65,16 @@ let ProjectsService = class ProjectsService {
             throw new common_1.NotFoundException('Project not found');
         return project;
     }
+    async update(id, dto, userId) {
+        const project = await this.findOne(id);
+        Object.assign(project, { ...dto, updatedBy: userId });
+        return this.projectsRepo.save(project);
+    }
+    async remove(id) {
+        const project = await this.findOne(id);
+        project.isDeleted = true;
+        await this.projectsRepo.save(project);
+    }
     async getDashboard(id) {
         const project = await this.findOne(id);
         const [progress, milestones, changeOrders, attendance, machinery, snags, incidents, rfis, photos] = await Promise.all([

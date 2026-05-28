@@ -30,4 +30,16 @@ export class VendorsService {
     if (!vendor) throw new NotFoundException('Vendor not found');
     return vendor;
   }
+
+  async update(id: string, dto: any): Promise<Vendor> {
+    const vendor = await this.findOne(id);
+    Object.assign(vendor, dto);
+    return this.vendorsRepository.save(vendor);
+  }
+
+  async remove(id: string): Promise<void> {
+    const vendor = await this.findOne(id);
+    vendor.isDeleted = true;
+    await this.vendorsRepository.save(vendor);
+  }
 }

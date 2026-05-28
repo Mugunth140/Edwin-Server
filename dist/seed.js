@@ -33,7 +33,7 @@ var __importStar = (this && this.__importStar) || (function () {
     };
 })();
 Object.defineProperty(exports, "__esModule", { value: true });
-const node_process_1 = require("node:process");
+const process = __importStar(require("node:process"));
 const bcrypt = __importStar(require("bcrypt"));
 const typeorm_1 = require("typeorm");
 const user_entity_js_1 = require("./users/entities/user.entity.js");
@@ -92,8 +92,11 @@ const entities = [
     payment_entity_js_1.Payment,
 ];
 function loadEnvironment() {
+    const loadEnv = process.loadEnvFile;
+    if (!loadEnv)
+        return;
     try {
-        (0, node_process_1.loadEnvFile)();
+        loadEnv();
     }
     catch (error) {
         const nodeError = error;

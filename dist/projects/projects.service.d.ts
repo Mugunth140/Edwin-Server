@@ -25,6 +25,8 @@ export declare class ProjectsService {
     create(dto: CreateProjectDto, userId?: string): Promise<Project>;
     findAll(): Promise<Project[]>;
     findOne(id: string): Promise<Project>;
+    update(id: string, dto: any, userId?: string): Promise<Project>;
+    remove(id: string): Promise<void>;
     getDashboard(id: string): Promise<{
         project: Project;
         progress: ProjectProgress[];

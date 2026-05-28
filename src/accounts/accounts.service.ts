@@ -7,6 +7,7 @@ import { PurchaseBill } from './entities/purchase-bill.entity.js';
 import { BoqItem } from './entities/boq-item.entity.js';
 import { Advance } from './entities/advance.entity.js';
 import { Customer } from '../customers/entities/customer.entity.js';
+import { PurchaseOrder } from '../purchase-orders/entities/purchase-order.entity.js';
 import { CreateInvoiceDto, CreateBillDto, CreateAdvanceDto, CreateBoqDto } from './dto/accounts.dto.js';
 import { InvoiceStatus } from '../common/enums.js';
 
@@ -19,7 +20,26 @@ export class AccountsService {
     @InjectRepository(BoqItem) private boqRepo: Repository<BoqItem>,
     @InjectRepository(Advance) private advanceRepo: Repository<Advance>,
     @InjectRepository(Customer) private customerRepo: Repository<Customer>,
+    @InjectRepository(PurchaseOrder) private poRepo: Repository<PurchaseOrder>,
   ) {}
+
+  // ... (existing methods)
+
+  async convertPoToBill(poId: string, userId?: string): Promise<PurchaseBill> {
+    const po = await this.poRepo.findOne({ where: { id: poId }, relations: ['vendor'] });
+    if (!po) throw new NotFoundException('Purchase Order not found');
+
+    const billNumber = await this.generateBillNumber();
+    const bill = this.billRepo.create({
+      vendorId: po.vendorId,
+      projectId: po.projectId,
+      amount: po.totalAmount,
+      billDate: new Date(),
+      billNumber,
+      createdBy: userId,
+    });
+    return this.billRepo.save(bill);
+  }
 
   // --- Invoice ---
   private async generateInvoiceNumber(): Promise<string> {
@@ -155,16 +175,14 @@ export class AccountsService {
   }
 
   async getPayables() {
-    return this.billRepo.find({ where: { isDeleted: false, paidAt: undefined }, relations: ['vendor'] });
+    return this.billRepo.find({ where: { isDeleted: false }, relations: ['vendor'], order: { dueDate: 'ASC' } });
   }
 
   async getReceivables() {
     return this.invoiceRepo.find({
-      where: [
-        { isDeleted: false, status: InvoiceStatus.SENT },
-        { isDeleted: false, status: InvoiceStatus.OVERDUE },
-      ],
-      relations: ['customer'],
+      where: { isDeleted: false },
+      relations: ['customer', 'project'],
+      order: { createdAt: 'DESC' },
     });
   }
 

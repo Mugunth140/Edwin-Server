@@ -23,6 +23,7 @@ export declare class AccountsController {
     updateInvoiceStatus(id: string, status: InvoiceStatus): Promise<import("./entities/sales-invoice.entity.js").SalesInvoice>;
     createBill(dto: CreateBillDto, req: any): Promise<import("./entities/purchase-bill.entity.js").PurchaseBill>;
     findBills(): Promise<import("./entities/purchase-bill.entity.js").PurchaseBill[]>;
+    convertPoToBill(id: string, req: any): Promise<import("./entities/purchase-bill.entity.js").PurchaseBill>;
     createBoq(dto: CreateBoqDto): Promise<import("./entities/boq-item.entity.js").BoqItem>;
     findBoq(projectId: string): Promise<import("./entities/boq-item.entity.js").BoqItem[]>;
     createAdvance(dto: CreateAdvanceDto, req: any): Promise<import("./entities/advance.entity.js").Advance>;

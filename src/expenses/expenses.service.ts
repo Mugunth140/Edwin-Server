@@ -1,4 +1,4 @@
-import { Injectable } from '@nestjs/common';
+import { Injectable, NotFoundException } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
 import { Expense } from './entities/expense.entity.js';
@@ -27,6 +27,27 @@ export class ExpensesService {
     qb.orderBy('e.expenseDate', 'DESC').skip((page - 1) * limit).take(limit);
     const [data, total] = await qb.getManyAndCount();
     return { data, total, page, limit };
+  }
+
+  async findOne(id: string): Promise<Expense> {
+    const expense = await this.expensesRepo.findOne({
+      where: { id, isDeleted: false },
+      relations: ['project'],
+    });
+    if (!expense) throw new NotFoundException('Expense not found');
+    return expense;
+  }
+
+  async update(id: string, dto: Partial<CreateExpenseDto>): Promise<Expense> {
+    const expense = await this.findOne(id);
+    Object.assign(expense, dto);
+    return this.expensesRepo.save(expense);
+  }
+
+  async softDelete(id: string): Promise<void> {
+    const expense = await this.findOne(id);
+    expense.isDeleted = true;
+    await this.expensesRepo.save(expense);
   }
 
   async getSummary() {

@@ -14,6 +14,9 @@ import {
 import { FileInterceptor } from '@nestjs/platform-express';
 import { ApiTags, ApiOperation, ApiBearerAuth, ApiConsumes, ApiQuery } from '@nestjs/swagger';
 import { AuthGuard } from '@nestjs/passport';
+import { diskStorage } from 'multer';
+import { extname } from 'path';
+import * as fs from 'fs';
 import { RolesGuard } from '../auth/roles.guard.js';
 import { Roles } from '../auth/roles.decorator.js';
 import { Role } from '../common/enums.js';
@@ -28,7 +31,41 @@ export class DprController {
 
   @Post()
   @Roles(Role.ADMIN, Role.SITE_ENGINEER)
-  @UseInterceptors(FileInterceptor('file'))
+  @UseInterceptors(
+    FileInterceptor('file', {
+      storage: diskStorage({
+        destination: (req, file, cb) => {
+          const uploadPath = './uploads/dpr';
+          if (!fs.existsSync(uploadPath)) {
+            fs.mkdirSync(uploadPath, { recursive: true });
+          }
+          cb(null, uploadPath);
+        },
+        filename: (req, file, cb) => {
+          const uniqueSuffix = Date.now() + '-' + Math.round(Math.random() * 1e9);
+          cb(null, `${file.fieldname}-${uniqueSuffix}${extname(file.originalname)}`);
+        },
+      }),
+      fileFilter: (req, file, cb) => {
+        const allowedMimeTypes = [
+          'application/pdf',
+          'application/msword',
+          'application/vnd.openxmlformats-officedocument.wordprocessingml.document',
+          'application/vnd.ms-excel',
+          'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet',
+          'image/jpeg',
+          'image/png',
+          'image/gif',
+          'image/webp',
+        ];
+        if (allowedMimeTypes.includes(file.mimetype)) {
+          cb(null, true);
+        } else {
+          cb(new Error('Invalid file type'), false);
+        }
+      },
+    }),
+  )
   @ApiConsumes('multipart/form-data')
   @ApiOperation({ summary: 'Upload a DPR report' })
   async create(
@@ -36,10 +73,13 @@ export class DprController {
     @Body() body: { projectId: string; reportDate: string },
     @Request() req: any,
   ) {
-    // In production, upload to S3 and get URL/key
-    const fileUrl = file ? `/uploads/dpr/${file.originalname}` : '';
-    const fileKey = file ? `dpr/${Date.now()}-${file.originalname}` : '';
-    const fileType = file ? file.mimetype : '';
+    if (!file) {
+      throw new Error('File is required');
+    }
+
+    const fileUrl = `/uploads/dpr/${file.filename}`;
+    const fileKey = file.filename;
+    const fileType = file.mimetype;
 
     return this.dprService.create({
       projectId: body.projectId,

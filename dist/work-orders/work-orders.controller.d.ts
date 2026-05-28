@@ -1,7 +1,7 @@
 import { WorkOrderStatus } from '../common/enums.js';
 import { WorkOrdersService } from './work-orders.service.js';
 import { CreateWorkOrderDto } from './dto/create-work-order.dto.js';
-import { UpdateWorkOrderStatusDto } from './dto/update-work-order.dto.js';
+import { UpdateWorkOrderDto, UpdateWorkOrderStatusDto } from './dto/update-work-order.dto.js';
 export declare class WorkOrdersController {
     private readonly woService;
     constructor(woService: WorkOrdersService);
@@ -13,5 +13,7 @@ export declare class WorkOrdersController {
         limit: number;
     }>;
     findOne(id: string): Promise<import("./entities/work-order.entity.js").WorkOrder>;
+    update(id: string, dto: UpdateWorkOrderDto, req: any): Promise<import("./entities/work-order.entity.js").WorkOrder>;
     updateStatus(id: string, dto: UpdateWorkOrderStatusDto, req: any): Promise<import("./entities/work-order.entity.js").WorkOrder>;
+    remove(id: string): Promise<void>;
 }

@@ -12,4 +12,7 @@ export declare class ExpensesController {
         limit: number;
     }>;
     getSummary(): Promise<any[]>;
+    findOne(id: string): Promise<import("./entities/expense.entity.js").Expense>;
+    update(id: string, dto: Partial<CreateExpenseDto>): Promise<import("./entities/expense.entity.js").Expense>;
+    remove(id: string): Promise<void>;
 }

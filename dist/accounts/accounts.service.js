@@ -22,6 +22,7 @@ const purchase_bill_entity_js_1 = require("./entities/purchase-bill.entity.js");
 const boq_item_entity_js_1 = require("./entities/boq-item.entity.js");
 const advance_entity_js_1 = require("./entities/advance.entity.js");
 const customer_entity_js_1 = require("../customers/entities/customer.entity.js");
+const purchase_order_entity_js_1 = require("../purchase-orders/entities/purchase-order.entity.js");
 const enums_js_1 = require("../common/enums.js");
 let AccountsService = class AccountsService {
     invoiceRepo;
@@ -30,13 +31,30 @@ let AccountsService = class AccountsService {
     boqRepo;
     advanceRepo;
     customerRepo;
-    constructor(invoiceRepo, invoiceItemRepo, billRepo, boqRepo, advanceRepo, customerRepo) {
+    poRepo;
+    constructor(invoiceRepo, invoiceItemRepo, billRepo, boqRepo, advanceRepo, customerRepo, poRepo) {
         this.invoiceRepo = invoiceRepo;
         this.invoiceItemRepo = invoiceItemRepo;
         this.billRepo = billRepo;
         this.boqRepo = boqRepo;
         this.advanceRepo = advanceRepo;
         this.customerRepo = customerRepo;
+        this.poRepo = poRepo;
+    }
+    async convertPoToBill(poId, userId) {
+        const po = await this.poRepo.findOne({ where: { id: poId }, relations: ['vendor'] });
+        if (!po)
+            throw new common_1.NotFoundException('Purchase Order not found');
+        const billNumber = await this.generateBillNumber();
+        const bill = this.billRepo.create({
+            vendorId: po.vendorId,
+            projectId: po.projectId,
+            amount: po.totalAmount,
+            billDate: new Date(),
+            billNumber,
+            createdBy: userId,
+        });
+        return this.billRepo.save(bill);
     }
     async generateInvoiceNumber() {
         const year = new Date().getFullYear();
@@ -164,15 +182,13 @@ let AccountsService = class AccountsService {
         return ledger;
     }
     async getPayables() {
-        return this.billRepo.find({ where: { isDeleted: false, paidAt: undefined }, relations: ['vendor'] });
+        return this.billRepo.find({ where: { isDeleted: false }, relations: ['vendor'], order: { dueDate: 'ASC' } });
     }
     async getReceivables() {
         return this.invoiceRepo.find({
-            where: [
-                { isDeleted: false, status: enums_js_1.InvoiceStatus.SENT },
-                { isDeleted: false, status: enums_js_1.InvoiceStatus.OVERDUE },
-            ],
-            relations: ['customer'],
+            where: { isDeleted: false },
+            relations: ['customer', 'project'],
+            order: { createdAt: 'DESC' },
         });
     }
     async getBalance() {
@@ -201,7 +217,9 @@ exports.AccountsService = AccountsService = __decorate([
     __param(3, (0, typeorm_1.InjectRepository)(boq_item_entity_js_1.BoqItem)),
     __param(4, (0, typeorm_1.InjectRepository)(advance_entity_js_1.Advance)),
     __param(5, (0, typeorm_1.InjectRepository)(customer_entity_js_1.Customer)),
+    __param(6, (0, typeorm_1.InjectRepository)(purchase_order_entity_js_1.PurchaseOrder)),
     __metadata("design:paramtypes", [typeorm_2.Repository,
+        typeorm_2.Repository,
         typeorm_2.Repository,
         typeorm_2.Repository,
         typeorm_2.Repository,

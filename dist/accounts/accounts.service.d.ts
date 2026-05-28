@@ -5,6 +5,7 @@ import { PurchaseBill } from './entities/purchase-bill.entity.js';
 import { BoqItem } from './entities/boq-item.entity.js';
 import { Advance } from './entities/advance.entity.js';
 import { Customer } from '../customers/entities/customer.entity.js';
+import { PurchaseOrder } from '../purchase-orders/entities/purchase-order.entity.js';
 import { CreateInvoiceDto, CreateBillDto, CreateAdvanceDto, CreateBoqDto } from './dto/accounts.dto.js';
 import { InvoiceStatus } from '../common/enums.js';
 export declare class AccountsService {
@@ -14,7 +15,9 @@ export declare class AccountsService {
     private boqRepo;
     private advanceRepo;
     private customerRepo;
-    constructor(invoiceRepo: Repository<SalesInvoice>, invoiceItemRepo: Repository<InvoiceItem>, billRepo: Repository<PurchaseBill>, boqRepo: Repository<BoqItem>, advanceRepo: Repository<Advance>, customerRepo: Repository<Customer>);
+    private poRepo;
+    constructor(invoiceRepo: Repository<SalesInvoice>, invoiceItemRepo: Repository<InvoiceItem>, billRepo: Repository<PurchaseBill>, boqRepo: Repository<BoqItem>, advanceRepo: Repository<Advance>, customerRepo: Repository<Customer>, poRepo: Repository<PurchaseOrder>);
+    convertPoToBill(poId: string, userId?: string): Promise<PurchaseBill>;
     private generateInvoiceNumber;
     createInvoice(dto: CreateInvoiceDto, userId?: string): Promise<SalesInvoice>;
     findInvoices(query: {

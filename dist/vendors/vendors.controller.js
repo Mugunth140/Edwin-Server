@@ -21,6 +21,7 @@ const roles_decorator_js_1 = require("../auth/roles.decorator.js");
 const enums_js_1 = require("../common/enums.js");
 const vendors_service_js_1 = require("./vendors.service.js");
 const create_vendor_dto_js_1 = require("./dto/create-vendor.dto.js");
+const update_vendor_dto_js_1 = require("./dto/update-vendor.dto.js");
 let VendorsController = class VendorsController {
     vendorsService;
     constructor(vendorsService) {
@@ -31,6 +32,12 @@ let VendorsController = class VendorsController {
     }
     findAll() {
         return this.vendorsService.findAll();
+    }
+    update(id, dto) {
+        return this.vendorsService.update(id, dto);
+    }
+    remove(id) {
+        return this.vendorsService.remove(id);
     }
 };
 exports.VendorsController = VendorsController;
@@ -50,6 +57,25 @@ __decorate([
     __metadata("design:paramtypes", []),
     __metadata("design:returntype", void 0)
 ], VendorsController.prototype, "findAll", null);
+__decorate([
+    (0, common_1.Patch)(':id'),
+    (0, roles_decorator_js_1.Roles)(enums_js_1.Role.ADMIN, enums_js_1.Role.ACCOUNTS_MANAGER),
+    (0, swagger_1.ApiOperation)({ summary: 'Update a vendor' }),
+    __param(0, (0, common_1.Param)('id')),
+    __param(1, (0, common_1.Body)()),
+    __metadata("design:type", Function),
+    __metadata("design:paramtypes", [String, update_vendor_dto_js_1.UpdateVendorDto]),
+    __metadata("design:returntype", void 0)
+], VendorsController.prototype, "update", null);
+__decorate([
+    (0, common_1.Delete)(':id'),
+    (0, roles_decorator_js_1.Roles)(enums_js_1.Role.ADMIN),
+    (0, swagger_1.ApiOperation)({ summary: 'Delete a vendor' }),
+    __param(0, (0, common_1.Param)('id')),
+    __metadata("design:type", Function),
+    __metadata("design:paramtypes", [String]),
+    __metadata("design:returntype", void 0)
+], VendorsController.prototype, "remove", null);
 exports.VendorsController = VendorsController = __decorate([
     (0, swagger_1.ApiTags)('Vendors'),
     (0, common_1.Controller)({ path: 'vendors', version: '1' }),

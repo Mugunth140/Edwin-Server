@@ -1,6 +1,7 @@
 import { Injectable, NotFoundException } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
+import * as fs from 'fs';
 import { Drawing } from './entities/drawing.entity.js';
 import { DrawingCategory } from '../common/enums.js';
 
@@ -32,6 +33,21 @@ export class DrawingsService {
     const drawing = await this.drawingsRepo.findOne({ where: { id, isDeleted: false }, relations: ['project'] });
     if (!drawing) throw new NotFoundException('Drawing not found');
     return drawing;
+  }
+
+  async update(id: string, data: Partial<Drawing>): Promise<Drawing> {
+    const drawing = await this.findOne(id);
+    
+    // Delete old file if new one is uploaded
+    if (data.fileUrl && drawing.fileUrl && data.fileUrl !== drawing.fileUrl) {
+      const oldPath = `.${drawing.fileUrl}`;
+      if (fs.existsSync(oldPath)) {
+        fs.unlinkSync(oldPath);
+      }
+    }
+
+    Object.assign(drawing, data);
+    return this.drawingsRepo.save(drawing);
   }
 
   async softDelete(id: string): Promise<void> {

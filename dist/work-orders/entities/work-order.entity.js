@@ -55,7 +55,7 @@ __decorate([
     __metadata("design:type", String)
 ], WorkOrder.prototype, "vendorId", void 0);
 __decorate([
-    (0, typeorm_1.ManyToOne)(() => project_entity_js_1.Project),
+    (0, typeorm_1.ManyToOne)(() => project_entity_js_1.Project, { eager: true }),
     (0, typeorm_1.JoinColumn)({ name: 'projectId' }),
     __metadata("design:type", project_entity_js_1.Project)
 ], WorkOrder.prototype, "project", void 0);

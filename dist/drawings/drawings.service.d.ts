@@ -11,5 +11,6 @@ export declare class DrawingsService {
         revision?: string;
     }): Promise<Drawing[]>;
     findOne(id: string): Promise<Drawing>;
+    update(id: string, data: Partial<Drawing>): Promise<Drawing>;
     softDelete(id: string): Promise<void>;
 }

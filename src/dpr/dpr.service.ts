@@ -17,15 +17,40 @@ export class DprService {
 
   async findAll(query: { projectId?: string; dateFrom?: string; dateTo?: string; page?: number; limit?: number }) {
     const { projectId, dateFrom, dateTo, page = 1, limit = 20 } = query;
+    console.log('DPR Filter Query:', { projectId, dateFrom, dateTo });
+
     const qb = this.dprRepo.createQueryBuilder('dpr')
       .leftJoinAndSelect('dpr.project', 'project')
       .where('dpr.isDeleted = false');
 
-    if (projectId) qb.andWhere('dpr.projectId = :projectId', { projectId });
-    if (dateFrom && dateTo) qb.andWhere('dpr.reportDate BETWEEN :dateFrom AND :dateTo', { dateFrom, dateTo });
+    if (projectId && projectId !== 'undefined' && projectId !== '') {
+      qb.andWhere('dpr.projectId = :projectId', { projectId });
+    }
+
+    if (dateFrom && dateFrom !== '' && dateFrom !== 'undefined') {
+      const fromDate = new Date(dateFrom);
+      if (!isNaN(fromDate.getTime())) {
+        qb.andWhere('dpr.reportDate >= :dateFromFormatted', { 
+          dateFromFormatted: fromDate.toISOString().split('T')[0] 
+        });
+      }
+    }
+
+    if (dateTo && dateTo !== '' && dateTo !== 'undefined') {
+      const toDate = new Date(dateTo);
+      if (!isNaN(toDate.getTime())) {
+        qb.andWhere('dpr.reportDate <= :dateToFormatted', { 
+          dateToFormatted: toDate.toISOString().split('T')[0] 
+        });
+      }
+    }
 
     qb.orderBy('dpr.reportDate', 'DESC');
+    qb.addOrderBy('dpr.createdAt', 'DESC');
     qb.skip((page - 1) * limit).take(limit);
+
+    console.log('SQL Query:', qb.getSql());
+    console.log('SQL Parameters:', qb.getParameters());
 
     const [data, total] = await qb.getManyAndCount();
     return { data, total, page, limit };

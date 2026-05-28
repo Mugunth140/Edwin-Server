@@ -40,6 +40,16 @@ let VendorsService = class VendorsService {
             throw new common_1.NotFoundException('Vendor not found');
         return vendor;
     }
+    async update(id, dto) {
+        const vendor = await this.findOne(id);
+        Object.assign(vendor, dto);
+        return this.vendorsRepository.save(vendor);
+    }
+    async remove(id) {
+        const vendor = await this.findOne(id);
+        vendor.isDeleted = true;
+        await this.vendorsRepository.save(vendor);
+    }
 };
 exports.VendorsService = VendorsService;
 exports.VendorsService = VendorsService = __decorate([
