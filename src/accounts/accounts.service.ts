@@ -23,7 +23,7 @@ export class AccountsService {
     @InjectRepository(PurchaseOrder) private poRepo: Repository<PurchaseOrder>,
   ) {}
 
-  // ... (existing methods)
+
 
   async convertPoToBill(poId: string, userId?: string): Promise<PurchaseBill> {
     const po = await this.poRepo.findOne({ where: { id: poId }, relations: ['vendor'] });
@@ -175,14 +175,16 @@ export class AccountsService {
   }
 
   async getPayables() {
-    return this.billRepo.find({ where: { isDeleted: false }, relations: ['vendor'], order: { dueDate: 'ASC' } });
+    return this.billRepo.find({ where: { isDeleted: false, paidAt: undefined }, relations: ['vendor'] });
   }
 
   async getReceivables() {
     return this.invoiceRepo.find({
-      where: { isDeleted: false },
-      relations: ['customer', 'project'],
-      order: { createdAt: 'DESC' },
+      where: [
+        { isDeleted: false, status: InvoiceStatus.SENT },
+        { isDeleted: false, status: InvoiceStatus.OVERDUE },
+      ],
+      relations: ['customer'],
     });
   }
 
