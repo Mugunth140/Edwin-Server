@@ -1,6 +1,6 @@
 FROM oven/bun:alpine AS deps
 WORKDIR /app
-COPY package.json package-lock.json ./
+COPY package.json bun.lock ./
 RUN bun install --no-save
 
 FROM oven/bun:alpine AS build
@@ -12,7 +12,7 @@ RUN bun run build
 FROM oven/bun:alpine AS runner
 WORKDIR /app
 ENV NODE_ENV=production
-COPY --from=build /app/package.json /app/package-lock.json ./
+COPY --from=build /app/package.json /app/bun.lock ./
 RUN bun install --production --no-save
 COPY --from=build /app/dist ./dist
 EXPOSE 4000
