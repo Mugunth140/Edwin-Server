@@ -139,7 +139,7 @@ let AccountsService = class AccountsService {
         return this.billRepo.save(bill);
     }
     async findBills() {
-        return this.billRepo.find({ where: { isDeleted: false }, relations: ['vendor'], order: { createdAt: 'DESC' } });
+        return this.billRepo.find({ where: { isDeleted: false }, relations: ['vendor', 'payments'], order: { createdAt: 'DESC' } });
     }
     async createBoq(dto) {
         const boq = this.boqRepo.create({

@@ -12,12 +12,14 @@ const typeorm_1 = require("@nestjs/typeorm");
 const payments_controller_js_1 = require("./payments.controller.js");
 const payments_service_js_1 = require("./payments.service.js");
 const payment_entity_js_1 = require("./entities/payment.entity.js");
+const purchase_bill_entity_js_1 = require("../accounts/entities/purchase-bill.entity.js");
+const expense_entity_js_1 = require("../expenses/entities/expense.entity.js");
 let PaymentsModule = class PaymentsModule {
 };
 exports.PaymentsModule = PaymentsModule;
 exports.PaymentsModule = PaymentsModule = __decorate([
     (0, common_1.Module)({
-        imports: [typeorm_1.TypeOrmModule.forFeature([payment_entity_js_1.Payment])],
+        imports: [typeorm_1.TypeOrmModule.forFeature([payment_entity_js_1.Payment, purchase_bill_entity_js_1.PurchaseBill, expense_entity_js_1.Expense])],
         controllers: [payments_controller_js_1.PaymentsController],
         providers: [payments_service_js_1.PaymentsService],
         exports: [payments_service_js_1.PaymentsService],

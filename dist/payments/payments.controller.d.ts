@@ -12,4 +12,8 @@ export declare class PaymentsController {
         limit: number;
     }>;
     getSummary(): Promise<any[]>;
+    syncExpenses(): Promise<{
+        success: boolean;
+        syncedCount: number;
+    }>;
 }

@@ -33,6 +33,7 @@ let PaymentsController = class PaymentsController {
         return this.paymentsService.findAll({ type, projectId, dateFrom, dateTo, page, limit });
     }
     getSummary() { return this.paymentsService.getSummary(); }
+    syncExpenses() { return this.paymentsService.syncExpenses(); }
 };
 exports.PaymentsController = PaymentsController;
 __decorate([
@@ -69,6 +70,14 @@ __decorate([
     __metadata("design:paramtypes", []),
     __metadata("design:returntype", void 0)
 ], PaymentsController.prototype, "getSummary", null);
+__decorate([
+    (0, common_1.Post)('sync-expenses'),
+    (0, roles_decorator_js_1.Roles)(enums_js_1.Role.ADMIN, enums_js_1.Role.ACCOUNTS_MANAGER),
+    (0, swagger_1.ApiOperation)({ summary: 'Sync missing expenses to ledger' }),
+    __metadata("design:type", Function),
+    __metadata("design:paramtypes", []),
+    __metadata("design:returntype", void 0)
+], PaymentsController.prototype, "syncExpenses", null);
 exports.PaymentsController = PaymentsController = __decorate([
     (0, swagger_1.ApiTags)('Payments'),
     (0, common_1.Controller)({ path: 'payments', version: '1' }),

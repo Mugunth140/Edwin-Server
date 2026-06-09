@@ -41,4 +41,9 @@ export class PaymentsController {
   @Get('summary')
   @ApiOperation({ summary: 'Payment-type-wise totals' })
   getSummary() { return this.paymentsService.getSummary(); }
+
+  @Post('sync-expenses')
+  @Roles(Role.ADMIN, Role.ACCOUNTS_MANAGER)
+  @ApiOperation({ summary: 'Sync missing expenses to ledger' })
+  syncExpenses() { return this.paymentsService.syncExpenses(); }
 }

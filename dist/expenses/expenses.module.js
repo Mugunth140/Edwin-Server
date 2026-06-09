@@ -12,12 +12,13 @@ const typeorm_1 = require("@nestjs/typeorm");
 const expenses_controller_js_1 = require("./expenses.controller.js");
 const expenses_service_js_1 = require("./expenses.service.js");
 const expense_entity_js_1 = require("./entities/expense.entity.js");
+const payment_entity_js_1 = require("../payments/entities/payment.entity.js");
 let ExpensesModule = class ExpensesModule {
 };
 exports.ExpensesModule = ExpensesModule;
 exports.ExpensesModule = ExpensesModule = __decorate([
     (0, common_1.Module)({
-        imports: [typeorm_1.TypeOrmModule.forFeature([expense_entity_js_1.Expense])],
+        imports: [typeorm_1.TypeOrmModule.forFeature([expense_entity_js_1.Expense, payment_entity_js_1.Payment])],
         controllers: [expenses_controller_js_1.ExpensesController],
         providers: [expenses_service_js_1.ExpensesService],
         exports: [expenses_service_js_1.ExpensesService],

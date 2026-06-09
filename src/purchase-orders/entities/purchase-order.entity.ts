@@ -38,7 +38,7 @@ export class PurchaseOrder {
   @Column({ type: 'text', nullable: true })
   paymentTerms: string;
 
-  @Column({ type: 'enum', enum: PurchaseOrderStatus, default: PurchaseOrderStatus.DRAFT })
+  @Column({ type: 'varchar', length: 50, default: PurchaseOrderStatus.DRAFT })
   status: PurchaseOrderStatus;
 
   @Column({ type: 'decimal', precision: 12, scale: 2, default: 0 })

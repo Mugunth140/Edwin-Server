@@ -21,6 +21,7 @@ const roles_decorator_js_1 = require("../auth/roles.decorator.js");
 const enums_js_1 = require("../common/enums.js");
 const purchase_orders_service_js_1 = require("./purchase-orders.service.js");
 const create_purchase_order_dto_js_1 = require("./dto/create-purchase-order.dto.js");
+const update_purchase_order_status_dto_js_1 = require("./dto/update-purchase-order-status.dto.js");
 let PurchaseOrdersController = class PurchaseOrdersController {
     poService;
     constructor(poService) {
@@ -31,6 +32,15 @@ let PurchaseOrdersController = class PurchaseOrdersController {
     }
     findAll() { return this.poService.findAll(); }
     findOne(id) { return this.poService.findOne(id); }
+    updateStatus(id, dto) {
+        return this.poService.updateStatus(id, dto.status);
+    }
+    update(id, dto, req) {
+        return this.poService.update(id, dto, req.user.id);
+    }
+    remove(id) {
+        return this.poService.remove(id);
+    }
 };
 exports.PurchaseOrdersController = PurchaseOrdersController;
 __decorate([
@@ -58,6 +68,36 @@ __decorate([
     __metadata("design:paramtypes", [String]),
     __metadata("design:returntype", void 0)
 ], PurchaseOrdersController.prototype, "findOne", null);
+__decorate([
+    (0, common_1.Patch)(':id/status'),
+    (0, roles_decorator_js_1.Roles)(enums_js_1.Role.ADMIN, enums_js_1.Role.ACCOUNTS_MANAGER),
+    (0, swagger_1.ApiOperation)({ summary: 'Update purchase order status' }),
+    __param(0, (0, common_1.Param)('id')),
+    __param(1, (0, common_1.Body)()),
+    __metadata("design:type", Function),
+    __metadata("design:paramtypes", [String, update_purchase_order_status_dto_js_1.UpdatePurchaseOrderStatusDto]),
+    __metadata("design:returntype", void 0)
+], PurchaseOrdersController.prototype, "updateStatus", null);
+__decorate([
+    (0, common_1.Put)(':id'),
+    (0, roles_decorator_js_1.Roles)(enums_js_1.Role.ADMIN, enums_js_1.Role.ACCOUNTS_MANAGER),
+    (0, swagger_1.ApiOperation)({ summary: 'Update purchase order' }),
+    __param(0, (0, common_1.Param)('id')),
+    __param(1, (0, common_1.Body)()),
+    __param(2, (0, common_1.Request)()),
+    __metadata("design:type", Function),
+    __metadata("design:paramtypes", [String, Object, Object]),
+    __metadata("design:returntype", void 0)
+], PurchaseOrdersController.prototype, "update", null);
+__decorate([
+    (0, common_1.Delete)(':id'),
+    (0, roles_decorator_js_1.Roles)(enums_js_1.Role.ADMIN, enums_js_1.Role.ACCOUNTS_MANAGER),
+    (0, swagger_1.ApiOperation)({ summary: 'Delete purchase order' }),
+    __param(0, (0, common_1.Param)('id')),
+    __metadata("design:type", Function),
+    __metadata("design:paramtypes", [String]),
+    __metadata("design:returntype", void 0)
+], PurchaseOrdersController.prototype, "remove", null);
 exports.PurchaseOrdersController = PurchaseOrdersController = __decorate([
     (0, swagger_1.ApiTags)('Purchase Orders'),
     (0, common_1.Controller)({ path: 'purchase-orders', version: '1' }),

@@ -15,9 +15,13 @@ const swagger_1 = require("@nestjs/swagger");
 const enums_js_1 = require("../../common/enums.js");
 class CreatePaymentDto {
     paymentType;
+    purchaseBillId;
+    vendorId;
     payeeName;
     amount;
     paymentDate;
+    paymentMode;
+    referenceNumber;
     projectId;
     notes;
 }
@@ -28,8 +32,21 @@ __decorate([
     __metadata("design:type", String)
 ], CreatePaymentDto.prototype, "paymentType", void 0);
 __decorate([
-    (0, swagger_1.ApiProperty)(),
+    (0, swagger_1.ApiPropertyOptional)(),
+    (0, class_validator_1.IsUUID)(),
+    (0, class_validator_1.IsOptional)(),
+    __metadata("design:type", String)
+], CreatePaymentDto.prototype, "purchaseBillId", void 0);
+__decorate([
+    (0, swagger_1.ApiPropertyOptional)(),
+    (0, class_validator_1.IsUUID)(),
+    (0, class_validator_1.IsOptional)(),
+    __metadata("design:type", String)
+], CreatePaymentDto.prototype, "vendorId", void 0);
+__decorate([
+    (0, swagger_1.ApiPropertyOptional)(),
     (0, class_validator_1.IsString)(),
+    (0, class_validator_1.IsOptional)(),
     __metadata("design:type", String)
 ], CreatePaymentDto.prototype, "payeeName", void 0);
 __decorate([
@@ -42,6 +59,18 @@ __decorate([
     (0, class_validator_1.IsDateString)(),
     __metadata("design:type", String)
 ], CreatePaymentDto.prototype, "paymentDate", void 0);
+__decorate([
+    (0, swagger_1.ApiProperty)({ enum: enums_js_1.PaymentMode }),
+    (0, class_validator_1.IsEnum)(enums_js_1.PaymentMode),
+    (0, class_validator_1.IsOptional)(),
+    __metadata("design:type", String)
+], CreatePaymentDto.prototype, "paymentMode", void 0);
+__decorate([
+    (0, swagger_1.ApiPropertyOptional)(),
+    (0, class_validator_1.IsString)(),
+    (0, class_validator_1.IsOptional)(),
+    __metadata("design:type", String)
+], CreatePaymentDto.prototype, "referenceNumber", void 0);
 __decorate([
     (0, swagger_1.ApiPropertyOptional)(),
     (0, class_validator_1.IsUUID)(),

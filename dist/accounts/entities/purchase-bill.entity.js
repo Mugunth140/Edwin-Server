@@ -11,9 +11,11 @@ var __metadata = (this && this.__metadata) || function (k, v) {
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.PurchaseBill = void 0;
 const typeorm_1 = require("typeorm");
+const enums_js_1 = require("../../common/enums.js");
 const vendor_entity_js_1 = require("../../vendors/entities/vendor.entity.js");
 const purchase_order_entity_js_1 = require("../../purchase-orders/entities/purchase-order.entity.js");
 const project_entity_js_1 = require("../../projects/entities/project.entity.js");
+const payment_entity_js_1 = require("../../payments/entities/payment.entity.js");
 let PurchaseBill = class PurchaseBill {
     id;
     billNumber;
@@ -24,9 +26,12 @@ let PurchaseBill = class PurchaseBill {
     project;
     projectId;
     amount;
+    status;
+    paidAmount;
     billDate;
     dueDate;
     paidAt;
+    payments;
     isDeleted;
     createdBy;
     createdAt;
@@ -72,6 +77,14 @@ __decorate([
     __metadata("design:type", Number)
 ], PurchaseBill.prototype, "amount", void 0);
 __decorate([
+    (0, typeorm_1.Column)({ type: 'varchar', length: 50, default: enums_js_1.BillStatus.UNPAID }),
+    __metadata("design:type", String)
+], PurchaseBill.prototype, "status", void 0);
+__decorate([
+    (0, typeorm_1.Column)({ type: 'decimal', precision: 12, scale: 2, default: 0 }),
+    __metadata("design:type", Number)
+], PurchaseBill.prototype, "paidAmount", void 0);
+__decorate([
     (0, typeorm_1.Column)({ type: 'date', nullable: true }),
     __metadata("design:type", Date)
 ], PurchaseBill.prototype, "billDate", void 0);
@@ -83,6 +96,10 @@ __decorate([
     (0, typeorm_1.Column)({ type: 'timestamp', nullable: true }),
     __metadata("design:type", Date)
 ], PurchaseBill.prototype, "paidAt", void 0);
+__decorate([
+    (0, typeorm_1.OneToMany)(() => payment_entity_js_1.Payment, (payment) => payment.purchaseBill),
+    __metadata("design:type", Array)
+], PurchaseBill.prototype, "payments", void 0);
 __decorate([
     (0, typeorm_1.Column)({ default: false }),
     __metadata("design:type", Boolean)

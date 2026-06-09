@@ -120,7 +120,7 @@ export class AccountsService {
   }
 
   async findBills() {
-    return this.billRepo.find({ where: { isDeleted: false }, relations: ['vendor'], order: { createdAt: 'DESC' } });
+    return this.billRepo.find({ where: { isDeleted: false }, relations: ['vendor', 'payments'], order: { createdAt: 'DESC' } });
   }
 
   // --- BOQ ---

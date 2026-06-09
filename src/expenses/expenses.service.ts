@@ -1,19 +1,47 @@
 import { Injectable, NotFoundException } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
-import { Repository } from 'typeorm';
+import { Repository, DataSource } from 'typeorm';
 import { Expense } from './entities/expense.entity.js';
 import { CreateExpenseDto } from './dto/create-expense.dto.js';
-import { ExpenseCategory } from '../common/enums.js';
+import { ExpenseCategory, PaymentType, PaymentMode } from '../common/enums.js';
+import { Payment } from '../payments/entities/payment.entity.js';
 
 @Injectable()
 export class ExpensesService {
   constructor(
     @InjectRepository(Expense) private expensesRepo: Repository<Expense>,
+    @InjectRepository(Payment) private paymentsRepo: Repository<Payment>,
+    private dataSource: DataSource,
   ) {}
 
   async create(dto: CreateExpenseDto, userId?: string): Promise<Expense> {
-    const expense = this.expensesRepo.create({ ...dto, createdBy: userId });
-    return this.expensesRepo.save(expense);
+    return await this.dataSource.transaction(async (manager) => {
+      // 1. Create the Expense
+      const expense = manager.create(Expense, { ...dto, createdBy: userId });
+      const savedExpense = await manager.save(expense);
+
+      // 2. Map ExpenseCategory to PaymentType
+      let pType = PaymentType.STAFF_EXPENSE;
+      if (dto.category === ExpenseCategory.OFFICE) pType = PaymentType.OFFICE_MAINTENANCE;
+      if (dto.category === ExpenseCategory.TRANSPORT) pType = PaymentType.TRANSPORT;
+      if (dto.category === ExpenseCategory.TRAVEL) pType = PaymentType.TRAVEL;
+
+      // 3. Create the Payment record for the Master Ledger
+      const payment = manager.create(Payment, {
+        paymentType: pType,
+        expenseId: savedExpense.id,
+        amount: dto.amount,
+        paymentDate: dto.expenseDate,
+        paymentMode: PaymentMode.CASH, // Default for expenses, can be updated if needed
+        payeeName: dto.paidBy || 'Staff',
+        projectId: dto.projectId,
+        notes: dto.description,
+        createdBy: userId,
+      });
+      await manager.save(payment);
+
+      return savedExpense;
+    });
   }
 
   async findAll(query: { category?: ExpenseCategory; projectId?: string; dateFrom?: string; dateTo?: string; page?: number; limit?: number }) {

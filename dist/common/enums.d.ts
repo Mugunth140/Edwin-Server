@@ -11,8 +11,21 @@ export declare enum WorkOrderStatus {
 }
 export declare enum PurchaseOrderStatus {
     DRAFT = "draft",
-    SENT = "sent",
-    APPROVED = "approved"
+    ISSUED = "issued",
+    PARTIALLY_RECEIVED = "partially_received",
+    COMPLETED = "completed",
+    CANCELLED = "cancelled"
+}
+export declare enum BillStatus {
+    UNPAID = "unpaid",
+    PARTIAL = "partial",
+    PAID = "paid"
+}
+export declare enum PaymentMode {
+    CASH = "cash",
+    UPI = "upi",
+    RTGS = "rtgs",
+    CHEQUE = "cheque"
 }
 export declare enum InvoiceStatus {
     DRAFT = "draft",
@@ -63,7 +76,10 @@ export declare enum PaymentType {
     LABOUR = "labour",
     RENT = "rent",
     ACCOMMODATION = "accommodation",
-    OFFICE_MAINTENANCE = "office_maintenance"
+    OFFICE_MAINTENANCE = "office_maintenance",
+    STAFF_EXPENSE = "staff_expense",
+    TRAVEL = "travel",
+    TRANSPORT = "transport"
 }
 export declare enum AdvanceEntityType {
     VENDOR = "vendor",

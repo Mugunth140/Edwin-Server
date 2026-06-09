@@ -5,10 +5,13 @@ import {
   CreateDateColumn,
   ManyToOne,
   JoinColumn,
+  OneToMany,
 } from 'typeorm';
+import { BillStatus } from '../../common/enums.js';
 import { Vendor } from '../../vendors/entities/vendor.entity.js';
 import { PurchaseOrder } from '../../purchase-orders/entities/purchase-order.entity.js';
 import { Project } from '../../projects/entities/project.entity.js';
+import { Payment } from '../../payments/entities/payment.entity.js';
 
 @Entity('purchase_bills')
 export class PurchaseBill {
@@ -42,6 +45,12 @@ export class PurchaseBill {
   @Column({ type: 'decimal', precision: 12, scale: 2, default: 0 })
   amount: number;
 
+  @Column({ type: 'varchar', length: 50, default: BillStatus.UNPAID })
+  status: BillStatus;
+
+  @Column({ type: 'decimal', precision: 12, scale: 2, default: 0 })
+  paidAmount: number;
+
   @Column({ type: 'date', nullable: true })
   billDate: Date;
 
@@ -50,6 +59,9 @@ export class PurchaseBill {
 
   @Column({ type: 'timestamp', nullable: true })
   paidAt: Date;
+
+  @OneToMany(() => Payment, (payment) => payment.purchaseBill)
+  payments: Payment[];
 
   @Column({ default: false })
   isDeleted: boolean;

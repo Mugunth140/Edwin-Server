@@ -1,6 +1,6 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.ProjectStatus = exports.AdvanceEntityType = exports.PaymentType = exports.ExpenseCategory = exports.DrawingCategory = exports.SeverityLevel = exports.RfiStatus = exports.SnagStatus = exports.MilestoneStatus = exports.InvoiceStatus = exports.PurchaseOrderStatus = exports.WorkOrderStatus = exports.Role = void 0;
+exports.ProjectStatus = exports.AdvanceEntityType = exports.PaymentType = exports.ExpenseCategory = exports.DrawingCategory = exports.SeverityLevel = exports.RfiStatus = exports.SnagStatus = exports.MilestoneStatus = exports.InvoiceStatus = exports.PaymentMode = exports.BillStatus = exports.PurchaseOrderStatus = exports.WorkOrderStatus = exports.Role = void 0;
 var Role;
 (function (Role) {
     Role["ADMIN"] = "admin";
@@ -17,9 +17,24 @@ var WorkOrderStatus;
 var PurchaseOrderStatus;
 (function (PurchaseOrderStatus) {
     PurchaseOrderStatus["DRAFT"] = "draft";
-    PurchaseOrderStatus["SENT"] = "sent";
-    PurchaseOrderStatus["APPROVED"] = "approved";
+    PurchaseOrderStatus["ISSUED"] = "issued";
+    PurchaseOrderStatus["PARTIALLY_RECEIVED"] = "partially_received";
+    PurchaseOrderStatus["COMPLETED"] = "completed";
+    PurchaseOrderStatus["CANCELLED"] = "cancelled";
 })(PurchaseOrderStatus || (exports.PurchaseOrderStatus = PurchaseOrderStatus = {}));
+var BillStatus;
+(function (BillStatus) {
+    BillStatus["UNPAID"] = "unpaid";
+    BillStatus["PARTIAL"] = "partial";
+    BillStatus["PAID"] = "paid";
+})(BillStatus || (exports.BillStatus = BillStatus = {}));
+var PaymentMode;
+(function (PaymentMode) {
+    PaymentMode["CASH"] = "cash";
+    PaymentMode["UPI"] = "upi";
+    PaymentMode["RTGS"] = "rtgs";
+    PaymentMode["CHEQUE"] = "cheque";
+})(PaymentMode || (exports.PaymentMode = PaymentMode = {}));
 var InvoiceStatus;
 (function (InvoiceStatus) {
     InvoiceStatus["DRAFT"] = "draft";
@@ -78,6 +93,9 @@ var PaymentType;
     PaymentType["RENT"] = "rent";
     PaymentType["ACCOMMODATION"] = "accommodation";
     PaymentType["OFFICE_MAINTENANCE"] = "office_maintenance";
+    PaymentType["STAFF_EXPENSE"] = "staff_expense";
+    PaymentType["TRAVEL"] = "travel";
+    PaymentType["TRANSPORT"] = "transport";
 })(PaymentType || (exports.PaymentType = PaymentType = {}));
 var AdvanceEntityType;
 (function (AdvanceEntityType) {

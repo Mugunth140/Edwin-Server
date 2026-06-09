@@ -17,14 +17,42 @@ const common_1 = require("@nestjs/common");
 const typeorm_1 = require("@nestjs/typeorm");
 const typeorm_2 = require("typeorm");
 const expense_entity_js_1 = require("./entities/expense.entity.js");
+const enums_js_1 = require("../common/enums.js");
+const payment_entity_js_1 = require("../payments/entities/payment.entity.js");
 let ExpensesService = class ExpensesService {
     expensesRepo;
-    constructor(expensesRepo) {
+    paymentsRepo;
+    dataSource;
+    constructor(expensesRepo, paymentsRepo, dataSource) {
         this.expensesRepo = expensesRepo;
+        this.paymentsRepo = paymentsRepo;
+        this.dataSource = dataSource;
     }
     async create(dto, userId) {
-        const expense = this.expensesRepo.create({ ...dto, createdBy: userId });
-        return this.expensesRepo.save(expense);
+        return await this.dataSource.transaction(async (manager) => {
+            const expense = manager.create(expense_entity_js_1.Expense, { ...dto, createdBy: userId });
+            const savedExpense = await manager.save(expense);
+            let pType = enums_js_1.PaymentType.STAFF_EXPENSE;
+            if (dto.category === enums_js_1.ExpenseCategory.OFFICE)
+                pType = enums_js_1.PaymentType.OFFICE_MAINTENANCE;
+            if (dto.category === enums_js_1.ExpenseCategory.TRANSPORT)
+                pType = enums_js_1.PaymentType.TRANSPORT;
+            if (dto.category === enums_js_1.ExpenseCategory.TRAVEL)
+                pType = enums_js_1.PaymentType.TRAVEL;
+            const payment = manager.create(payment_entity_js_1.Payment, {
+                paymentType: pType,
+                expenseId: savedExpense.id,
+                amount: dto.amount,
+                paymentDate: dto.expenseDate,
+                paymentMode: enums_js_1.PaymentMode.CASH,
+                payeeName: dto.paidBy || 'Staff',
+                projectId: dto.projectId,
+                notes: dto.description,
+                createdBy: userId,
+            });
+            await manager.save(payment);
+            return savedExpense;
+        });
     }
     async findAll(query) {
         const { category, projectId, dateFrom, dateTo, page = 1, limit = 20 } = query;
@@ -75,6 +103,9 @@ exports.ExpensesService = ExpensesService;
 exports.ExpensesService = ExpensesService = __decorate([
     (0, common_1.Injectable)(),
     __param(0, (0, typeorm_1.InjectRepository)(expense_entity_js_1.Expense)),
-    __metadata("design:paramtypes", [typeorm_2.Repository])
+    __param(1, (0, typeorm_1.InjectRepository)(payment_entity_js_1.Payment)),
+    __metadata("design:paramtypes", [typeorm_2.Repository,
+        typeorm_2.Repository,
+        typeorm_2.DataSource])
 ], ExpensesService);
 //# sourceMappingURL=expenses.service.js.map

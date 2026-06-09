@@ -17,19 +17,58 @@ const common_1 = require("@nestjs/common");
 const typeorm_1 = require("@nestjs/typeorm");
 const typeorm_2 = require("typeorm");
 const payment_entity_js_1 = require("./entities/payment.entity.js");
+const enums_js_1 = require("../common/enums.js");
+const purchase_bill_entity_js_1 = require("../accounts/entities/purchase-bill.entity.js");
+const expense_entity_js_1 = require("../expenses/entities/expense.entity.js");
 let PaymentsService = class PaymentsService {
     paymentsRepo;
-    constructor(paymentsRepo) {
+    billRepo;
+    expenseRepo;
+    dataSource;
+    constructor(paymentsRepo, billRepo, expenseRepo, dataSource) {
         this.paymentsRepo = paymentsRepo;
+        this.billRepo = billRepo;
+        this.expenseRepo = expenseRepo;
+        this.dataSource = dataSource;
     }
     async create(dto, userId) {
-        const payment = this.paymentsRepo.create({ ...dto, createdBy: userId });
-        return this.paymentsRepo.save(payment);
+        return await this.dataSource.transaction(async (manager) => {
+            let projectId = dto.projectId;
+            let vendorId = dto.vendorId;
+            if (dto.purchaseBillId) {
+                const bill = await manager.findOne(purchase_bill_entity_js_1.PurchaseBill, {
+                    where: { id: dto.purchaseBillId },
+                });
+                if (!bill)
+                    throw new common_1.NotFoundException('Purchase Bill not found');
+                projectId = bill.projectId;
+                vendorId = bill.vendorId;
+                const newPaidAmount = Number(bill.paidAmount) + Number(dto.amount);
+                bill.paidAmount = newPaidAmount;
+                if (newPaidAmount >= Number(bill.amount)) {
+                    bill.status = enums_js_1.BillStatus.PAID;
+                    bill.paidAt = new Date();
+                }
+                else if (newPaidAmount > 0) {
+                    bill.status = enums_js_1.BillStatus.PARTIAL;
+                }
+                await manager.save(bill);
+            }
+            const payment = manager.create(payment_entity_js_1.Payment, {
+                ...dto,
+                projectId,
+                vendorId,
+                createdBy: userId,
+            });
+            return await manager.save(payment);
+        });
     }
     async findAll(query) {
         const { type, projectId, dateFrom, dateTo, page = 1, limit = 20 } = query;
         const qb = this.paymentsRepo.createQueryBuilder('p')
             .leftJoinAndSelect('p.project', 'project')
+            .leftJoinAndSelect('p.vendor', 'vendor')
+            .leftJoinAndSelect('p.expense', 'expense')
             .where('p.isDeleted = false');
         if (type)
             qb.andWhere('p.paymentType = :type', { type });
@@ -50,11 +89,45 @@ let PaymentsService = class PaymentsService {
             .groupBy('p.paymentType')
             .getRawMany();
     }
+    async syncExpenses() {
+        const expenses = await this.expenseRepo.find({ where: { isDeleted: false } });
+        let count = 0;
+        for (const exp of expenses) {
+            const exists = await this.paymentsRepo.findOne({ where: { expenseId: exp.id } });
+            if (!exists) {
+                let pType = enums_js_1.PaymentType.STAFF_EXPENSE;
+                if (exp.category === enums_js_1.ExpenseCategory.OFFICE)
+                    pType = enums_js_1.PaymentType.OFFICE_MAINTENANCE;
+                if (exp.category === enums_js_1.ExpenseCategory.TRANSPORT)
+                    pType = enums_js_1.PaymentType.TRANSPORT;
+                if (exp.category === enums_js_1.ExpenseCategory.TRAVEL)
+                    pType = enums_js_1.PaymentType.TRAVEL;
+                const payment = this.paymentsRepo.create({
+                    paymentType: pType,
+                    expenseId: exp.id,
+                    amount: exp.amount,
+                    paymentDate: exp.expenseDate,
+                    paymentMode: enums_js_1.PaymentMode.CASH,
+                    payeeName: exp.paidBy || 'Staff',
+                    projectId: exp.projectId,
+                    notes: exp.description,
+                });
+                await this.paymentsRepo.save(payment);
+                count++;
+            }
+        }
+        return { success: true, syncedCount: count };
+    }
 };
 exports.PaymentsService = PaymentsService;
 exports.PaymentsService = PaymentsService = __decorate([
     (0, common_1.Injectable)(),
     __param(0, (0, typeorm_1.InjectRepository)(payment_entity_js_1.Payment)),
-    __metadata("design:paramtypes", [typeorm_2.Repository])
+    __param(1, (0, typeorm_1.InjectRepository)(purchase_bill_entity_js_1.PurchaseBill)),
+    __param(2, (0, typeorm_1.InjectRepository)(expense_entity_js_1.Expense)),
+    __metadata("design:paramtypes", [typeorm_2.Repository,
+        typeorm_2.Repository,
+        typeorm_2.Repository,
+        typeorm_2.DataSource])
 ], PaymentsService);
 //# sourceMappingURL=payments.service.js.map
