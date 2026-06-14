@@ -2,6 +2,7 @@ import { Injectable, NotFoundException } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
 import { Project } from './entities/project.entity.js';
+import { Customer } from '../customers/entities/customer.entity.js';
 import { ProjectProgress } from './entities/project-progress.entity.js';
 import { ProjectMilestone } from './entities/project-milestone.entity.js';
 import { ChangeOrder } from './entities/change-order.entity.js';

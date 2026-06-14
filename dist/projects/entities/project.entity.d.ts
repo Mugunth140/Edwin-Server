@@ -4,6 +4,9 @@ export declare class Project {
     name: string;
     description: string;
     location: string;
+    email: string;
+    phone1: string;
+    phone2: string;
     clientName: string;
     status: ProjectStatus;
     completionPct: number;

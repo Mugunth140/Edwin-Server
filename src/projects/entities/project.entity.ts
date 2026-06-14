@@ -5,6 +5,8 @@ import {
   CreateDateColumn,
   UpdateDateColumn,
   OneToMany,
+  ManyToOne,
+  JoinColumn,
 } from 'typeorm';
 import { ProjectStatus } from '../../common/enums.js';
 
@@ -21,6 +23,15 @@ export class Project {
 
   @Column({ nullable: true })
   location: string;
+
+  @Column({ nullable: true })
+  email: string;
+
+  @Column({ nullable: true })
+  phone1: string;
+
+  @Column({ nullable: true })
+  phone2: string;
 
   @Column({ nullable: true })
   clientName: string;

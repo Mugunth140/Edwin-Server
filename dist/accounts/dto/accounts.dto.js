@@ -43,7 +43,6 @@ __decorate([
     __metadata("design:type", Number)
 ], InvoiceItemDto.prototype, "rate", void 0);
 class CreateInvoiceDto {
-    customerId;
     projectId;
     dueDate;
     items;
@@ -52,12 +51,6 @@ exports.CreateInvoiceDto = CreateInvoiceDto;
 __decorate([
     (0, swagger_1.ApiProperty)(),
     (0, class_validator_1.IsUUID)(),
-    __metadata("design:type", String)
-], CreateInvoiceDto.prototype, "customerId", void 0);
-__decorate([
-    (0, swagger_1.ApiPropertyOptional)(),
-    (0, class_validator_1.IsUUID)(),
-    (0, class_validator_1.IsOptional)(),
     __metadata("design:type", String)
 ], CreateInvoiceDto.prototype, "projectId", void 0);
 __decorate([

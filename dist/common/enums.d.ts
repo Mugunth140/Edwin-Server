@@ -92,3 +92,14 @@ export declare enum ProjectStatus {
     ON_HOLD = "on_hold",
     COMPLETED = "completed"
 }
+export declare enum WorkCategory {
+    CIVIL = "civil",
+    ELECTRICAL = "electrical",
+    PLUMBING = "plumbing",
+    PAINTING = "painting",
+    HVAC = "hvac",
+    FIRE_FIGHTING = "fire_fighting",
+    INTERIOR = "interior",
+    LANDSCAPING = "landscaping",
+    OTHER = "other"
+}

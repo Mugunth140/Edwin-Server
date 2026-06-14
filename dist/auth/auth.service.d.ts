@@ -5,14 +5,17 @@ export declare class AuthService {
     private usersRepository;
     private jwtService;
     constructor(usersRepository: Repository<User>, jwtService: JwtService);
-    validateUser(email: string, password: string): Promise<User>;
-    login(email: string, password: string): Promise<{
+    validateUser(identifier: string, password: string): Promise<User>;
+    login(identifier: string, password: string): Promise<{
         access_token: string;
         user: {
             id: string;
             name: string;
             email: string;
             role: import("../common/enums.js").Role;
+            projects: {
+                id: string;
+            }[];
         };
     }>;
     getProfile(userId: string): Promise<{
@@ -20,5 +23,8 @@ export declare class AuthService {
         name: string;
         email: string;
         role: import("../common/enums.js").Role;
+        projects: {
+            id: string;
+        }[];
     }>;
 }

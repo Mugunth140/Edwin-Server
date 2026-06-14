@@ -13,7 +13,6 @@ const typeorm_1 = require("@nestjs/typeorm");
 const auth_module_js_1 = require("./auth/auth.module.js");
 const users_module_js_1 = require("./users/users.module.js");
 const vendors_module_js_1 = require("./vendors/vendors.module.js");
-const customers_module_js_1 = require("./customers/customers.module.js");
 const projects_module_js_1 = require("./projects/projects.module.js");
 const work_orders_module_js_1 = require("./work-orders/work-orders.module.js");
 const dpr_module_js_1 = require("./dpr/dpr.module.js");
@@ -23,9 +22,15 @@ const accounts_module_js_1 = require("./accounts/accounts.module.js");
 const expenses_module_js_1 = require("./expenses/expenses.module.js");
 const payments_module_js_1 = require("./payments/payments.module.js");
 const dashboard_module_js_1 = require("./dashboard/dashboard.module.js");
+const subcontractors_module_js_1 = require("./subcontractors/subcontractors.module.js");
+const work_categories_module_js_1 = require("./work-categories/work-categories.module.js");
+const subcontract_work_orders_module_js_1 = require("./subcontract-work-orders/subcontract-work-orders.module.js");
+const site_engineers_module_js_1 = require("./site-engineers/site-engineers.module.js");
+const daily_labour_module_js_1 = require("./daily-labour/daily-labour.module.js");
+const trades_module_js_1 = require("./trades/trades.module.js");
+const accounts_managers_module_js_1 = require("./accounts-managers/accounts-managers.module.js");
 const user_entity_js_1 = require("./users/entities/user.entity.js");
 const vendor_entity_js_1 = require("./vendors/entities/vendor.entity.js");
-const customer_entity_js_1 = require("./customers/entities/customer.entity.js");
 const project_entity_js_1 = require("./projects/entities/project.entity.js");
 const project_progress_entity_js_1 = require("./projects/entities/project-progress.entity.js");
 const project_milestone_entity_js_1 = require("./projects/entities/project-milestone.entity.js");
@@ -49,6 +54,12 @@ const boq_item_entity_js_1 = require("./accounts/entities/boq-item.entity.js");
 const advance_entity_js_1 = require("./accounts/entities/advance.entity.js");
 const expense_entity_js_1 = require("./expenses/entities/expense.entity.js");
 const payment_entity_js_1 = require("./payments/entities/payment.entity.js");
+const subcontractor_entity_js_1 = require("./subcontractors/entities/subcontractor.entity.js");
+const work_category_entity_js_1 = require("./work-categories/entities/work-category.entity.js");
+const subcontract_work_order_entity_js_1 = require("./subcontract-work-orders/entities/subcontract-work-order.entity.js");
+const daily_labour_report_entity_js_1 = require("./daily-labour/entities/daily-labour-report.entity.js");
+const daily_worker_entity_js_1 = require("./daily-labour/entities/daily-worker.entity.js");
+const trade_entity_js_1 = require("./trades/entities/trade.entity.js");
 function getBooleanConfig(configService, key, fallback) {
     const value = configService.get(key);
     if (typeof value === 'boolean')
@@ -78,7 +89,6 @@ exports.AppModule = AppModule = __decorate([
                     entities: [
                         user_entity_js_1.User,
                         vendor_entity_js_1.Vendor,
-                        customer_entity_js_1.Customer,
                         project_entity_js_1.Project,
                         project_progress_entity_js_1.ProjectProgress,
                         project_milestone_entity_js_1.ProjectMilestone,
@@ -102,6 +112,12 @@ exports.AppModule = AppModule = __decorate([
                         advance_entity_js_1.Advance,
                         expense_entity_js_1.Expense,
                         payment_entity_js_1.Payment,
+                        subcontractor_entity_js_1.Subcontractor,
+                        work_category_entity_js_1.WorkCategory,
+                        subcontract_work_order_entity_js_1.SubcontractWorkOrder,
+                        daily_labour_report_entity_js_1.DailyLabourReport,
+                        daily_worker_entity_js_1.DailyWorker,
+                        trade_entity_js_1.Trade,
                     ],
                     synchronize: getBooleanConfig(configService, 'TYPEORM_SYNCHRONIZE', false),
                     logging: getBooleanConfig(configService, 'TYPEORM_LOGGING', false),
@@ -110,7 +126,6 @@ exports.AppModule = AppModule = __decorate([
             auth_module_js_1.AuthModule,
             users_module_js_1.UsersModule,
             vendors_module_js_1.VendorsModule,
-            customers_module_js_1.CustomersModule,
             projects_module_js_1.ProjectsModule,
             work_orders_module_js_1.WorkOrdersModule,
             dpr_module_js_1.DprModule,
@@ -120,6 +135,13 @@ exports.AppModule = AppModule = __decorate([
             expenses_module_js_1.ExpensesModule,
             payments_module_js_1.PaymentsModule,
             dashboard_module_js_1.DashboardModule,
+            subcontractors_module_js_1.SubcontractorsModule,
+            work_categories_module_js_1.WorkCategoriesModule,
+            subcontract_work_orders_module_js_1.SubcontractWorkOrdersModule,
+            site_engineers_module_js_1.SiteEngineersModule,
+            daily_labour_module_js_1.DailyLabourModule,
+            trades_module_js_1.TradesModule,
+            accounts_managers_module_js_1.AccountsManagersModule,
         ],
     })
 ], AppModule);

@@ -1,4 +1,4 @@
-import { Injectable } from '@nestjs/common';
+import { Injectable, NotFoundException } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
 import { Project } from '../projects/entities/project.entity.js';
@@ -8,6 +8,7 @@ import { SalesInvoice } from '../accounts/entities/sales-invoice.entity.js';
 import { PurchaseBill } from '../accounts/entities/purchase-bill.entity.js';
 import { Expense } from '../expenses/entities/expense.entity.js';
 import { Payment } from '../payments/entities/payment.entity.js';
+import { User } from '../users/entities/user.entity.js';
 import { InvoiceStatus } from '../common/enums.js';
 
 @Injectable()
@@ -20,6 +21,7 @@ export class DashboardService {
     @InjectRepository(PurchaseBill) private billRepo: Repository<PurchaseBill>,
     @InjectRepository(Expense) private expenseRepo: Repository<Expense>,
     @InjectRepository(Payment) private paymentRepo: Repository<Payment>,
+    @InjectRepository(User) private usersRepo: Repository<User>,
   ) {}
 
   async getMasterDashboard() {
@@ -76,6 +78,31 @@ export class DashboardService {
         weekStart: w.weekStart,
         headcount: Number(w.headcount),
       })),
+      criticalActions: [],
+    };
+  }
+
+  async getEngineerDashboard(userId: string) {
+    const engineer = await this.usersRepo.findOne({
+      where: { id: userId, isActive: true },
+      relations: ['projects'],
+    });
+
+    if (!engineer) {
+      throw new NotFoundException('Engineer not found');
+    }
+
+    const assignedProjects = engineer.projects || [];
+    
+    return {
+      totalProjects: assignedProjects.length,
+      projects: assignedProjects.map((p) => ({
+        id: p.id,
+        name: p.name,
+        completionPct: Number(p.completionPct),
+      })),
+      revenueVsCost: { totalRevenue: 0, totalCost: 0 }, // Engineers don't see financial totals
+      weeklyLabour: [],
       criticalActions: [],
     };
   }

@@ -12,6 +12,7 @@ const typeorm_1 = require("@nestjs/typeorm");
 const projects_controller_js_1 = require("./projects.controller.js");
 const projects_service_js_1 = require("./projects.service.js");
 const project_entity_js_1 = require("./entities/project.entity.js");
+const customer_entity_js_1 = require("../customers/entities/customer.entity.js");
 const project_progress_entity_js_1 = require("./entities/project-progress.entity.js");
 const project_milestone_entity_js_1 = require("./entities/project-milestone.entity.js");
 const change_order_entity_js_1 = require("./entities/change-order.entity.js");
@@ -29,6 +30,7 @@ exports.ProjectsModule = ProjectsModule = __decorate([
         imports: [
             typeorm_1.TypeOrmModule.forFeature([
                 project_entity_js_1.Project,
+                customer_entity_js_1.Customer,
                 project_progress_entity_js_1.ProjectProgress,
                 project_milestone_entity_js_1.ProjectMilestone,
                 change_order_entity_js_1.ChangeOrder,

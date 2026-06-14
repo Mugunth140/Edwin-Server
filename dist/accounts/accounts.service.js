@@ -21,7 +21,7 @@ const invoice_item_entity_js_1 = require("./entities/invoice-item.entity.js");
 const purchase_bill_entity_js_1 = require("./entities/purchase-bill.entity.js");
 const boq_item_entity_js_1 = require("./entities/boq-item.entity.js");
 const advance_entity_js_1 = require("./entities/advance.entity.js");
-const customer_entity_js_1 = require("../customers/entities/customer.entity.js");
+const project_entity_js_1 = require("../projects/entities/project.entity.js");
 const purchase_order_entity_js_1 = require("../purchase-orders/entities/purchase-order.entity.js");
 const enums_js_1 = require("../common/enums.js");
 let AccountsService = class AccountsService {
@@ -30,15 +30,15 @@ let AccountsService = class AccountsService {
     billRepo;
     boqRepo;
     advanceRepo;
-    customerRepo;
+    projectRepo;
     poRepo;
-    constructor(invoiceRepo, invoiceItemRepo, billRepo, boqRepo, advanceRepo, customerRepo, poRepo) {
+    constructor(invoiceRepo, invoiceItemRepo, billRepo, boqRepo, advanceRepo, projectRepo, poRepo) {
         this.invoiceRepo = invoiceRepo;
         this.invoiceItemRepo = invoiceItemRepo;
         this.billRepo = billRepo;
         this.boqRepo = boqRepo;
         this.advanceRepo = advanceRepo;
-        this.customerRepo = customerRepo;
+        this.projectRepo = projectRepo;
         this.poRepo = poRepo;
     }
     async convertPoToBill(poId, userId) {
@@ -70,9 +70,9 @@ let AccountsService = class AccountsService {
         return `INV-${year}-${String(seq).padStart(3, '0')}`;
     }
     async createInvoice(dto, userId) {
-        const customer = await this.customerRepo.findOne({ where: { id: dto.customerId } });
-        if (!customer)
-            throw new common_1.NotFoundException('Customer not found');
+        const project = await this.projectRepo.findOne({ where: { id: dto.projectId } });
+        if (!project)
+            throw new common_1.NotFoundException('Project not found');
         const invoiceNumber = await this.generateInvoiceNumber();
         const items = dto.items.map((item) => {
             const amount = item.quantity * item.rate;
@@ -83,7 +83,8 @@ let AccountsService = class AccountsService {
         const gstAmount = totalAmount * gstRate;
         const companyState = 'Tamil Nadu';
         let cgstAmount = 0, sgstAmount = 0, igstAmount = 0;
-        if (customer.state && customer.state.toLowerCase() === companyState.toLowerCase()) {
+        const clientState = project.location || '';
+        if (clientState.toLowerCase().includes(companyState.toLowerCase())) {
             cgstAmount = gstAmount / 2;
             sgstAmount = gstAmount / 2;
         }
@@ -91,7 +92,7 @@ let AccountsService = class AccountsService {
             igstAmount = gstAmount;
         }
         const invoice = this.invoiceRepo.create({
-            invoiceNumber, customerId: dto.customerId, projectId: dto.projectId,
+            invoiceNumber, projectId: dto.projectId,
             dueDate: dto.dueDate ? new Date(dto.dueDate) : undefined,
             totalAmount, gstAmount, cgstAmount, sgstAmount, igstAmount,
             items, createdBy: userId,
@@ -100,13 +101,11 @@ let AccountsService = class AccountsService {
     }
     async findInvoices(query) {
         const qb = this.invoiceRepo.createQueryBuilder('inv')
-            .leftJoinAndSelect('inv.customer', 'customer')
+            .leftJoinAndSelect('inv.project', 'project')
             .leftJoinAndSelect('inv.items', 'items')
             .where('inv.isDeleted = false');
         if (query.status)
             qb.andWhere('inv.status = :status', { status: query.status });
-        if (query.customerId)
-            qb.andWhere('inv.customerId = :customerId', { customerId: query.customerId });
         if (query.projectId)
             qb.andWhere('inv.projectId = :projectId', { projectId: query.projectId });
         return qb.orderBy('inv.createdAt', 'DESC').getMany();
@@ -119,6 +118,13 @@ let AccountsService = class AccountsService {
         if (status === enums_js_1.InvoiceStatus.PAID)
             invoice.paidAt = new Date();
         return this.invoiceRepo.save(invoice);
+    }
+    async removeInvoice(id) {
+        const invoice = await this.invoiceRepo.findOne({ where: { id } });
+        if (!invoice)
+            throw new common_1.NotFoundException('Invoice not found');
+        invoice.isDeleted = true;
+        await this.invoiceRepo.save(invoice);
     }
     async generateBillNumber() {
         const year = new Date().getFullYear();
@@ -159,13 +165,13 @@ let AccountsService = class AccountsService {
         return this.advanceRepo.find({ order: { date: 'DESC' } });
     }
     async getLedger() {
-        const invoices = await this.invoiceRepo.find({ where: { isDeleted: false }, relations: ['customer'] });
+        const invoices = await this.invoiceRepo.find({ where: { isDeleted: false }, relations: ['project'] });
         const bills = await this.billRepo.find({ where: { isDeleted: false }, relations: ['vendor'] });
         const ledger = [
             ...invoices.map((inv) => ({
                 type: 'RECEIVABLE',
                 refNumber: inv.invoiceNumber,
-                party: inv.customer?.name,
+                party: inv.project?.clientName,
                 amount: Number(inv.totalAmount) + Number(inv.gstAmount),
                 date: inv.createdAt,
                 status: inv.status,
@@ -190,7 +196,7 @@ let AccountsService = class AccountsService {
                 { isDeleted: false, status: enums_js_1.InvoiceStatus.SENT },
                 { isDeleted: false, status: enums_js_1.InvoiceStatus.OVERDUE },
             ],
-            relations: ['customer'],
+            relations: ['project'],
         });
     }
     async getBalance() {
@@ -218,7 +224,7 @@ exports.AccountsService = AccountsService = __decorate([
     __param(2, (0, typeorm_1.InjectRepository)(purchase_bill_entity_js_1.PurchaseBill)),
     __param(3, (0, typeorm_1.InjectRepository)(boq_item_entity_js_1.BoqItem)),
     __param(4, (0, typeorm_1.InjectRepository)(advance_entity_js_1.Advance)),
-    __param(5, (0, typeorm_1.InjectRepository)(customer_entity_js_1.Customer)),
+    __param(5, (0, typeorm_1.InjectRepository)(project_entity_js_1.Project)),
     __param(6, (0, typeorm_1.InjectRepository)(purchase_order_entity_js_1.PurchaseOrder)),
     __metadata("design:paramtypes", [typeorm_2.Repository,
         typeorm_2.Repository,

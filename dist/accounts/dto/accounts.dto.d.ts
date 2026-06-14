@@ -6,8 +6,7 @@ export declare class InvoiceItemDto {
     rate: number;
 }
 export declare class CreateInvoiceDto {
-    customerId: string;
-    projectId?: string;
+    projectId: string;
     dueDate?: string;
     items: InvoiceItemDto[];
 }

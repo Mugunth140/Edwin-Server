@@ -1,4 +1,4 @@
-import { Controller, Get, Post, Patch, Body, Param, Query, UseGuards, Request } from '@nestjs/common';
+import { Controller, Get, Post, Patch, Delete, Body, Param, Query, UseGuards, Request } from '@nestjs/common';
 import { ApiTags, ApiOperation, ApiBearerAuth, ApiQuery } from '@nestjs/swagger';
 import { AuthGuard } from '@nestjs/passport';
 import { RolesGuard } from '../auth/roles.guard.js';
@@ -25,14 +25,12 @@ export class InvoicesController {
   @Roles(Role.ADMIN, Role.ACCOUNTS_MANAGER)
   @ApiOperation({ summary: 'List invoices' })
   @ApiQuery({ name: 'status', required: false, enum: InvoiceStatus })
-  @ApiQuery({ name: 'customerId', required: false })
   @ApiQuery({ name: 'projectId', required: false })
   findInvoices(
     @Query('status') status?: InvoiceStatus,
-    @Query('customerId') customerId?: string,
     @Query('projectId') projectId?: string,
   ) {
-    return this.accountsService.findInvoices({ status, customerId, projectId });
+    return this.accountsService.findInvoices({ status, projectId });
   }
 
   @Patch(':id/status')
@@ -40,5 +38,12 @@ export class InvoicesController {
   @ApiOperation({ summary: 'Update invoice status' })
   updateInvoiceStatus(@Param('id') id: string, @Body('status') status: InvoiceStatus) {
     return this.accountsService.updateInvoiceStatus(id, status);
+  }
+
+  @Delete(':id')
+  @Roles(Role.ADMIN)
+  @ApiOperation({ summary: 'Delete invoice' })
+  removeInvoice(@Param('id') id: string) {
+    return this.accountsService.removeInvoice(id);
   }
 }

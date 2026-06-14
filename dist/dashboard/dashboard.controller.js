@@ -8,6 +8,9 @@ var __decorate = (this && this.__decorate) || function (decorators, target, key,
 var __metadata = (this && this.__metadata) || function (k, v) {
     if (typeof Reflect === "object" && typeof Reflect.metadata === "function") return Reflect.metadata(k, v);
 };
+var __param = (this && this.__param) || function (paramIndex, decorator) {
+    return function (target, key) { decorator(target, key, paramIndex); }
+};
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.DashboardController = void 0;
 const common_1 = require("@nestjs/common");
@@ -25,6 +28,9 @@ let DashboardController = class DashboardController {
     getMaster() {
         return this.dashboardService.getMasterDashboard();
     }
+    getEngineer(req) {
+        return this.dashboardService.getEngineerDashboard(req.user.id);
+    }
 };
 exports.DashboardController = DashboardController;
 __decorate([
@@ -35,6 +41,15 @@ __decorate([
     __metadata("design:paramtypes", []),
     __metadata("design:returntype", void 0)
 ], DashboardController.prototype, "getMaster", null);
+__decorate([
+    (0, common_1.Get)('engineer'),
+    (0, roles_decorator_js_1.Roles)(enums_js_1.Role.SITE_ENGINEER),
+    (0, swagger_1.ApiOperation)({ summary: 'Get engineer dashboard KPIs' }),
+    __param(0, (0, common_1.Request)()),
+    __metadata("design:type", Function),
+    __metadata("design:paramtypes", [Object]),
+    __metadata("design:returntype", void 0)
+], DashboardController.prototype, "getEngineer", null);
 exports.DashboardController = DashboardController = __decorate([
     (0, swagger_1.ApiTags)('Dashboard'),
     (0, common_1.Controller)({ path: 'dashboard', version: '1' }),

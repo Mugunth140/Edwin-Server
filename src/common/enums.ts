@@ -106,3 +106,15 @@ export enum ProjectStatus {
   ON_HOLD = 'on_hold',
   COMPLETED = 'completed',
 }
+
+export enum WorkCategory {
+  CIVIL = 'civil',
+  ELECTRICAL = 'electrical',
+  PLUMBING = 'plumbing',
+  PAINTING = 'painting',
+  HVAC = 'hvac',
+  FIRE_FIGHTING = 'fire_fighting',
+  INTERIOR = 'interior',
+  LANDSCAPING = 'landscaping',
+  OTHER = 'other',
+}

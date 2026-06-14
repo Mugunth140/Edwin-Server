@@ -12,13 +12,19 @@ Object.defineProperty(exports, "__esModule", { value: true });
 exports.User = void 0;
 const typeorm_1 = require("typeorm");
 const enums_js_1 = require("../../common/enums.js");
+const project_entity_js_1 = require("../../projects/entities/project.entity.js");
 let User = class User {
     id;
     name;
     email;
+    username;
+    employeeId;
+    phone;
+    address;
     passwordHash;
     role;
     isActive;
+    projects;
     createdAt;
     updatedAt;
 };
@@ -36,6 +42,22 @@ __decorate([
     __metadata("design:type", String)
 ], User.prototype, "email", void 0);
 __decorate([
+    (0, typeorm_1.Column)({ unique: true, nullable: true }),
+    __metadata("design:type", String)
+], User.prototype, "username", void 0);
+__decorate([
+    (0, typeorm_1.Column)({ nullable: true }),
+    __metadata("design:type", String)
+], User.prototype, "employeeId", void 0);
+__decorate([
+    (0, typeorm_1.Column)({ nullable: true }),
+    __metadata("design:type", String)
+], User.prototype, "phone", void 0);
+__decorate([
+    (0, typeorm_1.Column)({ type: 'text', nullable: true }),
+    __metadata("design:type", String)
+], User.prototype, "address", void 0);
+__decorate([
     (0, typeorm_1.Column)(),
     __metadata("design:type", String)
 ], User.prototype, "passwordHash", void 0);
@@ -47,6 +69,11 @@ __decorate([
     (0, typeorm_1.Column)({ default: true }),
     __metadata("design:type", Boolean)
 ], User.prototype, "isActive", void 0);
+__decorate([
+    (0, typeorm_1.ManyToMany)(() => project_entity_js_1.Project),
+    (0, typeorm_1.JoinTable)({ name: 'user_projects' }),
+    __metadata("design:type", Array)
+], User.prototype, "projects", void 0);
 __decorate([
     (0, typeorm_1.CreateDateColumn)(),
     __metadata("design:type", Date)

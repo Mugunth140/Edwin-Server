@@ -1,4 +1,4 @@
-import { Controller, Get, UseGuards } from '@nestjs/common';
+import { Controller, Get, UseGuards, Request } from '@nestjs/common';
 import { ApiTags, ApiOperation, ApiBearerAuth } from '@nestjs/swagger';
 import { AuthGuard } from '@nestjs/passport';
 import { RolesGuard } from '../auth/roles.guard.js';
@@ -18,5 +18,12 @@ export class DashboardController {
   @ApiOperation({ summary: 'Get master dashboard KPIs' })
   getMaster() {
     return this.dashboardService.getMasterDashboard();
+  }
+
+  @Get('engineer')
+  @Roles(Role.SITE_ENGINEER)
+  @ApiOperation({ summary: 'Get engineer dashboard KPIs' })
+  getEngineer(@Request() req: any) {
+    return this.dashboardService.getEngineerDashboard(req.user.id);
   }
 }

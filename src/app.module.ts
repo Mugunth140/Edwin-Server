@@ -4,7 +4,6 @@ import { TypeOrmModule } from '@nestjs/typeorm';
 import { AuthModule } from './auth/auth.module.js';
 import { UsersModule } from './users/users.module.js';
 import { VendorsModule } from './vendors/vendors.module.js';
-import { CustomersModule } from './customers/customers.module.js';
 import { ProjectsModule } from './projects/projects.module.js';
 import { WorkOrdersModule } from './work-orders/work-orders.module.js';
 import { DprModule } from './dpr/dpr.module.js';
@@ -14,11 +13,17 @@ import { AccountsModule } from './accounts/accounts.module.js';
 import { ExpensesModule } from './expenses/expenses.module.js';
 import { PaymentsModule } from './payments/payments.module.js';
 import { DashboardModule } from './dashboard/dashboard.module.js';
+import { SubcontractorsModule } from './subcontractors/subcontractors.module.js';
+import { WorkCategoriesModule } from './work-categories/work-categories.module.js';
+import { SubcontractWorkOrdersModule } from './subcontract-work-orders/subcontract-work-orders.module.js';
+import { SiteEngineersModule } from './site-engineers/site-engineers.module.js';
+import { DailyLabourModule } from './daily-labour/daily-labour.module.js';
+import { TradesModule } from './trades/trades.module.js';
+import { AccountsManagersModule } from './accounts-managers/accounts-managers.module.js';
 
 // Entity imports
 import { User } from './users/entities/user.entity.js';
 import { Vendor } from './vendors/entities/vendor.entity.js';
-import { Customer } from './customers/entities/customer.entity.js';
 import { Project } from './projects/entities/project.entity.js';
 import { ProjectProgress } from './projects/entities/project-progress.entity.js';
 import { ProjectMilestone } from './projects/entities/project-milestone.entity.js';
@@ -42,6 +47,12 @@ import { BoqItem } from './accounts/entities/boq-item.entity.js';
 import { Advance } from './accounts/entities/advance.entity.js';
 import { Expense } from './expenses/entities/expense.entity.js';
 import { Payment } from './payments/entities/payment.entity.js';
+import { Subcontractor } from './subcontractors/entities/subcontractor.entity.js';
+import { WorkCategory } from './work-categories/entities/work-category.entity.js';
+import { SubcontractWorkOrder } from './subcontract-work-orders/entities/subcontract-work-order.entity.js';
+import { DailyLabourReport } from './daily-labour/entities/daily-labour-report.entity.js';
+import { DailyWorker } from './daily-labour/entities/daily-worker.entity.js';
+import { Trade } from './trades/entities/trade.entity.js';
 
 function getBooleanConfig(
   configService: ConfigService,
@@ -73,7 +84,6 @@ function getBooleanConfig(
         entities: [
           User,
           Vendor,
-          Customer,
           Project,
           ProjectProgress,
           ProjectMilestone,
@@ -97,6 +107,12 @@ function getBooleanConfig(
           Advance,
           Expense,
           Payment,
+          Subcontractor,
+          WorkCategory,
+          SubcontractWorkOrder,
+          DailyLabourReport,
+          DailyWorker,
+          Trade,
         ],
         synchronize: getBooleanConfig(configService, 'TYPEORM_SYNCHRONIZE', false),
         logging: getBooleanConfig(configService, 'TYPEORM_LOGGING', false),
@@ -105,7 +121,6 @@ function getBooleanConfig(
     AuthModule,
     UsersModule,
     VendorsModule,
-    CustomersModule,
     ProjectsModule,
     WorkOrdersModule,
     DprModule,
@@ -115,6 +130,13 @@ function getBooleanConfig(
     ExpensesModule,
     PaymentsModule,
     DashboardModule,
+    SubcontractorsModule,
+    WorkCategoriesModule,
+    SubcontractWorkOrdersModule,
+    SiteEngineersModule,
+    DailyLabourModule,
+    TradesModule,
+    AccountsManagersModule,
   ],
 })
 export class AppModule {}

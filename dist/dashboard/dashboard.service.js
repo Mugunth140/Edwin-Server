@@ -23,6 +23,7 @@ const sales_invoice_entity_js_1 = require("../accounts/entities/sales-invoice.en
 const purchase_bill_entity_js_1 = require("../accounts/entities/purchase-bill.entity.js");
 const expense_entity_js_1 = require("../expenses/entities/expense.entity.js");
 const payment_entity_js_1 = require("../payments/entities/payment.entity.js");
+const user_entity_js_1 = require("../users/entities/user.entity.js");
 const enums_js_1 = require("../common/enums.js");
 let DashboardService = class DashboardService {
     projectsRepo;
@@ -32,7 +33,8 @@ let DashboardService = class DashboardService {
     billRepo;
     expenseRepo;
     paymentRepo;
-    constructor(projectsRepo, milestonesRepo, attendanceRepo, invoiceRepo, billRepo, expenseRepo, paymentRepo) {
+    usersRepo;
+    constructor(projectsRepo, milestonesRepo, attendanceRepo, invoiceRepo, billRepo, expenseRepo, paymentRepo, usersRepo) {
         this.projectsRepo = projectsRepo;
         this.milestonesRepo = milestonesRepo;
         this.attendanceRepo = attendanceRepo;
@@ -40,6 +42,7 @@ let DashboardService = class DashboardService {
         this.billRepo = billRepo;
         this.expenseRepo = expenseRepo;
         this.paymentRepo = paymentRepo;
+        this.usersRepo = usersRepo;
     }
     async getMasterDashboard() {
         const projects = await this.projectsRepo.find({ where: { isDeleted: false } });
@@ -89,6 +92,27 @@ let DashboardService = class DashboardService {
             criticalActions: [],
         };
     }
+    async getEngineerDashboard(userId) {
+        const engineer = await this.usersRepo.findOne({
+            where: { id: userId, isActive: true },
+            relations: ['projects'],
+        });
+        if (!engineer) {
+            throw new common_1.NotFoundException('Engineer not found');
+        }
+        const assignedProjects = engineer.projects || [];
+        return {
+            totalProjects: assignedProjects.length,
+            projects: assignedProjects.map((p) => ({
+                id: p.id,
+                name: p.name,
+                completionPct: Number(p.completionPct),
+            })),
+            revenueVsCost: { totalRevenue: 0, totalCost: 0 },
+            weeklyLabour: [],
+            criticalActions: [],
+        };
+    }
 };
 exports.DashboardService = DashboardService;
 exports.DashboardService = DashboardService = __decorate([
@@ -100,7 +124,9 @@ exports.DashboardService = DashboardService = __decorate([
     __param(4, (0, typeorm_1.InjectRepository)(purchase_bill_entity_js_1.PurchaseBill)),
     __param(5, (0, typeorm_1.InjectRepository)(expense_entity_js_1.Expense)),
     __param(6, (0, typeorm_1.InjectRepository)(payment_entity_js_1.Payment)),
+    __param(7, (0, typeorm_1.InjectRepository)(user_entity_js_1.User)),
     __metadata("design:paramtypes", [typeorm_2.Repository,
+        typeorm_2.Repository,
         typeorm_2.Repository,
         typeorm_2.Repository,
         typeorm_2.Repository,

@@ -3,6 +3,7 @@ import { TypeOrmModule } from '@nestjs/typeorm';
 import { ProjectsController } from './projects.controller.js';
 import { ProjectsService } from './projects.service.js';
 import { Project } from './entities/project.entity.js';
+import { Customer } from '../customers/entities/customer.entity.js';
 import { ProjectProgress } from './entities/project-progress.entity.js';
 import { ProjectMilestone } from './entities/project-milestone.entity.js';
 import { ChangeOrder } from './entities/change-order.entity.js';
@@ -17,6 +18,7 @@ import { SitePhoto } from './entities/site-photo.entity.js';
   imports: [
     TypeOrmModule.forFeature([
       Project,
+      Customer,
       ProjectProgress,
       ProjectMilestone,
       ChangeOrder,

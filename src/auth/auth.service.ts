@@ -13,9 +13,13 @@ export class AuthService {
     private jwtService: JwtService,
   ) {}
 
-  async validateUser(email: string, password: string): Promise<User> {
+  async validateUser(identifier: string, password: string): Promise<User> {
     const user = await this.usersRepository.findOne({
-      where: { email, isActive: true },
+      where: [
+        { email: identifier, isActive: true },
+        { username: identifier, isActive: true },
+      ],
+      relations: ['projects'],
     });
 
     if (!user) {
@@ -30,8 +34,8 @@ export class AuthService {
     return user;
   }
 
-  async login(email: string, password: string) {
-    const user = await this.validateUser(email, password);
+  async login(identifier: string, password: string) {
+    const user = await this.validateUser(identifier, password);
     const payload = { sub: user.id, email: user.email, role: user.role };
 
     return {
@@ -41,6 +45,7 @@ export class AuthService {
         name: user.name,
         email: user.email,
         role: user.role,
+        projects: user.projects?.map(p => ({ id: p.id })) || [],
       },
     };
   }
@@ -48,6 +53,7 @@ export class AuthService {
   async getProfile(userId: string) {
     const user = await this.usersRepository.findOne({
       where: { id: userId, isActive: true },
+      relations: ['projects'],
     });
 
     if (!user) {
@@ -59,6 +65,7 @@ export class AuthService {
       name: user.name,
       email: user.email,
       role: user.role,
+      projects: user.projects?.map(p => ({ id: p.id })) || [],
     };
   }
 }

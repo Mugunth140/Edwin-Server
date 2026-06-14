@@ -9,6 +9,7 @@ import { SalesInvoice } from '../accounts/entities/sales-invoice.entity.js';
 import { PurchaseBill } from '../accounts/entities/purchase-bill.entity.js';
 import { Expense } from '../expenses/entities/expense.entity.js';
 import { Payment } from '../payments/entities/payment.entity.js';
+import { User } from '../users/entities/user.entity.js';
 
 @Module({
   imports: [
@@ -20,6 +21,7 @@ import { Payment } from '../payments/entities/payment.entity.js';
       PurchaseBill,
       Expense,
       Payment,
+      User,
     ]),
   ],
   controllers: [DashboardController],

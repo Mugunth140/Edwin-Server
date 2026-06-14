@@ -59,9 +59,13 @@ let AuthService = class AuthService {
         this.usersRepository = usersRepository;
         this.jwtService = jwtService;
     }
-    async validateUser(email, password) {
+    async validateUser(identifier, password) {
         const user = await this.usersRepository.findOne({
-            where: { email, isActive: true },
+            where: [
+                { email: identifier, isActive: true },
+                { username: identifier, isActive: true },
+            ],
+            relations: ['projects'],
         });
         if (!user) {
             throw new common_1.UnauthorizedException('Invalid credentials');
@@ -72,8 +76,8 @@ let AuthService = class AuthService {
         }
         return user;
     }
-    async login(email, password) {
-        const user = await this.validateUser(email, password);
+    async login(identifier, password) {
+        const user = await this.validateUser(identifier, password);
         const payload = { sub: user.id, email: user.email, role: user.role };
         return {
             access_token: this.jwtService.sign(payload),
@@ -82,12 +86,14 @@ let AuthService = class AuthService {
                 name: user.name,
                 email: user.email,
                 role: user.role,
+                projects: user.projects?.map(p => ({ id: p.id })) || [],
             },
         };
     }
     async getProfile(userId) {
         const user = await this.usersRepository.findOne({
             where: { id: userId, isActive: true },
+            relations: ['projects'],
         });
         if (!user) {
             throw new common_1.UnauthorizedException('User not found');
@@ -97,6 +103,7 @@ let AuthService = class AuthService {
             name: user.name,
             email: user.email,
             role: user.role,
+            projects: user.projects?.map(p => ({ id: p.id })) || [],
         };
     }
 };

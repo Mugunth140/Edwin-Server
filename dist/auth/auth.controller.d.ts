@@ -10,6 +10,9 @@ export declare class AuthController {
             name: string;
             email: string;
             role: import("../common/enums.js").Role;
+            projects: {
+                id: string;
+            }[];
         };
     }>;
     getProfile(req: any): Promise<{
@@ -17,5 +20,8 @@ export declare class AuthController {
         name: string;
         email: string;
         role: import("../common/enums.js").Role;
+        projects: {
+            id: string;
+        }[];
     }>;
 }

@@ -11,8 +11,7 @@ export class InvoiceItemDto {
 }
 
 export class CreateInvoiceDto {
-  @ApiProperty() @IsUUID() customerId: string;
-  @ApiPropertyOptional() @IsUUID() @IsOptional() projectId?: string;
+  @ApiProperty() @IsUUID() projectId: string;
   @ApiPropertyOptional() @IsDateString() @IsOptional() dueDate?: string;
   @ApiProperty({ type: [InvoiceItemDto] })
   @IsArray() @ValidateNested({ each: true }) @Type(() => InvoiceItemDto) items: InvoiceItemDto[];

@@ -6,7 +6,7 @@ import { InvoiceItem } from './entities/invoice-item.entity.js';
 import { PurchaseBill } from './entities/purchase-bill.entity.js';
 import { BoqItem } from './entities/boq-item.entity.js';
 import { Advance } from './entities/advance.entity.js';
-import { Customer } from '../customers/entities/customer.entity.js';
+import { Project } from '../projects/entities/project.entity.js';
 import { PurchaseOrder } from '../purchase-orders/entities/purchase-order.entity.js';
 import { CreateInvoiceDto, CreateBillDto, CreateAdvanceDto, CreateBoqDto } from './dto/accounts.dto.js';
 import { InvoiceStatus } from '../common/enums.js';
@@ -19,7 +19,7 @@ export class AccountsService {
     @InjectRepository(PurchaseBill) private billRepo: Repository<PurchaseBill>,
     @InjectRepository(BoqItem) private boqRepo: Repository<BoqItem>,
     @InjectRepository(Advance) private advanceRepo: Repository<Advance>,
-    @InjectRepository(Customer) private customerRepo: Repository<Customer>,
+    @InjectRepository(Project) private projectRepo: Repository<Project>,
     @InjectRepository(PurchaseOrder) private poRepo: Repository<PurchaseOrder>,
   ) {}
 
@@ -55,8 +55,8 @@ export class AccountsService {
   }
 
   async createInvoice(dto: CreateInvoiceDto, userId?: string): Promise<SalesInvoice> {
-    const customer = await this.customerRepo.findOne({ where: { id: dto.customerId } });
-    if (!customer) throw new NotFoundException('Customer not found');
+    const project = await this.projectRepo.findOne({ where: { id: dto.projectId } });
+    if (!project) throw new NotFoundException('Project not found');
 
     const invoiceNumber = await this.generateInvoiceNumber();
     const items = dto.items.map((item) => {
@@ -68,12 +68,15 @@ export class AccountsService {
     const gstAmount = totalAmount * gstRate;
     const companyState = 'Tamil Nadu';
     let cgstAmount = 0, sgstAmount = 0, igstAmount = 0;
-    if (customer.state && customer.state.toLowerCase() === companyState.toLowerCase()) {
+    
+    // Use project location as a proxy for state if needed
+    const clientState = project.location || '';
+    if (clientState.toLowerCase().includes(companyState.toLowerCase())) {
       cgstAmount = gstAmount / 2; sgstAmount = gstAmount / 2;
     } else { igstAmount = gstAmount; }
 
     const invoice = this.invoiceRepo.create({
-      invoiceNumber, customerId: dto.customerId, projectId: dto.projectId,
+      invoiceNumber, projectId: dto.projectId,
       dueDate: dto.dueDate ? new Date(dto.dueDate) : undefined,
       totalAmount, gstAmount, cgstAmount, sgstAmount, igstAmount,
       items, createdBy: userId,
@@ -81,13 +84,12 @@ export class AccountsService {
     return this.invoiceRepo.save(invoice);
   }
 
-  async findInvoices(query: { status?: InvoiceStatus; customerId?: string; projectId?: string }) {
+  async findInvoices(query: { status?: InvoiceStatus; projectId?: string }) {
     const qb = this.invoiceRepo.createQueryBuilder('inv')
-      .leftJoinAndSelect('inv.customer', 'customer')
+      .leftJoinAndSelect('inv.project', 'project')
       .leftJoinAndSelect('inv.items', 'items')
       .where('inv.isDeleted = false');
     if (query.status) qb.andWhere('inv.status = :status', { status: query.status });
-    if (query.customerId) qb.andWhere('inv.customerId = :customerId', { customerId: query.customerId });
     if (query.projectId) qb.andWhere('inv.projectId = :projectId', { projectId: query.projectId });
     return qb.orderBy('inv.createdAt', 'DESC').getMany();
   }
@@ -98,6 +100,13 @@ export class AccountsService {
     invoice.status = status;
     if (status === InvoiceStatus.PAID) invoice.paidAt = new Date();
     return this.invoiceRepo.save(invoice);
+  }
+
+  async removeInvoice(id: string) {
+    const invoice = await this.invoiceRepo.findOne({ where: { id } });
+    if (!invoice) throw new NotFoundException('Invoice not found');
+    invoice.isDeleted = true;
+    await this.invoiceRepo.save(invoice);
   }
 
   // --- Bills ---
@@ -149,14 +158,14 @@ export class AccountsService {
   // --- Ledger / Summary ---
   async getLedger() {
     // Derived transaction log from invoices and bills
-    const invoices = await this.invoiceRepo.find({ where: { isDeleted: false }, relations: ['customer'] });
+    const invoices = await this.invoiceRepo.find({ where: { isDeleted: false }, relations: ['project'] });
     const bills = await this.billRepo.find({ where: { isDeleted: false }, relations: ['vendor'] });
 
     const ledger = [
       ...invoices.map((inv) => ({
         type: 'RECEIVABLE',
         refNumber: inv.invoiceNumber,
-        party: inv.customer?.name,
+        party: inv.project?.clientName,
         amount: Number(inv.totalAmount) + Number(inv.gstAmount),
         date: inv.createdAt,
         status: inv.status,
@@ -184,7 +193,7 @@ export class AccountsService {
         { isDeleted: false, status: InvoiceStatus.SENT },
         { isDeleted: false, status: InvoiceStatus.OVERDUE },
       ],
-      relations: ['customer'],
+      relations: ['project'],
     });
   }
 

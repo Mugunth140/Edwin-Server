@@ -1,0 +1,52 @@
+import { IsString, IsNumber, IsOptional, IsDateString, IsUUID } from 'class-validator';
+import { ApiProperty } from '@nestjs/swagger';
+
+export class CreateSubcontractWorkOrderDto {
+  @ApiProperty()
+  @IsString()
+  woNumber: string;
+
+  @ApiProperty()
+  @IsUUID()
+  projectId: string;
+
+  @ApiProperty()
+  @IsUUID()
+  subcontractorId: string;
+
+  @ApiProperty()
+  @IsUUID()
+  workCategoryId: string;
+
+  @ApiProperty()
+  @IsNumber()
+  quantity: number;
+
+  @ApiProperty({ required: false })
+  @IsString()
+  @IsOptional()
+  unit?: string;
+
+  @ApiProperty()
+  @IsNumber()
+  rate: number;
+
+  @ApiProperty()
+  @IsNumber()
+  gstPercentage: number;
+
+  @ApiProperty({ required: false })
+  @IsDateString()
+  @IsOptional()
+  startDate?: string;
+
+  @ApiProperty({ required: false })
+  @IsDateString()
+  @IsOptional()
+  endDate?: string;
+
+  @ApiProperty({ required: false })
+  @IsString()
+  @IsOptional()
+  notes?: string;
+}

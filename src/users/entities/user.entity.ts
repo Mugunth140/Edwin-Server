@@ -4,8 +4,11 @@ import {
   Column,
   CreateDateColumn,
   UpdateDateColumn,
+  ManyToMany,
+  JoinTable,
 } from 'typeorm';
 import { Role } from '../../common/enums.js';
+import { Project } from '../../projects/entities/project.entity.js';
 
 @Entity('users')
 export class User {
@@ -18,6 +21,18 @@ export class User {
   @Column({ unique: true })
   email: string;
 
+  @Column({ unique: true, nullable: true })
+  username: string;
+
+  @Column({ nullable: true })
+  employeeId: string;
+
+  @Column({ nullable: true })
+  phone: string;
+
+  @Column({ type: 'text', nullable: true })
+  address: string;
+
   @Column()
   passwordHash: string;
 
@@ -26,6 +41,10 @@ export class User {
 
   @Column({ default: true })
   isActive: boolean;
+
+  @ManyToMany(() => Project)
+  @JoinTable({ name: 'user_projects' })
+  projects: Project[];
 
   @CreateDateColumn()
   createdAt: Date;

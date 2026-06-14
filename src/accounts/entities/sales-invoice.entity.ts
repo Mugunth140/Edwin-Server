@@ -9,7 +9,6 @@ import {
   JoinColumn,
 } from 'typeorm';
 import { InvoiceStatus } from '../../common/enums.js';
-import { Customer } from '../../customers/entities/customer.entity.js';
 import { Project } from '../../projects/entities/project.entity.js';
 import { InvoiceItem } from './invoice-item.entity.js';
 
@@ -21,18 +20,11 @@ export class SalesInvoice {
   @Column({ unique: true })
   invoiceNumber: string;
 
-  @ManyToOne(() => Customer, { eager: true })
-  @JoinColumn({ name: 'customerId' })
-  customer: Customer;
-
-  @Column()
-  customerId: string;
-
-  @ManyToOne(() => Project)
+  @ManyToOne(() => Project, { eager: true })
   @JoinColumn({ name: 'projectId' })
   project: Project;
 
-  @Column({ nullable: true })
+  @Column()
   projectId: string;
 
   @Column({ type: 'enum', enum: InvoiceStatus, default: InvoiceStatus.DRAFT })

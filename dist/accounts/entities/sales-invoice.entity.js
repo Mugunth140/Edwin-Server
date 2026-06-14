@@ -12,14 +12,11 @@ Object.defineProperty(exports, "__esModule", { value: true });
 exports.SalesInvoice = void 0;
 const typeorm_1 = require("typeorm");
 const enums_js_1 = require("../../common/enums.js");
-const customer_entity_js_1 = require("../../customers/entities/customer.entity.js");
 const project_entity_js_1 = require("../../projects/entities/project.entity.js");
 const invoice_item_entity_js_1 = require("./invoice-item.entity.js");
 let SalesInvoice = class SalesInvoice {
     id;
     invoiceNumber;
-    customer;
-    customerId;
     project;
     projectId;
     status;
@@ -48,21 +45,12 @@ __decorate([
     __metadata("design:type", String)
 ], SalesInvoice.prototype, "invoiceNumber", void 0);
 __decorate([
-    (0, typeorm_1.ManyToOne)(() => customer_entity_js_1.Customer, { eager: true }),
-    (0, typeorm_1.JoinColumn)({ name: 'customerId' }),
-    __metadata("design:type", customer_entity_js_1.Customer)
-], SalesInvoice.prototype, "customer", void 0);
-__decorate([
-    (0, typeorm_1.Column)(),
-    __metadata("design:type", String)
-], SalesInvoice.prototype, "customerId", void 0);
-__decorate([
-    (0, typeorm_1.ManyToOne)(() => project_entity_js_1.Project),
+    (0, typeorm_1.ManyToOne)(() => project_entity_js_1.Project, { eager: true }),
     (0, typeorm_1.JoinColumn)({ name: 'projectId' }),
     __metadata("design:type", project_entity_js_1.Project)
 ], SalesInvoice.prototype, "project", void 0);
 __decorate([
-    (0, typeorm_1.Column)({ nullable: true }),
+    (0, typeorm_1.Column)(),
     __metadata("design:type", String)
 ], SalesInvoice.prototype, "projectId", void 0);
 __decorate([

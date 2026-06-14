@@ -1,6 +1,6 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.ProjectStatus = exports.AdvanceEntityType = exports.PaymentType = exports.ExpenseCategory = exports.DrawingCategory = exports.SeverityLevel = exports.RfiStatus = exports.SnagStatus = exports.MilestoneStatus = exports.InvoiceStatus = exports.PaymentMode = exports.BillStatus = exports.PurchaseOrderStatus = exports.WorkOrderStatus = exports.Role = void 0;
+exports.WorkCategory = exports.ProjectStatus = exports.AdvanceEntityType = exports.PaymentType = exports.ExpenseCategory = exports.DrawingCategory = exports.SeverityLevel = exports.RfiStatus = exports.SnagStatus = exports.MilestoneStatus = exports.InvoiceStatus = exports.PaymentMode = exports.BillStatus = exports.PurchaseOrderStatus = exports.WorkOrderStatus = exports.Role = void 0;
 var Role;
 (function (Role) {
     Role["ADMIN"] = "admin";
@@ -110,4 +110,16 @@ var ProjectStatus;
     ProjectStatus["ON_HOLD"] = "on_hold";
     ProjectStatus["COMPLETED"] = "completed";
 })(ProjectStatus || (exports.ProjectStatus = ProjectStatus = {}));
+var WorkCategory;
+(function (WorkCategory) {
+    WorkCategory["CIVIL"] = "civil";
+    WorkCategory["ELECTRICAL"] = "electrical";
+    WorkCategory["PLUMBING"] = "plumbing";
+    WorkCategory["PAINTING"] = "painting";
+    WorkCategory["HVAC"] = "hvac";
+    WorkCategory["FIRE_FIGHTING"] = "fire_fighting";
+    WorkCategory["INTERIOR"] = "interior";
+    WorkCategory["LANDSCAPING"] = "landscaping";
+    WorkCategory["OTHER"] = "other";
+})(WorkCategory || (exports.WorkCategory = WorkCategory = {}));
 //# sourceMappingURL=enums.js.map

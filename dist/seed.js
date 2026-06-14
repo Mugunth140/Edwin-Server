@@ -38,7 +38,6 @@ const bcrypt = __importStar(require("bcrypt"));
 const typeorm_1 = require("typeorm");
 const user_entity_js_1 = require("./users/entities/user.entity.js");
 const vendor_entity_js_1 = require("./vendors/entities/vendor.entity.js");
-const customer_entity_js_1 = require("./customers/entities/customer.entity.js");
 const project_entity_js_1 = require("./projects/entities/project.entity.js");
 const project_progress_entity_js_1 = require("./projects/entities/project-progress.entity.js");
 const project_milestone_entity_js_1 = require("./projects/entities/project-milestone.entity.js");
@@ -62,11 +61,12 @@ const boq_item_entity_js_1 = require("./accounts/entities/boq-item.entity.js");
 const advance_entity_js_1 = require("./accounts/entities/advance.entity.js");
 const expense_entity_js_1 = require("./expenses/entities/expense.entity.js");
 const payment_entity_js_1 = require("./payments/entities/payment.entity.js");
+const work_category_entity_js_1 = require("./work-categories/entities/work-category.entity.js");
+const trade_entity_js_1 = require("./trades/entities/trade.entity.js");
 const enums_js_1 = require("./common/enums.js");
 const entities = [
     user_entity_js_1.User,
     vendor_entity_js_1.Vendor,
-    customer_entity_js_1.Customer,
     project_entity_js_1.Project,
     project_progress_entity_js_1.ProjectProgress,
     project_milestone_entity_js_1.ProjectMilestone,
@@ -90,6 +90,8 @@ const entities = [
     advance_entity_js_1.Advance,
     expense_entity_js_1.Expense,
     payment_entity_js_1.Payment,
+    work_category_entity_js_1.WorkCategory,
+    trade_entity_js_1.Trade,
 ];
 function loadEnvironment() {
     const loadEnv = process.loadEnvFile;
@@ -165,33 +167,48 @@ async function seedAdmin(userRepo) {
     const email = env('SEED_ADMIN_EMAIL', 'admin@edwinconstructions.com').toLowerCase();
     const password = getAdminPassword(isProduction);
     const resetPassword = boolEnv('SEED_RESET_ADMIN_PASSWORD', false);
-    const existing = await userRepo.findOne({ where: { email } });
-    if (existing) {
-        existing.name = env('SEED_ADMIN_NAME', existing.name || 'Edwin Admin');
-        existing.role = enums_js_1.Role.ADMIN;
-        existing.isActive = true;
+    let admin = await userRepo.findOne({ where: { email } });
+    if (admin) {
+        admin.name = env('SEED_ADMIN_NAME', admin.name || 'Edwin Admin');
+        admin.role = enums_js_1.Role.ADMIN;
+        admin.isActive = true;
         if (resetPassword) {
-            existing.passwordHash = await bcrypt.hash(password, 12);
+            admin.passwordHash = await bcrypt.hash(password, 12);
             console.log(`🔐 Admin password reset for ${email}`);
         }
-        await userRepo.save(existing);
+        await userRepo.save(admin);
         console.log(`✅ Admin user verified: ${email}`);
-        return existing;
     }
-    const admin = userRepo.create({
-        name: env('SEED_ADMIN_NAME', 'Edwin Admin'),
-        email,
-        passwordHash: await bcrypt.hash(password, 12),
-        role: enums_js_1.Role.ADMIN,
-        isActive: true,
-    });
-    await userRepo.save(admin);
-    console.log(`✅ Admin user created: ${email}`);
+    else {
+        admin = userRepo.create({
+            name: env('SEED_ADMIN_NAME', 'Edwin Admin'),
+            email,
+            passwordHash: await bcrypt.hash(password, 12),
+            role: enums_js_1.Role.ADMIN,
+            isActive: true,
+        });
+        await userRepo.save(admin);
+        console.log(`✅ Admin user created: ${email}`);
+    }
+    const accEmail = 'accounts@edwinconstructions.com';
+    const accExisting = await userRepo.findOne({ where: { email: accEmail } });
+    if (!accExisting) {
+        const manager = userRepo.create({
+            name: 'Sample Accounts Manager',
+            email: accEmail,
+            username: 'accounts_mgr',
+            passwordHash: await bcrypt.hash('8220', 12),
+            role: enums_js_1.Role.ACCOUNTS_MANAGER,
+            isActive: true,
+            employeeId: 'ACC-001',
+        });
+        await userRepo.save(manager);
+        console.log(`✅ Accounts Manager user created: ${accEmail}`);
+    }
     return admin;
 }
 async function seedReferenceData(manager, admin) {
     const vendorRepo = manager.getRepository(vendor_entity_js_1.Vendor);
-    const customerRepo = manager.getRepository(customer_entity_js_1.Customer);
     const projectRepo = manager.getRepository(project_entity_js_1.Project);
     const vendors = [];
     vendors.push(await upsertBy(vendorRepo, { name: 'Tata Steel Limited' }, {
@@ -210,43 +227,6 @@ async function seedReferenceData(manager, admin) {
         state: 'Maharashtra',
         contactEmail: 'orders@ambujacement.com',
         contactPhone: '+91-9876543211',
-        isDeleted: false,
-    }));
-    vendors.push(await upsertBy(vendorRepo, { name: 'KR Electricals' }, {
-        name: 'KR Electricals',
-        address: 'Chennai, Tamil Nadu',
-        gstNumber: '33AABCK5678P1Z2',
-        state: 'Tamil Nadu',
-        contactEmail: 'info@krelectricals.com',
-        contactPhone: '+91-9876543212',
-        isDeleted: false,
-    }));
-    const customers = [];
-    customers.push(await upsertBy(customerRepo, { name: 'NHAI - National Highways Authority of India' }, {
-        name: 'NHAI - National Highways Authority of India',
-        address: 'New Delhi',
-        gstNumber: '07AABCN5555M1Z3',
-        state: 'Delhi',
-        contactEmail: 'projects@nhai.gov.in',
-        contactPhone: '+91-11-25074100',
-        isDeleted: false,
-    }));
-    customers.push(await upsertBy(customerRepo, { name: 'Chennai Metro Rail Limited' }, {
-        name: 'Chennai Metro Rail Limited',
-        address: 'Chennai, Tamil Nadu',
-        gstNumber: '33AABCC1234M1Z5',
-        state: 'Tamil Nadu',
-        contactEmail: 'infra@chennaimetrorail.com',
-        contactPhone: '+91-44-27491111',
-        isDeleted: false,
-    }));
-    customers.push(await upsertBy(customerRepo, { name: 'Prestige Group' }, {
-        name: 'Prestige Group',
-        address: 'Bangalore, Karnataka',
-        gstNumber: '29AABCP3456K1Z7',
-        state: 'Karnataka',
-        contactEmail: 'procurement@prestigeconstruction.com',
-        contactPhone: '+91-80-25591234',
         isDeleted: false,
     }));
     const projects = [];
@@ -278,12 +258,11 @@ async function seedReferenceData(manager, admin) {
         createdBy: admin.id,
         updatedBy: admin.id,
     }));
-    console.log(`✅ Reference data verified: ${vendors.length} vendors, ${customers.length} customers, ${projects.length} projects`);
-    return { vendors, customers, projects };
+    console.log(`✅ Reference data verified: ${vendors.length} vendors, ${projects.length} projects`);
+    return { vendors, projects };
 }
 async function seedOperationalSampleData(manager, admin, seedData) {
     const [steelVendor] = seedData.vendors;
-    const [nhaiCustomer] = seedData.customers;
     const [highwayProject] = seedData.projects;
     const invoiceRepo = manager.getRepository(sales_invoice_entity_js_1.SalesInvoice);
     const billRepo = manager.getRepository(purchase_bill_entity_js_1.PurchaseBill);
@@ -309,7 +288,6 @@ async function seedOperationalSampleData(manager, admin, seedData) {
     });
     await upsertBy(invoiceRepo, { invoiceNumber: 'INV-2026-0001' }, {
         invoiceNumber: 'INV-2026-0001',
-        customerId: nhaiCustomer.id,
         projectId: highwayProject.id,
         status: enums_js_1.InvoiceStatus.PAID,
         totalAmount: 5_200_000,
@@ -381,6 +359,41 @@ async function seedOperationalSampleData(manager, admin, seedData) {
     });
     console.log(`✅ Operational sample data verified: ${workOrder.woNumber}`);
 }
+async function seedWorkCategories(manager) {
+    const repo = manager.getRepository(work_category_entity_js_1.WorkCategory);
+    const categories = [
+        'Civil',
+        'Electrical',
+        'Plumbing',
+        'Painting',
+        'HVAC',
+        'Fire Fighting',
+        'Interior',
+        'Landscaping',
+        'Other',
+    ];
+    for (const name of categories) {
+        await upsertBy(repo, { name }, { name, isDeleted: false });
+    }
+    console.log(`✅ Work categories verified: ${categories.length}`);
+}
+async function seedTrades(manager) {
+    const repo = manager.getRepository(trade_entity_js_1.Trade);
+    const trades = [
+        'Mason',
+        'Carpenter',
+        'Electrician',
+        'Plumber',
+        'Painter',
+        'Helper',
+        'Supervisor',
+        'Other',
+    ];
+    for (const name of trades) {
+        await upsertBy(repo, { name }, { name, isDeleted: false });
+    }
+    console.log(`✅ Trades verified: ${trades.length}`);
+}
 async function seed() {
     loadEnvironment();
     const isProduction = process.env.NODE_ENV === 'production';
@@ -391,6 +404,8 @@ async function seed() {
     try {
         await dataSource.transaction(async (manager) => {
             const admin = await seedAdmin(manager.getRepository(user_entity_js_1.User));
+            await seedWorkCategories(manager);
+            await seedTrades(manager);
             const referenceData = await seedReferenceData(manager, admin);
             if (includeSampleData) {
                 await seedOperationalSampleData(manager, admin, referenceData);

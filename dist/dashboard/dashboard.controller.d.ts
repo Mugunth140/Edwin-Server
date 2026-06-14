@@ -19,4 +19,18 @@ export declare class DashboardController {
         }[];
         criticalActions: never[];
     }>;
+    getEngineer(req: any): Promise<{
+        totalProjects: number;
+        projects: {
+            id: string;
+            name: string;
+            completionPct: number;
+        }[];
+        revenueVsCost: {
+            totalRevenue: number;
+            totalCost: number;
+        };
+        weeklyLabour: never[];
+        criticalActions: never[];
+    }>;
 }

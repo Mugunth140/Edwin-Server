@@ -10,7 +10,7 @@ import { InvoiceItem } from './entities/invoice-item.entity.js';
 import { PurchaseBill } from './entities/purchase-bill.entity.js';
 import { BoqItem } from './entities/boq-item.entity.js';
 import { Advance } from './entities/advance.entity.js';
-import { Customer } from '../customers/entities/customer.entity.js';
+import { Project } from '../projects/entities/project.entity.js';
 import { PurchaseOrder } from '../purchase-orders/entities/purchase-order.entity.js';
 
 @Module({
@@ -21,7 +21,7 @@ import { PurchaseOrder } from '../purchase-orders/entities/purchase-order.entity
       PurchaseBill,
       BoqItem,
       Advance,
-      Customer,
+      Project,
       PurchaseOrder,
     ]),
   ],
@@ -35,3 +35,4 @@ import { PurchaseOrder } from '../purchase-orders/entities/purchase-order.entity
   exports: [AccountsService],
 })
 export class AccountsModule {}
+
