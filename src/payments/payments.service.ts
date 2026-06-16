@@ -36,10 +36,10 @@ export class PaymentsService {
         bill.paidAmount = newPaidAmount;
 
         if (newPaidAmount >= Number(bill.amount)) {
-          bill.status = BillStatus.PAID;
+          bill.status = BillStatus.APPROVED;
           bill.paidAt = new Date();
         } else if (newPaidAmount > 0) {
-          bill.status = BillStatus.PARTIAL;
+          bill.status = BillStatus.APPROVED;
         }
 
         await manager.save(bill);
