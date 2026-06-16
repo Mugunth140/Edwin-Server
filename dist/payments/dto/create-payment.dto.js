@@ -16,6 +16,7 @@ const enums_js_1 = require("../../common/enums.js");
 class CreatePaymentDto {
     paymentType;
     purchaseBillId;
+    salesInvoiceId;
     vendorId;
     payeeName;
     amount;
@@ -37,6 +38,12 @@ __decorate([
     (0, class_validator_1.IsOptional)(),
     __metadata("design:type", String)
 ], CreatePaymentDto.prototype, "purchaseBillId", void 0);
+__decorate([
+    (0, swagger_1.ApiPropertyOptional)(),
+    (0, class_validator_1.IsUUID)(),
+    (0, class_validator_1.IsOptional)(),
+    __metadata("design:type", String)
+], CreatePaymentDto.prototype, "salesInvoiceId", void 0);
 __decorate([
     (0, swagger_1.ApiPropertyOptional)(),
     (0, class_validator_1.IsUUID)(),

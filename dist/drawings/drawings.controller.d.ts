@@ -9,7 +9,7 @@ export declare class DrawingsController {
         category: DrawingCategory;
         revision?: string;
     }, req: any): Promise<import("./entities/drawing.entity.js").Drawing>;
-    findAll(projectId?: string, category?: DrawingCategory, revision?: string): Promise<import("./entities/drawing.entity.js").Drawing[]>;
+    findAll(projectId: string, category: DrawingCategory, revision: string, req: any): Promise<import("./entities/drawing.entity.js").Drawing[]>;
     findOne(id: string): Promise<import("./entities/drawing.entity.js").Drawing>;
     update(id: string, file: Express.Multer.File, body: {
         title?: string;

@@ -38,7 +38,7 @@ let PaymentsController = class PaymentsController {
 exports.PaymentsController = PaymentsController;
 __decorate([
     (0, common_1.Post)(),
-    (0, roles_decorator_js_1.Roles)(enums_js_1.Role.ADMIN, enums_js_1.Role.ACCOUNTS_MANAGER),
+    (0, roles_decorator_js_1.Roles)(enums_js_1.Role.ADMIN, enums_js_1.Role.ACCOUNTS_MANAGER, enums_js_1.Role.PURCHASE_TEAM),
     (0, swagger_1.ApiOperation)({ summary: 'Create payment' }),
     __param(0, (0, common_1.Body)()),
     __param(1, (0, common_1.Request)()),

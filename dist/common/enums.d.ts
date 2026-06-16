@@ -1,6 +1,7 @@
 export declare enum Role {
     ADMIN = "admin",
     ACCOUNTS_MANAGER = "accounts_manager",
+    PURCHASE_TEAM = "purchase_team",
     SITE_ENGINEER = "site_engineer",
     VIEWER = "viewer"
 }
@@ -11,15 +12,13 @@ export declare enum WorkOrderStatus {
 }
 export declare enum PurchaseOrderStatus {
     DRAFT = "draft",
-    ISSUED = "issued",
-    PARTIALLY_RECEIVED = "partially_received",
-    COMPLETED = "completed",
-    CANCELLED = "cancelled"
+    SENT = "sent",
+    APPROVED = "approved"
 }
 export declare enum BillStatus {
-    UNPAID = "unpaid",
-    PARTIAL = "partial",
-    PAID = "paid"
+    PENDING = "pending",
+    APPROVED = "approved",
+    REJECTED = "rejected"
 }
 export declare enum PaymentMode {
     CASH = "cash",
@@ -30,6 +29,7 @@ export declare enum PaymentMode {
 export declare enum InvoiceStatus {
     DRAFT = "draft",
     SENT = "sent",
+    PARTIAL = "partial",
     PAID = "paid",
     OVERDUE = "overdue",
     CANCELLED = "cancelled"
@@ -71,6 +71,11 @@ export declare enum ExpenseCategory {
     TRANSPORT = "transport",
     TRAVEL = "travel"
 }
+export declare enum ExpenseStatus {
+    PENDING = "pending",
+    APPROVED = "approved",
+    REJECTED = "rejected"
+}
 export declare enum PaymentType {
     MATERIAL = "material",
     LABOUR = "labour",
@@ -79,7 +84,8 @@ export declare enum PaymentType {
     OFFICE_MAINTENANCE = "office_maintenance",
     STAFF_EXPENSE = "staff_expense",
     TRAVEL = "travel",
-    TRANSPORT = "transport"
+    TRANSPORT = "transport",
+    REVENUE = "revenue"
 }
 export declare enum AdvanceEntityType {
     VENDOR = "vendor",

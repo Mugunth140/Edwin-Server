@@ -78,8 +78,8 @@ let DprController = class DprController {
             uploadedBy: req.user.id,
         });
     }
-    findAll(projectId, dateFrom, dateTo, page, limit) {
-        return this.dprService.findAll({ projectId, dateFrom, dateTo, page, limit });
+    findAll(projectId, dateFrom, dateTo, page, limit, req) {
+        return this.dprService.findAll({ projectId, dateFrom, dateTo, page, limit }, req.user);
     }
     findOne(id) {
         return this.dprService.findOne(id);
@@ -146,8 +146,9 @@ __decorate([
     __param(2, (0, common_1.Query)('dateTo')),
     __param(3, (0, common_1.Query)('page')),
     __param(4, (0, common_1.Query)('limit')),
+    __param(5, (0, common_1.Request)()),
     __metadata("design:type", Function),
-    __metadata("design:paramtypes", [String, String, String, Number, Number]),
+    __metadata("design:paramtypes", [String, String, String, Number, Number, Object]),
     __metadata("design:returntype", void 0)
 ], DprController.prototype, "findAll", null);
 __decorate([

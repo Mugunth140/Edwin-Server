@@ -15,7 +15,7 @@ export class PaymentsController {
   constructor(private readonly paymentsService: PaymentsService) {}
 
   @Post()
-  @Roles(Role.ADMIN, Role.ACCOUNTS_MANAGER)
+  @Roles(Role.ADMIN, Role.ACCOUNTS_MANAGER, Role.PURCHASE_TEAM)
   @ApiOperation({ summary: 'Create payment' })
   create(@Body() dto: CreatePaymentDto, @Request() req: any) {
     return this.paymentsService.create(dto, req.user.id);

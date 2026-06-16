@@ -11,6 +11,7 @@ import { Project } from '../../projects/entities/project.entity.js';
 import { PurchaseBill } from '../../accounts/entities/purchase-bill.entity.js';
 import { Vendor } from '../../vendors/entities/vendor.entity.js';
 import { Expense } from '../../expenses/entities/expense.entity.js';
+import { SalesInvoice } from '../../accounts/entities/sales-invoice.entity.js';
 
 @Entity('payments')
 export class Payment {
@@ -26,6 +27,13 @@ export class Payment {
 
   @Column({ nullable: true })
   purchaseBillId: string;
+
+  @ManyToOne(() => SalesInvoice, (invoice) => invoice.payments, { nullable: true })
+  @JoinColumn({ name: 'salesInvoiceId' })
+  salesInvoice: SalesInvoice;
+
+  @Column({ nullable: true })
+  salesInvoiceId: string;
 
   @ManyToOne(() => Expense, { nullable: true })
   @JoinColumn({ name: 'expenseId' })

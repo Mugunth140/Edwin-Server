@@ -6,8 +6,9 @@ import { BoqItem } from './entities/boq-item.entity.js';
 import { Advance } from './entities/advance.entity.js';
 import { Project } from '../projects/entities/project.entity.js';
 import { PurchaseOrder } from '../purchase-orders/entities/purchase-order.entity.js';
+import { PoItem } from '../purchase-orders/entities/po-item.entity.js';
 import { CreateInvoiceDto, CreateBillDto, CreateAdvanceDto, CreateBoqDto } from './dto/accounts.dto.js';
-import { InvoiceStatus } from '../common/enums.js';
+import { InvoiceStatus, BillStatus } from '../common/enums.js';
 export declare class AccountsService {
     private invoiceRepo;
     private invoiceItemRepo;
@@ -16,7 +17,8 @@ export declare class AccountsService {
     private advanceRepo;
     private projectRepo;
     private poRepo;
-    constructor(invoiceRepo: Repository<SalesInvoice>, invoiceItemRepo: Repository<InvoiceItem>, billRepo: Repository<PurchaseBill>, boqRepo: Repository<BoqItem>, advanceRepo: Repository<Advance>, projectRepo: Repository<Project>, poRepo: Repository<PurchaseOrder>);
+    private poItemRepo;
+    constructor(invoiceRepo: Repository<SalesInvoice>, invoiceItemRepo: Repository<InvoiceItem>, billRepo: Repository<PurchaseBill>, boqRepo: Repository<BoqItem>, advanceRepo: Repository<Advance>, projectRepo: Repository<Project>, poRepo: Repository<PurchaseOrder>, poItemRepo: Repository<PoItem>);
     convertPoToBill(poId: string, userId?: string): Promise<PurchaseBill>;
     private generateInvoiceNumber;
     createInvoice(dto: CreateInvoiceDto, userId?: string): Promise<SalesInvoice>;
@@ -24,23 +26,32 @@ export declare class AccountsService {
         status?: InvoiceStatus;
         projectId?: string;
     }): Promise<SalesInvoice[]>;
+    findInvoice(id: string): Promise<SalesInvoice>;
     updateInvoiceStatus(id: string, status: InvoiceStatus): Promise<SalesInvoice>;
     removeInvoice(id: string): Promise<void>;
     private generateBillNumber;
     createBill(dto: CreateBillDto, userId?: string): Promise<PurchaseBill>;
     findBills(): Promise<PurchaseBill[]>;
+    updateBillStatus(id: string, status: BillStatus): Promise<PurchaseBill>;
     createBoq(dto: CreateBoqDto): Promise<BoqItem>;
     findBoq(projectId: string): Promise<BoqItem[]>;
     createAdvance(dto: CreateAdvanceDto, userId?: string): Promise<Advance>;
     findAdvances(): Promise<Advance[]>;
-    getLedger(): Promise<{
+    getLedger(): Promise<({
         type: string;
         refNumber: string;
         party: string;
         amount: number;
         date: Date;
-        status: string;
-    }[]>;
+        status: InvoiceStatus;
+    } | {
+        type: string;
+        refNumber: string;
+        party: string;
+        amount: number;
+        date: Date;
+        status: BillStatus;
+    })[]>;
     getPayables(): Promise<PurchaseBill[]>;
     getReceivables(): Promise<SalesInvoice[]>;
     getBalance(): Promise<{

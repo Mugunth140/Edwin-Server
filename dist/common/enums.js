@@ -1,10 +1,11 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.WorkCategory = exports.ProjectStatus = exports.AdvanceEntityType = exports.PaymentType = exports.ExpenseCategory = exports.DrawingCategory = exports.SeverityLevel = exports.RfiStatus = exports.SnagStatus = exports.MilestoneStatus = exports.InvoiceStatus = exports.PaymentMode = exports.BillStatus = exports.PurchaseOrderStatus = exports.WorkOrderStatus = exports.Role = void 0;
+exports.WorkCategory = exports.ProjectStatus = exports.AdvanceEntityType = exports.PaymentType = exports.ExpenseStatus = exports.ExpenseCategory = exports.DrawingCategory = exports.SeverityLevel = exports.RfiStatus = exports.SnagStatus = exports.MilestoneStatus = exports.InvoiceStatus = exports.PaymentMode = exports.BillStatus = exports.PurchaseOrderStatus = exports.WorkOrderStatus = exports.Role = void 0;
 var Role;
 (function (Role) {
     Role["ADMIN"] = "admin";
     Role["ACCOUNTS_MANAGER"] = "accounts_manager";
+    Role["PURCHASE_TEAM"] = "purchase_team";
     Role["SITE_ENGINEER"] = "site_engineer";
     Role["VIEWER"] = "viewer";
 })(Role || (exports.Role = Role = {}));
@@ -17,16 +18,14 @@ var WorkOrderStatus;
 var PurchaseOrderStatus;
 (function (PurchaseOrderStatus) {
     PurchaseOrderStatus["DRAFT"] = "draft";
-    PurchaseOrderStatus["ISSUED"] = "issued";
-    PurchaseOrderStatus["PARTIALLY_RECEIVED"] = "partially_received";
-    PurchaseOrderStatus["COMPLETED"] = "completed";
-    PurchaseOrderStatus["CANCELLED"] = "cancelled";
+    PurchaseOrderStatus["SENT"] = "sent";
+    PurchaseOrderStatus["APPROVED"] = "approved";
 })(PurchaseOrderStatus || (exports.PurchaseOrderStatus = PurchaseOrderStatus = {}));
 var BillStatus;
 (function (BillStatus) {
-    BillStatus["UNPAID"] = "unpaid";
-    BillStatus["PARTIAL"] = "partial";
-    BillStatus["PAID"] = "paid";
+    BillStatus["PENDING"] = "pending";
+    BillStatus["APPROVED"] = "approved";
+    BillStatus["REJECTED"] = "rejected";
 })(BillStatus || (exports.BillStatus = BillStatus = {}));
 var PaymentMode;
 (function (PaymentMode) {
@@ -39,6 +38,7 @@ var InvoiceStatus;
 (function (InvoiceStatus) {
     InvoiceStatus["DRAFT"] = "draft";
     InvoiceStatus["SENT"] = "sent";
+    InvoiceStatus["PARTIAL"] = "partial";
     InvoiceStatus["PAID"] = "paid";
     InvoiceStatus["OVERDUE"] = "overdue";
     InvoiceStatus["CANCELLED"] = "cancelled";
@@ -86,6 +86,12 @@ var ExpenseCategory;
     ExpenseCategory["TRANSPORT"] = "transport";
     ExpenseCategory["TRAVEL"] = "travel";
 })(ExpenseCategory || (exports.ExpenseCategory = ExpenseCategory = {}));
+var ExpenseStatus;
+(function (ExpenseStatus) {
+    ExpenseStatus["PENDING"] = "pending";
+    ExpenseStatus["APPROVED"] = "approved";
+    ExpenseStatus["REJECTED"] = "rejected";
+})(ExpenseStatus || (exports.ExpenseStatus = ExpenseStatus = {}));
 var PaymentType;
 (function (PaymentType) {
     PaymentType["MATERIAL"] = "material";
@@ -96,6 +102,7 @@ var PaymentType;
     PaymentType["STAFF_EXPENSE"] = "staff_expense";
     PaymentType["TRAVEL"] = "travel";
     PaymentType["TRANSPORT"] = "transport";
+    PaymentType["REVENUE"] = "revenue";
 })(PaymentType || (exports.PaymentType = PaymentType = {}));
 var AdvanceEntityType;
 (function (AdvanceEntityType) {

@@ -1,6 +1,7 @@
 export enum Role {
   ADMIN = 'admin',
   ACCOUNTS_MANAGER = 'accounts_manager',
+  PURCHASE_TEAM = 'purchase_team',
   SITE_ENGINEER = 'site_engineer',
   VIEWER = 'viewer',
 }
@@ -13,16 +14,14 @@ export enum WorkOrderStatus {
 
 export enum PurchaseOrderStatus {
   DRAFT = 'draft',
-  ISSUED = 'issued',
-  PARTIALLY_RECEIVED = 'partially_received',
-  COMPLETED = 'completed',
-  CANCELLED = 'cancelled',
+  SENT = 'sent',
+  APPROVED = 'approved',
 }
 
 export enum BillStatus {
-  UNPAID = 'unpaid',
-  PARTIAL = 'partial',
-  PAID = 'paid',
+  PENDING = 'pending',
+  APPROVED = 'approved',
+  REJECTED = 'rejected',
 }
 
 export enum PaymentMode {
@@ -35,6 +34,7 @@ export enum PaymentMode {
 export enum InvoiceStatus {
   DRAFT = 'draft',
   SENT = 'sent',
+  PARTIAL = 'partial',
   PAID = 'paid',
   OVERDUE = 'overdue',
   CANCELLED = 'cancelled',
@@ -83,6 +83,12 @@ export enum ExpenseCategory {
   TRAVEL = 'travel',
 }
 
+export enum ExpenseStatus {
+  PENDING = 'pending',
+  APPROVED = 'approved',
+  REJECTED = 'rejected',
+}
+
 export enum PaymentType {
   MATERIAL = 'material',
   LABOUR = 'labour',
@@ -92,6 +98,7 @@ export enum PaymentType {
   STAFF_EXPENSE = 'staff_expense',
   TRAVEL = 'travel',
   TRANSPORT = 'transport',
+  REVENUE = 'revenue',
 }
 
 export enum AdvanceEntityType {

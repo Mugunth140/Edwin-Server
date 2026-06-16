@@ -8,7 +8,7 @@ export declare class ExpensesService {
     private paymentsRepo;
     private dataSource;
     constructor(expensesRepo: Repository<Expense>, paymentsRepo: Repository<Payment>, dataSource: DataSource);
-    create(dto: CreateExpenseDto, userId?: string): Promise<Expense>;
+    create(dto: CreateExpenseDto, userId?: string, files?: Express.Multer.File[]): Promise<Expense>;
     findAll(query: {
         category?: ExpenseCategory;
         projectId?: string;
@@ -16,14 +16,14 @@ export declare class ExpensesService {
         dateTo?: string;
         page?: number;
         limit?: number;
-    }): Promise<{
+    }, user?: any): Promise<{
         data: Expense[];
         total: number;
         page: number;
         limit: number;
     }>;
     findOne(id: string): Promise<Expense>;
-    update(id: string, dto: Partial<CreateExpenseDto>): Promise<Expense>;
+    update(id: string, dto: Partial<CreateExpenseDto>, files?: Express.Multer.File[]): Promise<Expense>;
     softDelete(id: string): Promise<void>;
     getSummary(): Promise<any[]>;
 }

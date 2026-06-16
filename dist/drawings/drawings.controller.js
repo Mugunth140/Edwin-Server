@@ -78,8 +78,8 @@ let DrawingsController = class DrawingsController {
             uploadedBy: req.user.id,
         });
     }
-    findAll(projectId, category, revision) {
-        return this.drawingsService.findAll({ projectId, category, revision });
+    findAll(projectId, category, revision, req) {
+        return this.drawingsService.findAll({ projectId, category, revision }, req.user);
     }
     findOne(id) {
         return this.drawingsService.findOne(id);
@@ -133,8 +133,9 @@ __decorate([
     __param(0, (0, common_1.Query)('projectId')),
     __param(1, (0, common_1.Query)('category')),
     __param(2, (0, common_1.Query)('revision')),
+    __param(3, (0, common_1.Request)()),
     __metadata("design:type", Function),
-    __metadata("design:paramtypes", [String, String, String]),
+    __metadata("design:paramtypes", [String, String, String, Object]),
     __metadata("design:returntype", void 0)
 ], DrawingsController.prototype, "findAll", null);
 __decorate([

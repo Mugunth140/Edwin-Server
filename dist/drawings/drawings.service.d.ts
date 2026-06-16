@@ -9,7 +9,7 @@ export declare class DrawingsService {
         projectId?: string;
         category?: DrawingCategory;
         revision?: string;
-    }): Promise<Drawing[]>;
+    }, user?: any): Promise<Drawing[]>;
     findOne(id: string): Promise<Drawing>;
     update(id: string, data: Partial<Drawing>): Promise<Drawing>;
     softDelete(id: string): Promise<void>;

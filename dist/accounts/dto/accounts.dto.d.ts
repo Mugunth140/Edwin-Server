@@ -10,6 +10,10 @@ export declare class CreateInvoiceDto {
     dueDate?: string;
     items: InvoiceItemDto[];
 }
+export declare class BillItemDto {
+    poItemId: string;
+    quantity: number;
+}
 export declare class CreateBillDto {
     vendorId: string;
     purchaseOrderId?: string;
@@ -17,6 +21,9 @@ export declare class CreateBillDto {
     amount: number;
     billDate?: string;
     dueDate?: string;
+    billFileUrl?: string;
+    billFileKey?: string;
+    items?: BillItemDto[];
 }
 export declare class CreateAdvanceDto {
     entityType: AdvanceEntityType;

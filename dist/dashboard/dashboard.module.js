@@ -18,6 +18,7 @@ const sales_invoice_entity_js_1 = require("../accounts/entities/sales-invoice.en
 const purchase_bill_entity_js_1 = require("../accounts/entities/purchase-bill.entity.js");
 const expense_entity_js_1 = require("../expenses/entities/expense.entity.js");
 const payment_entity_js_1 = require("../payments/entities/payment.entity.js");
+const purchase_order_entity_js_1 = require("../purchase-orders/entities/purchase-order.entity.js");
 const user_entity_js_1 = require("../users/entities/user.entity.js");
 let DashboardModule = class DashboardModule {
 };
@@ -34,6 +35,7 @@ exports.DashboardModule = DashboardModule = __decorate([
                 expense_entity_js_1.Expense,
                 payment_entity_js_1.Payment,
                 user_entity_js_1.User,
+                purchase_order_entity_js_1.PurchaseOrder,
             ]),
         ],
         controllers: [dashboard_controller_js_1.DashboardController],

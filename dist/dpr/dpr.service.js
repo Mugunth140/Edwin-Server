@@ -17,6 +17,7 @@ const common_1 = require("@nestjs/common");
 const typeorm_1 = require("@nestjs/typeorm");
 const typeorm_2 = require("typeorm");
 const dpr_report_entity_js_1 = require("./entities/dpr-report.entity.js");
+const enums_js_1 = require("../common/enums.js");
 let DprService = class DprService {
     dprRepo;
     constructor(dprRepo) {
@@ -26,7 +27,7 @@ let DprService = class DprService {
         const report = this.dprRepo.create(data);
         return this.dprRepo.save(report);
     }
-    async findAll(query) {
+    async findAll(query, user) {
         const { projectId, dateFrom, dateTo, page = 1, limit = 20 } = query;
         console.log('DPR Filter Query:', { projectId, dateFrom, dateTo });
         const qb = this.dprRepo.createQueryBuilder('dpr')
@@ -50,6 +51,9 @@ let DprService = class DprService {
                     dateToFormatted: toDate.toISOString().split('T')[0]
                 });
             }
+        }
+        if (user && user.role === enums_js_1.Role.SITE_ENGINEER) {
+            qb.andWhere('dpr.uploadedBy = :userId', { userId: user.id });
         }
         qb.orderBy('dpr.reportDate', 'DESC');
         qb.addOrderBy('dpr.createdAt', 'DESC');

@@ -70,11 +70,12 @@ export class DrawingsController {
   @ApiQuery({ name: 'category', required: false, enum: DrawingCategory })
   @ApiQuery({ name: 'revision', required: false })
   findAll(
-    @Query('projectId') projectId?: string,
-    @Query('category') category?: DrawingCategory,
-    @Query('revision') revision?: string,
+    @Query('projectId') projectId: string,
+    @Query('category') category: DrawingCategory,
+    @Query('revision') revision: string,
+    @Request() req: any,
   ) {
-    return this.drawingsService.findAll({ projectId, category, revision });
+    return this.drawingsService.findAll({ projectId, category, revision }, req.user);
   }
 
   @Get(':id')

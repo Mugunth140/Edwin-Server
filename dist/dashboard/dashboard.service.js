@@ -24,6 +24,7 @@ const purchase_bill_entity_js_1 = require("../accounts/entities/purchase-bill.en
 const expense_entity_js_1 = require("../expenses/entities/expense.entity.js");
 const payment_entity_js_1 = require("../payments/entities/payment.entity.js");
 const user_entity_js_1 = require("../users/entities/user.entity.js");
+const purchase_order_entity_js_1 = require("../purchase-orders/entities/purchase-order.entity.js");
 const enums_js_1 = require("../common/enums.js");
 let DashboardService = class DashboardService {
     projectsRepo;
@@ -34,7 +35,8 @@ let DashboardService = class DashboardService {
     expenseRepo;
     paymentRepo;
     usersRepo;
-    constructor(projectsRepo, milestonesRepo, attendanceRepo, invoiceRepo, billRepo, expenseRepo, paymentRepo, usersRepo) {
+    poRepo;
+    constructor(projectsRepo, milestonesRepo, attendanceRepo, invoiceRepo, billRepo, expenseRepo, paymentRepo, usersRepo, poRepo) {
         this.projectsRepo = projectsRepo;
         this.milestonesRepo = milestonesRepo;
         this.attendanceRepo = attendanceRepo;
@@ -43,6 +45,63 @@ let DashboardService = class DashboardService {
         this.expenseRepo = expenseRepo;
         this.paymentRepo = paymentRepo;
         this.usersRepo = usersRepo;
+        this.poRepo = poRepo;
+    }
+    async getPurchaseDashboard() {
+        const pendingPOs = await this.poRepo.find({
+            where: {
+                status: enums_js_1.PurchaseOrderStatus.APPROVED,
+                isDeleted: false
+            },
+            relations: ['vendor', 'items', 'project'],
+            order: { createdAt: 'DESC' },
+        });
+        const bills = await this.billRepo.find({
+            where: { isDeleted: false },
+            relations: ['vendor', 'payments'],
+        });
+        const totalPayable = bills.reduce((sum, bill) => {
+            const balance = Number(bill.amount) - Number(bill.paidAmount || 0);
+            return sum + balance;
+        }, 0);
+        const unpaidBillCount = bills.filter(b => (Number(b.amount) - Number(b.paidAmount || 0)) > 0).length;
+        const recentPOs = await this.poRepo.find({
+            where: { isDeleted: false },
+            relations: ['vendor'],
+            order: { createdAt: 'DESC' },
+            take: 5
+        });
+        const recentBills = await this.billRepo.find({
+            where: { isDeleted: false },
+            relations: ['vendor'],
+            order: { createdAt: 'DESC' },
+            take: 5
+        });
+        return {
+            pendingPOs: pendingPOs.map(po => {
+                const totalQty = po.items?.reduce((s, i) => s + Number(i.quantity), 0) || 0;
+                const totalBilled = po.items?.reduce((s, i) => s + Number(i.billedQuantity || 0), 0) || 0;
+                return {
+                    id: po.id,
+                    poNumber: po.poNumber,
+                    vendorName: po.vendor?.name,
+                    projectName: po.project?.name,
+                    totalAmount: po.totalAmount,
+                    fulfillment: totalQty > 0 ? Math.round((totalBilled / totalQty) * 100) : 0,
+                    createdAt: po.createdAt
+                };
+            }),
+            kpis: {
+                totalPayable,
+                unpaidBillCount,
+                activePOCount: pendingPOs.length,
+                totalPOValue: recentPOs.reduce((s, p) => s + Number(p.totalAmount), 0),
+            },
+            recentActivity: {
+                pos: recentPOs,
+                bills: recentBills
+            }
+        };
     }
     async getMasterDashboard() {
         const projects = await this.projectsRepo.find({ where: { isDeleted: false } });
@@ -52,23 +111,23 @@ let DashboardService = class DashboardService {
             .select('SUM(inv.totalAmount + inv.gstAmount)', 'total')
             .where('inv.isDeleted = false AND inv.status = :status', { status: enums_js_1.InvoiceStatus.PAID })
             .getRawOne();
-        const billCost = await this.billRepo
-            .createQueryBuilder('bill')
-            .select('SUM(bill.amount)', 'total')
-            .where('bill.isDeleted = false')
-            .getRawOne();
-        const expenseCost = await this.expenseRepo
-            .createQueryBuilder('e')
-            .select('SUM(e.amount)', 'total')
-            .where('e.isDeleted = false')
-            .getRawOne();
         const paymentCost = await this.paymentRepo
+            .createQueryBuilder('p')
+            .leftJoin('p.expense', 'expense')
+            .select('SUM(p.amount)', 'total')
+            .where('p.isDeleted = false')
+            .andWhere("p.paymentType != 'revenue'")
+            .andWhere('(expense.status = :status OR expense.status IS NULL)', { status: 'approved' })
+            .getRawOne();
+        const revenuePayment = await this.paymentRepo
             .createQueryBuilder('p')
             .select('SUM(p.amount)', 'total')
             .where('p.isDeleted = false')
+            .andWhere("p.paymentType = 'revenue'")
             .getRawOne();
         const totalRevenue = Number(revenueResult?.total || 0);
-        const totalCost = Number(billCost?.total || 0) + Number(expenseCost?.total || 0) + Number(paymentCost?.total || 0);
+        const totalCost = Number(paymentCost?.total || 0);
+        const totalInflow = Number(revenuePayment?.total || 0);
         const weeklyLabour = await this.attendanceRepo
             .createQueryBuilder('a')
             .select("DATE_TRUNC('week', a.logDate)", 'weekStart')
@@ -84,7 +143,7 @@ let DashboardService = class DashboardService {
                 name: p.name,
                 completionPct: Number(p.completionPct),
             })),
-            revenueVsCost: { totalRevenue, totalCost },
+            revenueVsCost: { totalRevenue, totalCost, totalInflow },
             weeklyLabour: weeklyLabour.map((w) => ({
                 weekStart: w.weekStart,
                 headcount: Number(w.headcount),
@@ -125,7 +184,9 @@ exports.DashboardService = DashboardService = __decorate([
     __param(5, (0, typeorm_1.InjectRepository)(expense_entity_js_1.Expense)),
     __param(6, (0, typeorm_1.InjectRepository)(payment_entity_js_1.Payment)),
     __param(7, (0, typeorm_1.InjectRepository)(user_entity_js_1.User)),
+    __param(8, (0, typeorm_1.InjectRepository)(purchase_order_entity_js_1.PurchaseOrder)),
     __metadata("design:paramtypes", [typeorm_2.Repository,
+        typeorm_2.Repository,
         typeorm_2.Repository,
         typeorm_2.Repository,
         typeorm_2.Repository,

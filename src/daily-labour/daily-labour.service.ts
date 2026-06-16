@@ -4,6 +4,7 @@ import { Repository } from 'typeorm';
 import { DailyLabourReport } from './entities/daily-labour-report.entity.js';
 import { DailyWorker } from './entities/daily-worker.entity.js';
 import { CreateDailyLabourReportDto } from './dto/create-daily-labour.dto.js';
+import { Role } from '../common/enums.js';
 
 @Injectable()
 export class DailyLabourService {
@@ -44,7 +45,7 @@ export class DailyLabourService {
     return this.findOne(savedReport.id);
   }
 
-  async findAll(projectId?: string) {
+  async findAll(user: any, projectId?: string) {
     const query = this.reportRepo.createQueryBuilder('report')
       .leftJoinAndSelect('report.project', 'project')
       .leftJoinAndSelect('report.createdBy', 'createdBy')
@@ -54,6 +55,11 @@ export class DailyLabourService {
 
     if (projectId) {
       query.andWhere('report.projectId = :projectId', { projectId });
+    }
+
+    // Site engineers only see their own reports
+    if (user.role === Role.SITE_ENGINEER) {
+      query.andWhere('report.createdById = :userId', { userId: user.id });
     }
 
     query.orderBy('report.reportDate', 'DESC');

@@ -16,11 +16,14 @@ const project_entity_js_1 = require("../../projects/entities/project.entity.js")
 const purchase_bill_entity_js_1 = require("../../accounts/entities/purchase-bill.entity.js");
 const vendor_entity_js_1 = require("../../vendors/entities/vendor.entity.js");
 const expense_entity_js_1 = require("../../expenses/entities/expense.entity.js");
+const sales_invoice_entity_js_1 = require("../../accounts/entities/sales-invoice.entity.js");
 let Payment = class Payment {
     id;
     paymentType;
     purchaseBill;
     purchaseBillId;
+    salesInvoice;
+    salesInvoiceId;
     expense;
     expenseId;
     vendor;
@@ -55,6 +58,15 @@ __decorate([
     (0, typeorm_1.Column)({ nullable: true }),
     __metadata("design:type", String)
 ], Payment.prototype, "purchaseBillId", void 0);
+__decorate([
+    (0, typeorm_1.ManyToOne)(() => sales_invoice_entity_js_1.SalesInvoice, (invoice) => invoice.payments, { nullable: true }),
+    (0, typeorm_1.JoinColumn)({ name: 'salesInvoiceId' }),
+    __metadata("design:type", sales_invoice_entity_js_1.SalesInvoice)
+], Payment.prototype, "salesInvoice", void 0);
+__decorate([
+    (0, typeorm_1.Column)({ nullable: true }),
+    __metadata("design:type", String)
+], Payment.prototype, "salesInvoiceId", void 0);
 __decorate([
     (0, typeorm_1.ManyToOne)(() => expense_entity_js_1.Expense, { nullable: true }),
     (0, typeorm_1.JoinColumn)({ name: 'expenseId' }),

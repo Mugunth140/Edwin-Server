@@ -15,6 +15,11 @@ export class CreatePaymentDto {
   @ApiPropertyOptional()
   @IsUUID()
   @IsOptional()
+  salesInvoiceId?: string;
+
+  @ApiPropertyOptional()
+  @IsUUID()
+  @IsOptional()
   vendorId?: string;
 
   @ApiPropertyOptional()

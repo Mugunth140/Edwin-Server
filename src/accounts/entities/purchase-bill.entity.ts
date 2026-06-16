@@ -45,7 +45,7 @@ export class PurchaseBill {
   @Column({ type: 'decimal', precision: 12, scale: 2, default: 0 })
   amount: number;
 
-  @Column({ type: 'varchar', length: 50, default: BillStatus.UNPAID })
+  @Column({ type: 'varchar', length: 50, default: BillStatus.PENDING })
   status: BillStatus;
 
   @Column({ type: 'decimal', precision: 12, scale: 2, default: 0 })
@@ -56,6 +56,12 @@ export class PurchaseBill {
 
   @Column({ type: 'date', nullable: true })
   dueDate: Date;
+
+  @Column({ type: 'varchar', nullable: true })
+  billFileUrl: string;
+
+  @Column({ type: 'varchar', nullable: true })
+  billFileKey: string;
 
   @Column({ type: 'timestamp', nullable: true })
   paidAt: Date;

@@ -8,8 +8,9 @@ import { BoqItem } from './entities/boq-item.entity.js';
 import { Advance } from './entities/advance.entity.js';
 import { Project } from '../projects/entities/project.entity.js';
 import { PurchaseOrder } from '../purchase-orders/entities/purchase-order.entity.js';
+import { PoItem } from '../purchase-orders/entities/po-item.entity.js';
 import { CreateInvoiceDto, CreateBillDto, CreateAdvanceDto, CreateBoqDto } from './dto/accounts.dto.js';
-import { InvoiceStatus } from '../common/enums.js';
+import { InvoiceStatus, BillStatus } from '../common/enums.js';
 
 @Injectable()
 export class AccountsService {
@@ -21,9 +22,8 @@ export class AccountsService {
     @InjectRepository(Advance) private advanceRepo: Repository<Advance>,
     @InjectRepository(Project) private projectRepo: Repository<Project>,
     @InjectRepository(PurchaseOrder) private poRepo: Repository<PurchaseOrder>,
+    @InjectRepository(PoItem) private poItemRepo: Repository<PoItem>,
   ) {}
-
-
 
   async convertPoToBill(poId: string, userId?: string): Promise<PurchaseBill> {
     const po = await this.poRepo.findOne({ where: { id: poId }, relations: ['vendor'] });
@@ -88,10 +88,23 @@ export class AccountsService {
     const qb = this.invoiceRepo.createQueryBuilder('inv')
       .leftJoinAndSelect('inv.project', 'project')
       .leftJoinAndSelect('inv.items', 'items')
+      .leftJoinAndSelect('inv.payments', 'payments')
       .where('inv.isDeleted = false');
     if (query.status) qb.andWhere('inv.status = :status', { status: query.status });
     if (query.projectId) qb.andWhere('inv.projectId = :projectId', { projectId: query.projectId });
     return qb.orderBy('inv.createdAt', 'DESC').getMany();
+  }
+
+  async findInvoice(id: string) {
+    const invoice = await this.invoiceRepo.createQueryBuilder('inv')
+      .leftJoinAndSelect('inv.project', 'project')
+      .leftJoinAndSelect('inv.items', 'items')
+      .leftJoinAndSelect('inv.payments', 'payments')
+      .where('inv.id = :id', { id })
+      .andWhere('inv.isDeleted = false')
+      .getOne();
+    if (!invoice) throw new NotFoundException('Invoice not found');
+    return invoice;
   }
 
   async updateInvoiceStatus(id: string, status: InvoiceStatus) {
@@ -124,12 +137,36 @@ export class AccountsService {
 
   async createBill(dto: CreateBillDto, userId?: string): Promise<PurchaseBill> {
     const billNumber = await this.generateBillNumber();
-    const bill = this.billRepo.create({ ...dto, billNumber, createdBy: userId });
-    return this.billRepo.save(bill);
+    const { items, ...billData } = dto;
+    const bill = this.billRepo.create({ ...billData, billNumber, createdBy: userId });
+    const savedBill = await this.billRepo.save(bill);
+
+    if (items && items.length > 0) {
+      for (const item of items) {
+        const poItem = await this.poItemRepo.findOne({ where: { id: item.poItemId } });
+        if (poItem) {
+          poItem.billedQuantity = Number(poItem.billedQuantity || 0) + Number(item.quantity);
+          await this.poItemRepo.save(poItem);
+        }
+      }
+    }
+    return savedBill;
   }
 
   async findBills() {
-    return this.billRepo.find({ where: { isDeleted: false }, relations: ['vendor', 'payments'], order: { createdAt: 'DESC' } });
+    return this.billRepo.find({
+      where: { isDeleted: false },
+      relations: ['vendor', 'payments', 'purchaseOrder', 'purchaseOrder.items'],
+      order: { createdAt: 'DESC' },
+    });
+  }
+
+  async updateBillStatus(id: string, status: BillStatus) {
+    const bill = await this.billRepo.findOne({ where: { id } });
+    if (!bill) throw new NotFoundException('Bill not found');
+    bill.status = status;
+    if (status === BillStatus.APPROVED) bill.paidAt = new Date();
+    return this.billRepo.save(bill);
   }
 
   // --- BOQ ---
@@ -176,7 +213,7 @@ export class AccountsService {
         party: bill.vendor?.name,
         amount: Number(bill.amount),
         date: bill.createdAt,
-        status: bill.paidAt ? 'paid' : 'unpaid',
+        status: bill.status,
       })),
     ].sort((a, b) => new Date(b.date).getTime() - new Date(a.date).getTime());
 

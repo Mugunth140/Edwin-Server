@@ -8,4 +8,5 @@ export declare class PoItem {
     unit: string;
     rate: number;
     amount: number;
+    billedQuantity: number;
 }

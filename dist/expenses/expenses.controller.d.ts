@@ -4,8 +4,8 @@ import { CreateExpenseDto } from './dto/create-expense.dto.js';
 export declare class ExpensesController {
     private readonly expensesService;
     constructor(expensesService: ExpensesService);
-    create(dto: CreateExpenseDto, req: any): Promise<import("./entities/expense.entity.js").Expense>;
-    findAll(category?: ExpenseCategory, projectId?: string, dateFrom?: string, dateTo?: string, page?: number, limit?: number): Promise<{
+    create(dto: CreateExpenseDto, req: any, files?: Express.Multer.File[]): Promise<import("./entities/expense.entity.js").Expense>;
+    findAll(category: ExpenseCategory, projectId: string, dateFrom: string, dateTo: string, page: number, limit: number, req: any): Promise<{
         data: import("./entities/expense.entity.js").Expense[];
         total: number;
         page: number;
@@ -13,6 +13,6 @@ export declare class ExpensesController {
     }>;
     getSummary(): Promise<any[]>;
     findOne(id: string): Promise<import("./entities/expense.entity.js").Expense>;
-    update(id: string, dto: Partial<CreateExpenseDto>): Promise<import("./entities/expense.entity.js").Expense>;
+    update(id: string, dto: Partial<CreateExpenseDto>, files?: Express.Multer.File[]): Promise<import("./entities/expense.entity.js").Expense>;
     remove(id: string): Promise<void>;
 }

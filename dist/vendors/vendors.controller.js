@@ -43,7 +43,7 @@ let VendorsController = class VendorsController {
 exports.VendorsController = VendorsController;
 __decorate([
     (0, common_1.Post)(),
-    (0, roles_decorator_js_1.Roles)(enums_js_1.Role.ADMIN, enums_js_1.Role.ACCOUNTS_MANAGER),
+    (0, roles_decorator_js_1.Roles)(enums_js_1.Role.ADMIN, enums_js_1.Role.ACCOUNTS_MANAGER, enums_js_1.Role.PURCHASE_TEAM),
     (0, swagger_1.ApiOperation)({ summary: 'Create a new vendor' }),
     __param(0, (0, common_1.Body)()),
     __metadata("design:type", Function),
@@ -59,7 +59,7 @@ __decorate([
 ], VendorsController.prototype, "findAll", null);
 __decorate([
     (0, common_1.Patch)(':id'),
-    (0, roles_decorator_js_1.Roles)(enums_js_1.Role.ADMIN, enums_js_1.Role.ACCOUNTS_MANAGER),
+    (0, roles_decorator_js_1.Roles)(enums_js_1.Role.ADMIN, enums_js_1.Role.ACCOUNTS_MANAGER, enums_js_1.Role.PURCHASE_TEAM),
     (0, swagger_1.ApiOperation)({ summary: 'Update a vendor' }),
     __param(0, (0, common_1.Param)('id')),
     __param(1, (0, common_1.Body)()),

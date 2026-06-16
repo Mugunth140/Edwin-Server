@@ -60,6 +60,7 @@ const purchase_bill_entity_js_1 = require("./accounts/entities/purchase-bill.ent
 const boq_item_entity_js_1 = require("./accounts/entities/boq-item.entity.js");
 const advance_entity_js_1 = require("./accounts/entities/advance.entity.js");
 const expense_entity_js_1 = require("./expenses/entities/expense.entity.js");
+const expense_type_entity_js_1 = require("./expense-types/entities/expense-type.entity.js");
 const payment_entity_js_1 = require("./payments/entities/payment.entity.js");
 const work_category_entity_js_1 = require("./work-categories/entities/work-category.entity.js");
 const trade_entity_js_1 = require("./trades/entities/trade.entity.js");
@@ -394,6 +395,22 @@ async function seedTrades(manager) {
     }
     console.log(`✅ Trades verified: ${trades.length}`);
 }
+async function seedExpenseTypes(manager) {
+    const repo = manager.getRepository(expense_type_entity_js_1.ExpenseType);
+    const types = [
+        'Staff Salary',
+        'Office Rent',
+        'Transport Fuel',
+        'Travel Allowance',
+        'Site Equipment',
+        'Material Purchase',
+        'Other',
+    ];
+    for (const name of types) {
+        await upsertBy(repo, { name }, { name, isDeleted: false });
+    }
+    console.log(`✅ Expense Types verified: ${types.length}`);
+}
 async function seed() {
     loadEnvironment();
     const isProduction = process.env.NODE_ENV === 'production';
@@ -406,6 +423,7 @@ async function seed() {
             const admin = await seedAdmin(manager.getRepository(user_entity_js_1.User));
             await seedWorkCategories(manager);
             await seedTrades(manager);
+            await seedExpenseTypes(manager);
             const referenceData = await seedReferenceData(manager, admin);
             if (includeSampleData) {
                 await seedOperationalSampleData(manager, admin, referenceData);

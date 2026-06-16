@@ -32,6 +32,7 @@ import { PurchaseBill } from './accounts/entities/purchase-bill.entity.js';
 import { BoqItem } from './accounts/entities/boq-item.entity.js';
 import { Advance } from './accounts/entities/advance.entity.js';
 import { Expense } from './expenses/entities/expense.entity.js';
+import { ExpenseType } from './expense-types/entities/expense-type.entity.js';
 import { Payment } from './payments/entities/payment.entity.js';
 import { WorkCategory } from './work-categories/entities/work-category.entity.js';
 import { Trade } from './trades/entities/trade.entity.js';
@@ -423,6 +424,24 @@ async function seedTrades(manager: EntityManager) {
   console.log(`✅ Trades verified: ${trades.length}`);
 }
 
+async function seedExpenseTypes(manager: EntityManager) {
+  const repo = manager.getRepository(ExpenseType);
+  const types = [
+    'Staff Salary',
+    'Office Rent',
+    'Transport Fuel',
+    'Travel Allowance',
+    'Site Equipment',
+    'Material Purchase',
+    'Other',
+  ];
+
+  for (const name of types) {
+    await upsertBy(repo, { name }, { name, isDeleted: false });
+  }
+  console.log(`✅ Expense Types verified: ${types.length}`);
+}
+
 async function seed() {
   loadEnvironment();
 
@@ -438,6 +457,7 @@ async function seed() {
       const admin = await seedAdmin(manager.getRepository(User));
       await seedWorkCategories(manager);
       await seedTrades(manager);
+      await seedExpenseTypes(manager);
       const referenceData = await seedReferenceData(manager, admin);
 
       if (includeSampleData) {

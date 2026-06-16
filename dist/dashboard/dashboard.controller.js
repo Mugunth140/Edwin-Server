@@ -28,6 +28,9 @@ let DashboardController = class DashboardController {
     getMaster() {
         return this.dashboardService.getMasterDashboard();
     }
+    getPurchase() {
+        return this.dashboardService.getPurchaseDashboard();
+    }
     getEngineer(req) {
         return this.dashboardService.getEngineerDashboard(req.user.id);
     }
@@ -41,6 +44,14 @@ __decorate([
     __metadata("design:paramtypes", []),
     __metadata("design:returntype", void 0)
 ], DashboardController.prototype, "getMaster", null);
+__decorate([
+    (0, common_1.Get)('purchase'),
+    (0, roles_decorator_js_1.Roles)(enums_js_1.Role.PURCHASE_TEAM),
+    (0, swagger_1.ApiOperation)({ summary: 'Get purchase team dashboard KPIs' }),
+    __metadata("design:type", Function),
+    __metadata("design:paramtypes", []),
+    __metadata("design:returntype", void 0)
+], DashboardController.prototype, "getPurchase", null);
 __decorate([
     (0, common_1.Get)('engineer'),
     (0, roles_decorator_js_1.Roles)(enums_js_1.Role.SITE_ENGINEER),

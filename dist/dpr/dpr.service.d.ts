@@ -10,7 +10,7 @@ export declare class DprService {
         dateTo?: string;
         page?: number;
         limit?: number;
-    }): Promise<{
+    }, user?: any): Promise<{
         data: DprReport[];
         total: number;
         page: number;

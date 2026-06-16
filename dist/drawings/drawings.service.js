@@ -51,6 +51,7 @@ const typeorm_1 = require("@nestjs/typeorm");
 const typeorm_2 = require("typeorm");
 const fs = __importStar(require("fs"));
 const drawing_entity_js_1 = require("./entities/drawing.entity.js");
+const enums_js_1 = require("../common/enums.js");
 let DrawingsService = class DrawingsService {
     drawingsRepo;
     constructor(drawingsRepo) {
@@ -60,7 +61,7 @@ let DrawingsService = class DrawingsService {
         const drawing = this.drawingsRepo.create(data);
         return this.drawingsRepo.save(drawing);
     }
-    async findAll(query) {
+    async findAll(query, user) {
         const qb = this.drawingsRepo.createQueryBuilder('d')
             .leftJoinAndSelect('d.project', 'project')
             .where('d.isDeleted = false');
@@ -70,6 +71,9 @@ let DrawingsService = class DrawingsService {
             qb.andWhere('d.category = :category', { category: query.category });
         if (query.revision)
             qb.andWhere('d.revision = :revision', { revision: query.revision });
+        if (user && user.role === enums_js_1.Role.SITE_ENGINEER) {
+            qb.andWhere('d.uploadedBy = :userId', { userId: user.id });
+        }
         return qb.orderBy('d.createdAt', 'DESC').getMany();
     }
     async findOne(id) {

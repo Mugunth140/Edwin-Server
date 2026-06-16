@@ -21,6 +21,7 @@ let PoItem = class PoItem {
     unit;
     rate;
     amount;
+    billedQuantity;
 };
 exports.PoItem = PoItem;
 __decorate([
@@ -56,6 +57,10 @@ __decorate([
     (0, typeorm_1.Column)({ type: 'decimal', precision: 12, scale: 2 }),
     __metadata("design:type", Number)
 ], PoItem.prototype, "amount", void 0);
+__decorate([
+    (0, typeorm_1.Column)({ type: 'decimal', precision: 12, scale: 3, default: 0 }),
+    __metadata("design:type", Number)
+], PoItem.prototype, "billedQuantity", void 0);
 exports.PoItem = PoItem = __decorate([
     (0, typeorm_1.Entity)('po_items')
 ], PoItem);

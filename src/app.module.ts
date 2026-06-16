@@ -19,7 +19,9 @@ import { SubcontractWorkOrdersModule } from './subcontract-work-orders/subcontra
 import { SiteEngineersModule } from './site-engineers/site-engineers.module.js';
 import { DailyLabourModule } from './daily-labour/daily-labour.module.js';
 import { TradesModule } from './trades/trades.module.js';
+import { ExpenseTypesModule } from './expense-types/expense-types.module.js';
 import { AccountsManagersModule } from './accounts-managers/accounts-managers.module.js';
+import { PurchaseTeamModule } from './purchase-team/purchase-team.module.js';
 
 // Entity imports
 import { User } from './users/entities/user.entity.js';
@@ -46,6 +48,7 @@ import { PurchaseBill } from './accounts/entities/purchase-bill.entity.js';
 import { BoqItem } from './accounts/entities/boq-item.entity.js';
 import { Advance } from './accounts/entities/advance.entity.js';
 import { Expense } from './expenses/entities/expense.entity.js';
+import { ExpenseType } from './expense-types/entities/expense-type.entity.js';
 import { Payment } from './payments/entities/payment.entity.js';
 import { Subcontractor } from './subcontractors/entities/subcontractor.entity.js';
 import { WorkCategory } from './work-categories/entities/work-category.entity.js';
@@ -113,6 +116,7 @@ function getBooleanConfig(
           DailyLabourReport,
           DailyWorker,
           Trade,
+          ExpenseType,
         ],
         synchronize: getBooleanConfig(configService, 'TYPEORM_SYNCHRONIZE', false),
         logging: getBooleanConfig(configService, 'TYPEORM_LOGGING', false),
@@ -136,7 +140,9 @@ function getBooleanConfig(
     SiteEngineersModule,
     DailyLabourModule,
     TradesModule,
+    ExpenseTypesModule,
     AccountsManagersModule,
+    PurchaseTeamModule,
   ],
 })
 export class AppModule {}

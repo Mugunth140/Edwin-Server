@@ -16,36 +16,38 @@ export class PurchaseOrdersController {
   constructor(private readonly poService: PurchaseOrdersService) {}
 
   @Post()
-  @Roles(Role.ADMIN, Role.ACCOUNTS_MANAGER)
+  @Roles(Role.ADMIN, Role.ACCOUNTS_MANAGER, Role.PURCHASE_TEAM)
   @ApiOperation({ summary: 'Create a new purchase order' })
   create(@Body() dto: CreatePurchaseOrderDto, @Request() req: any) {
     return this.poService.create(dto, req.user.id);
   }
 
   @Get()
+  @Roles(Role.ADMIN, Role.ACCOUNTS_MANAGER, Role.PURCHASE_TEAM)
   @ApiOperation({ summary: 'List purchase orders' })
   findAll() { return this.poService.findAll(); }
 
   @Get(':id')
+  @Roles(Role.ADMIN, Role.ACCOUNTS_MANAGER, Role.PURCHASE_TEAM)
   @ApiOperation({ summary: 'Get single purchase order' })
   findOne(@Param('id') id: string) { return this.poService.findOne(id); }
 
   @Patch(':id/status')
-  @Roles(Role.ADMIN, Role.ACCOUNTS_MANAGER)
+  @Roles(Role.ADMIN, Role.ACCOUNTS_MANAGER, Role.PURCHASE_TEAM)
   @ApiOperation({ summary: 'Update purchase order status' })
   updateStatus(@Param('id') id: string, @Body() dto: UpdatePurchaseOrderStatusDto) {
     return this.poService.updateStatus(id, dto.status);
   }
 
   @Put(':id')
-  @Roles(Role.ADMIN, Role.ACCOUNTS_MANAGER)
+  @Roles(Role.ADMIN, Role.ACCOUNTS_MANAGER, Role.PURCHASE_TEAM)
   @ApiOperation({ summary: 'Update purchase order' })
   update(@Param('id') id: string, @Body() dto: any, @Request() req: any) {
     return this.poService.update(id, dto, req.user.id);
   }
 
   @Delete(':id')
-  @Roles(Role.ADMIN, Role.ACCOUNTS_MANAGER)
+  @Roles(Role.ADMIN, Role.ACCOUNTS_MANAGER, Role.PURCHASE_TEAM)
   @ApiOperation({ summary: 'Delete purchase order' })
   remove(@Param('id') id: string) {
     return this.poService.remove(id);

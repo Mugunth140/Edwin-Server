@@ -97,13 +97,14 @@ export class DprController {
   @ApiQuery({ name: 'dateFrom', required: false })
   @ApiQuery({ name: 'dateTo', required: false })
   findAll(
-    @Query('projectId') projectId?: string,
-    @Query('dateFrom') dateFrom?: string,
-    @Query('dateTo') dateTo?: string,
-    @Query('page') page?: number,
-    @Query('limit') limit?: number,
+    @Query('projectId') projectId: string,
+    @Query('dateFrom') dateFrom: string,
+    @Query('dateTo') dateTo: string,
+    @Query('page') page: number,
+    @Query('limit') limit: number,
+    @Request() req: any,
   ) {
-    return this.dprService.findAll({ projectId, dateFrom, dateTo, page, limit });
+    return this.dprService.findAll({ projectId, dateFrom, dateTo, page, limit }, req.user);
   }
 
   @Get(':id')

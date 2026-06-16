@@ -21,6 +21,7 @@ const boq_item_entity_js_1 = require("./entities/boq-item.entity.js");
 const advance_entity_js_1 = require("./entities/advance.entity.js");
 const project_entity_js_1 = require("../projects/entities/project.entity.js");
 const purchase_order_entity_js_1 = require("../purchase-orders/entities/purchase-order.entity.js");
+const po_item_entity_js_1 = require("../purchase-orders/entities/po-item.entity.js");
 let AccountsModule = class AccountsModule {
 };
 exports.AccountsModule = AccountsModule;
@@ -35,6 +36,7 @@ exports.AccountsModule = AccountsModule = __decorate([
                 advance_entity_js_1.Advance,
                 project_entity_js_1.Project,
                 purchase_order_entity_js_1.PurchaseOrder,
+                po_item_entity_js_1.PoItem,
             ]),
         ],
         controllers: [

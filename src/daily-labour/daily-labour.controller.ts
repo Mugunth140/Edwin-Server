@@ -79,8 +79,8 @@ export class DailyLabourController {
   @Get()
   @ApiOperation({ summary: 'List all DPW reports' })
   @ApiQuery({ name: 'projectId', required: false })
-  findAll(@Query('projectId') projectId?: string) {
-    return this.dailyLabourService.findAll(projectId);
+  findAll(@Query('projectId') projectId: string, @Request() req: any) {
+    return this.dailyLabourService.findAll(req.user, projectId);
   }
 
   @Get(':id')

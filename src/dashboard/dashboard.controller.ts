@@ -20,6 +20,13 @@ export class DashboardController {
     return this.dashboardService.getMasterDashboard();
   }
 
+  @Get('purchase')
+  @Roles(Role.PURCHASE_TEAM)
+  @ApiOperation({ summary: 'Get purchase team dashboard KPIs' })
+  getPurchase() {
+    return this.dashboardService.getPurchaseDashboard();
+  }
+
   @Get('engineer')
   @Roles(Role.SITE_ENGINEER)
   @ApiOperation({ summary: 'Get engineer dashboard KPIs' })

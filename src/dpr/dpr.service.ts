@@ -2,6 +2,7 @@ import { Injectable, NotFoundException } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository, Between } from 'typeorm';
 import { DprReport } from './entities/dpr-report.entity.js';
+import { Role } from '../common/enums.js';
 
 @Injectable()
 export class DprService {
@@ -15,7 +16,7 @@ export class DprService {
     return this.dprRepo.save(report);
   }
 
-  async findAll(query: { projectId?: string; dateFrom?: string; dateTo?: string; page?: number; limit?: number }) {
+  async findAll(query: { projectId?: string; dateFrom?: string; dateTo?: string; page?: number; limit?: number }, user?: any) {
     const { projectId, dateFrom, dateTo, page = 1, limit = 20 } = query;
     console.log('DPR Filter Query:', { projectId, dateFrom, dateTo });
 
@@ -43,6 +44,11 @@ export class DprService {
           dateToFormatted: toDate.toISOString().split('T')[0] 
         });
       }
+    }
+
+    // Site engineers only see their own reports
+    if (user && user.role === Role.SITE_ENGINEER) {
+      qb.andWhere('dpr.uploadedBy = :userId', { userId: user.id });
     }
 
     qb.orderBy('dpr.reportDate', 'DESC');

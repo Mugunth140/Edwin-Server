@@ -14,6 +14,7 @@ const typeorm_1 = require("typeorm");
 const enums_js_1 = require("../../common/enums.js");
 const project_entity_js_1 = require("../../projects/entities/project.entity.js");
 const invoice_item_entity_js_1 = require("./invoice-item.entity.js");
+const payment_entity_js_1 = require("../../payments/entities/payment.entity.js");
 let SalesInvoice = class SalesInvoice {
     id;
     invoiceNumber;
@@ -21,6 +22,7 @@ let SalesInvoice = class SalesInvoice {
     projectId;
     status;
     totalAmount;
+    paidAmount;
     cgstAmount;
     sgstAmount;
     igstAmount;
@@ -29,6 +31,7 @@ let SalesInvoice = class SalesInvoice {
     paidAt;
     reminderSentAt;
     items;
+    payments;
     isDeleted;
     createdBy;
     updatedBy;
@@ -64,6 +67,10 @@ __decorate([
 __decorate([
     (0, typeorm_1.Column)({ type: 'decimal', precision: 12, scale: 2, default: 0 }),
     __metadata("design:type", Number)
+], SalesInvoice.prototype, "paidAmount", void 0);
+__decorate([
+    (0, typeorm_1.Column)({ type: 'decimal', precision: 12, scale: 2, default: 0 }),
+    __metadata("design:type", Number)
 ], SalesInvoice.prototype, "cgstAmount", void 0);
 __decorate([
     (0, typeorm_1.Column)({ type: 'decimal', precision: 12, scale: 2, default: 0 }),
@@ -93,6 +100,10 @@ __decorate([
     (0, typeorm_1.OneToMany)(() => invoice_item_entity_js_1.InvoiceItem, (item) => item.invoice, { cascade: true, eager: true }),
     __metadata("design:type", Array)
 ], SalesInvoice.prototype, "items", void 0);
+__decorate([
+    (0, typeorm_1.OneToMany)(() => payment_entity_js_1.Payment, (payment) => payment.salesInvoice),
+    __metadata("design:type", Array)
+], SalesInvoice.prototype, "payments", void 0);
 __decorate([
     (0, typeorm_1.Column)({ default: false }),
     __metadata("design:type", Boolean)

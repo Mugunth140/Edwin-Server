@@ -12,6 +12,7 @@ import { BoqItem } from './entities/boq-item.entity.js';
 import { Advance } from './entities/advance.entity.js';
 import { Project } from '../projects/entities/project.entity.js';
 import { PurchaseOrder } from '../purchase-orders/entities/purchase-order.entity.js';
+import { PoItem } from '../purchase-orders/entities/po-item.entity.js';
 
 @Module({
   imports: [
@@ -23,6 +24,7 @@ import { PurchaseOrder } from '../purchase-orders/entities/purchase-order.entity
       Advance,
       Project,
       PurchaseOrder,
+      PoItem,
     ]),
   ],
   controllers: [

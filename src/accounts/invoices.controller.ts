@@ -33,6 +33,13 @@ export class InvoicesController {
     return this.accountsService.findInvoices({ status, projectId });
   }
 
+  @Get(':id')
+  @Roles(Role.ADMIN, Role.ACCOUNTS_MANAGER)
+  @ApiOperation({ summary: 'Get single invoice' })
+  findInvoice(@Param('id') id: string) {
+    return this.accountsService.findInvoice(id);
+  }
+
   @Patch(':id/status')
   @Roles(Role.ADMIN, Role.ACCOUNTS_MANAGER)
   @ApiOperation({ summary: 'Update invoice status' })
@@ -41,7 +48,7 @@ export class InvoicesController {
   }
 
   @Delete(':id')
-  @Roles(Role.ADMIN)
+  @Roles(Role.ADMIN, Role.ACCOUNTS_MANAGER)
   @ApiOperation({ summary: 'Delete invoice' })
   removeInvoice(@Param('id') id: string) {
     return this.accountsService.removeInvoice(id);

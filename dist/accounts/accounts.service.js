@@ -23,6 +23,7 @@ const boq_item_entity_js_1 = require("./entities/boq-item.entity.js");
 const advance_entity_js_1 = require("./entities/advance.entity.js");
 const project_entity_js_1 = require("../projects/entities/project.entity.js");
 const purchase_order_entity_js_1 = require("../purchase-orders/entities/purchase-order.entity.js");
+const po_item_entity_js_1 = require("../purchase-orders/entities/po-item.entity.js");
 const enums_js_1 = require("../common/enums.js");
 let AccountsService = class AccountsService {
     invoiceRepo;
@@ -32,7 +33,8 @@ let AccountsService = class AccountsService {
     advanceRepo;
     projectRepo;
     poRepo;
-    constructor(invoiceRepo, invoiceItemRepo, billRepo, boqRepo, advanceRepo, projectRepo, poRepo) {
+    poItemRepo;
+    constructor(invoiceRepo, invoiceItemRepo, billRepo, boqRepo, advanceRepo, projectRepo, poRepo, poItemRepo) {
         this.invoiceRepo = invoiceRepo;
         this.invoiceItemRepo = invoiceItemRepo;
         this.billRepo = billRepo;
@@ -40,6 +42,7 @@ let AccountsService = class AccountsService {
         this.advanceRepo = advanceRepo;
         this.projectRepo = projectRepo;
         this.poRepo = poRepo;
+        this.poItemRepo = poItemRepo;
     }
     async convertPoToBill(poId, userId) {
         const po = await this.poRepo.findOne({ where: { id: poId }, relations: ['vendor'] });
@@ -103,12 +106,25 @@ let AccountsService = class AccountsService {
         const qb = this.invoiceRepo.createQueryBuilder('inv')
             .leftJoinAndSelect('inv.project', 'project')
             .leftJoinAndSelect('inv.items', 'items')
+            .leftJoinAndSelect('inv.payments', 'payments')
             .where('inv.isDeleted = false');
         if (query.status)
             qb.andWhere('inv.status = :status', { status: query.status });
         if (query.projectId)
             qb.andWhere('inv.projectId = :projectId', { projectId: query.projectId });
         return qb.orderBy('inv.createdAt', 'DESC').getMany();
+    }
+    async findInvoice(id) {
+        const invoice = await this.invoiceRepo.createQueryBuilder('inv')
+            .leftJoinAndSelect('inv.project', 'project')
+            .leftJoinAndSelect('inv.items', 'items')
+            .leftJoinAndSelect('inv.payments', 'payments')
+            .where('inv.id = :id', { id })
+            .andWhere('inv.isDeleted = false')
+            .getOne();
+        if (!invoice)
+            throw new common_1.NotFoundException('Invoice not found');
+        return invoice;
     }
     async updateInvoiceStatus(id, status) {
         const invoice = await this.invoiceRepo.findOne({ where: { id } });
@@ -141,11 +157,35 @@ let AccountsService = class AccountsService {
     }
     async createBill(dto, userId) {
         const billNumber = await this.generateBillNumber();
-        const bill = this.billRepo.create({ ...dto, billNumber, createdBy: userId });
-        return this.billRepo.save(bill);
+        const { items, ...billData } = dto;
+        const bill = this.billRepo.create({ ...billData, billNumber, createdBy: userId });
+        const savedBill = await this.billRepo.save(bill);
+        if (items && items.length > 0) {
+            for (const item of items) {
+                const poItem = await this.poItemRepo.findOne({ where: { id: item.poItemId } });
+                if (poItem) {
+                    poItem.billedQuantity = Number(poItem.billedQuantity || 0) + Number(item.quantity);
+                    await this.poItemRepo.save(poItem);
+                }
+            }
+        }
+        return savedBill;
     }
     async findBills() {
-        return this.billRepo.find({ where: { isDeleted: false }, relations: ['vendor', 'payments'], order: { createdAt: 'DESC' } });
+        return this.billRepo.find({
+            where: { isDeleted: false },
+            relations: ['vendor', 'payments', 'purchaseOrder', 'purchaseOrder.items'],
+            order: { createdAt: 'DESC' },
+        });
+    }
+    async updateBillStatus(id, status) {
+        const bill = await this.billRepo.findOne({ where: { id } });
+        if (!bill)
+            throw new common_1.NotFoundException('Bill not found');
+        bill.status = status;
+        if (status === enums_js_1.BillStatus.APPROVED)
+            bill.paidAt = new Date();
+        return this.billRepo.save(bill);
     }
     async createBoq(dto) {
         const boq = this.boqRepo.create({
@@ -182,7 +222,7 @@ let AccountsService = class AccountsService {
                 party: bill.vendor?.name,
                 amount: Number(bill.amount),
                 date: bill.createdAt,
-                status: bill.paidAt ? 'paid' : 'unpaid',
+                status: bill.status,
             })),
         ].sort((a, b) => new Date(b.date).getTime() - new Date(a.date).getTime());
         return ledger;
@@ -226,7 +266,9 @@ exports.AccountsService = AccountsService = __decorate([
     __param(4, (0, typeorm_1.InjectRepository)(advance_entity_js_1.Advance)),
     __param(5, (0, typeorm_1.InjectRepository)(project_entity_js_1.Project)),
     __param(6, (0, typeorm_1.InjectRepository)(purchase_order_entity_js_1.PurchaseOrder)),
+    __param(7, (0, typeorm_1.InjectRepository)(po_item_entity_js_1.PoItem)),
     __metadata("design:paramtypes", [typeorm_2.Repository,
+        typeorm_2.Repository,
         typeorm_2.Repository,
         typeorm_2.Repository,
         typeorm_2.Repository,

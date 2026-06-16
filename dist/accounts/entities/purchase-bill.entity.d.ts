@@ -17,6 +17,8 @@ export declare class PurchaseBill {
     paidAmount: number;
     billDate: Date;
     dueDate: Date;
+    billFileUrl: string;
+    billFileKey: string;
     paidAt: Date;
     payments: Payment[];
     isDeleted: boolean;

@@ -9,7 +9,7 @@ var __metadata = (this && this.__metadata) || function (k, v) {
     if (typeof Reflect === "object" && typeof Reflect.metadata === "function") return Reflect.metadata(k, v);
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.CreateBoqDto = exports.CreateAdvanceDto = exports.CreateBillDto = exports.CreateInvoiceDto = exports.InvoiceItemDto = void 0;
+exports.CreateBoqDto = exports.CreateAdvanceDto = exports.CreateBillDto = exports.BillItemDto = exports.CreateInvoiceDto = exports.InvoiceItemDto = void 0;
 const class_validator_1 = require("class-validator");
 const class_transformer_1 = require("class-transformer");
 const swagger_1 = require("@nestjs/swagger");
@@ -66,6 +66,21 @@ __decorate([
     (0, class_transformer_1.Type)(() => InvoiceItemDto),
     __metadata("design:type", Array)
 ], CreateInvoiceDto.prototype, "items", void 0);
+class BillItemDto {
+    poItemId;
+    quantity;
+}
+exports.BillItemDto = BillItemDto;
+__decorate([
+    (0, swagger_1.ApiProperty)(),
+    (0, class_validator_1.IsUUID)(),
+    __metadata("design:type", String)
+], BillItemDto.prototype, "poItemId", void 0);
+__decorate([
+    (0, swagger_1.ApiProperty)(),
+    (0, class_validator_1.IsNumber)(),
+    __metadata("design:type", Number)
+], BillItemDto.prototype, "quantity", void 0);
 class CreateBillDto {
     vendorId;
     purchaseOrderId;
@@ -73,6 +88,9 @@ class CreateBillDto {
     amount;
     billDate;
     dueDate;
+    billFileUrl;
+    billFileKey;
+    items;
 }
 exports.CreateBillDto = CreateBillDto;
 __decorate([
@@ -109,6 +127,26 @@ __decorate([
     (0, class_validator_1.IsOptional)(),
     __metadata("design:type", String)
 ], CreateBillDto.prototype, "dueDate", void 0);
+__decorate([
+    (0, swagger_1.ApiPropertyOptional)(),
+    (0, class_validator_1.IsString)(),
+    (0, class_validator_1.IsOptional)(),
+    __metadata("design:type", String)
+], CreateBillDto.prototype, "billFileUrl", void 0);
+__decorate([
+    (0, swagger_1.ApiPropertyOptional)(),
+    (0, class_validator_1.IsString)(),
+    (0, class_validator_1.IsOptional)(),
+    __metadata("design:type", String)
+], CreateBillDto.prototype, "billFileKey", void 0);
+__decorate([
+    (0, swagger_1.ApiPropertyOptional)({ type: [BillItemDto] }),
+    (0, class_validator_1.IsArray)(),
+    (0, class_validator_1.IsOptional)(),
+    (0, class_validator_1.ValidateNested)({ each: true }),
+    (0, class_transformer_1.Type)(() => BillItemDto),
+    __metadata("design:type", Array)
+], CreateBillDto.prototype, "items", void 0);
 class CreateAdvanceDto {
     entityType;
     entityId;

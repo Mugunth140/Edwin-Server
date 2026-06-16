@@ -15,18 +15,29 @@ const swagger_1 = require("@nestjs/swagger");
 const enums_js_1 = require("../../common/enums.js");
 class CreateExpenseDto {
     category;
+    expenseTypeId;
     description;
     amount;
     expenseDate;
     paidBy;
     projectId;
+    tradeId;
+    remarks;
+    status;
 }
 exports.CreateExpenseDto = CreateExpenseDto;
 __decorate([
-    (0, swagger_1.ApiProperty)({ enum: enums_js_1.ExpenseCategory }),
+    (0, swagger_1.ApiPropertyOptional)({ enum: enums_js_1.ExpenseCategory }),
     (0, class_validator_1.IsEnum)(enums_js_1.ExpenseCategory),
+    (0, class_validator_1.IsOptional)(),
     __metadata("design:type", String)
 ], CreateExpenseDto.prototype, "category", void 0);
+__decorate([
+    (0, swagger_1.ApiPropertyOptional)(),
+    (0, class_validator_1.IsUUID)(),
+    (0, class_validator_1.IsOptional)(),
+    __metadata("design:type", String)
+], CreateExpenseDto.prototype, "expenseTypeId", void 0);
 __decorate([
     (0, swagger_1.ApiProperty)(),
     (0, class_validator_1.IsString)(),
@@ -54,4 +65,22 @@ __decorate([
     (0, class_validator_1.IsOptional)(),
     __metadata("design:type", String)
 ], CreateExpenseDto.prototype, "projectId", void 0);
+__decorate([
+    (0, swagger_1.ApiPropertyOptional)(),
+    (0, class_validator_1.IsUUID)(),
+    (0, class_validator_1.IsOptional)(),
+    __metadata("design:type", String)
+], CreateExpenseDto.prototype, "tradeId", void 0);
+__decorate([
+    (0, swagger_1.ApiPropertyOptional)(),
+    (0, class_validator_1.IsString)(),
+    (0, class_validator_1.IsOptional)(),
+    __metadata("design:type", String)
+], CreateExpenseDto.prototype, "remarks", void 0);
+__decorate([
+    (0, swagger_1.ApiPropertyOptional)({ enum: enums_js_1.ExpenseStatus }),
+    (0, class_validator_1.IsEnum)(enums_js_1.ExpenseStatus),
+    (0, class_validator_1.IsOptional)(),
+    __metadata("design:type", String)
+], CreateExpenseDto.prototype, "status", void 0);
 //# sourceMappingURL=create-expense.dto.js.map

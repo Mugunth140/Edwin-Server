@@ -30,6 +30,8 @@ let PurchaseBill = class PurchaseBill {
     paidAmount;
     billDate;
     dueDate;
+    billFileUrl;
+    billFileKey;
     paidAt;
     payments;
     isDeleted;
@@ -77,7 +79,7 @@ __decorate([
     __metadata("design:type", Number)
 ], PurchaseBill.prototype, "amount", void 0);
 __decorate([
-    (0, typeorm_1.Column)({ type: 'varchar', length: 50, default: enums_js_1.BillStatus.UNPAID }),
+    (0, typeorm_1.Column)({ type: 'varchar', length: 50, default: enums_js_1.BillStatus.PENDING }),
     __metadata("design:type", String)
 ], PurchaseBill.prototype, "status", void 0);
 __decorate([
@@ -92,6 +94,14 @@ __decorate([
     (0, typeorm_1.Column)({ type: 'date', nullable: true }),
     __metadata("design:type", Date)
 ], PurchaseBill.prototype, "dueDate", void 0);
+__decorate([
+    (0, typeorm_1.Column)({ type: 'varchar', nullable: true }),
+    __metadata("design:type", String)
+], PurchaseBill.prototype, "billFileUrl", void 0);
+__decorate([
+    (0, typeorm_1.Column)({ type: 'varchar', nullable: true }),
+    __metadata("design:type", String)
+], PurchaseBill.prototype, "billFileKey", void 0);
 __decorate([
     (0, typeorm_1.Column)({ type: 'timestamp', nullable: true }),
     __metadata("design:type", Date)

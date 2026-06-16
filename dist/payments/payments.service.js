@@ -20,6 +20,7 @@ const payment_entity_js_1 = require("./entities/payment.entity.js");
 const enums_js_1 = require("../common/enums.js");
 const purchase_bill_entity_js_1 = require("../accounts/entities/purchase-bill.entity.js");
 const expense_entity_js_1 = require("../expenses/entities/expense.entity.js");
+const sales_invoice_entity_js_1 = require("../accounts/entities/sales-invoice.entity.js");
 let PaymentsService = class PaymentsService {
     paymentsRepo;
     billRepo;
@@ -54,6 +55,25 @@ let PaymentsService = class PaymentsService {
                 }
                 await manager.save(bill);
             }
+            if (dto.salesInvoiceId) {
+                const invoice = await manager.findOne(sales_invoice_entity_js_1.SalesInvoice, {
+                    where: { id: dto.salesInvoiceId },
+                });
+                if (!invoice)
+                    throw new common_1.NotFoundException('Sales Invoice not found');
+                projectId = invoice.projectId;
+                const newPaidAmount = Number(invoice.paidAmount || 0) + Number(dto.amount);
+                invoice.paidAmount = newPaidAmount;
+                const totalExpected = Number(invoice.totalAmount) + Number(invoice.gstAmount);
+                if (newPaidAmount >= totalExpected) {
+                    invoice.status = enums_js_1.InvoiceStatus.PAID;
+                    invoice.paidAt = new Date();
+                }
+                else if (newPaidAmount > 0) {
+                    invoice.status = enums_js_1.InvoiceStatus.PARTIAL;
+                }
+                await manager.save(invoice);
+            }
             const payment = manager.create(payment_entity_js_1.Payment, {
                 ...dto,
                 projectId,
@@ -68,8 +88,13 @@ let PaymentsService = class PaymentsService {
         const qb = this.paymentsRepo.createQueryBuilder('p')
             .leftJoinAndSelect('p.project', 'project')
             .leftJoinAndSelect('p.vendor', 'vendor')
+            .leftJoinAndSelect('p.purchaseBill', 'purchaseBill')
             .leftJoinAndSelect('p.expense', 'expense')
-            .where('p.isDeleted = false');
+            .leftJoinAndSelect('p.salesInvoice', 'salesInvoice')
+            .leftJoinAndSelect('salesInvoice.project', 'invoiceProject')
+            .where('p.isDeleted = false')
+            .andWhere('(expense.isDeleted = false OR expense.isDeleted IS NULL)')
+            .andWhere('(expense.status = :approved OR expense.status IS NULL)', { approved: 'approved' });
         if (type)
             qb.andWhere('p.paymentType = :type', { type });
         if (projectId)
@@ -83,17 +108,20 @@ let PaymentsService = class PaymentsService {
     async getSummary() {
         return this.paymentsRepo
             .createQueryBuilder('p')
+            .leftJoin('p.expense', 'expense')
             .select('p.paymentType', 'paymentType')
             .addSelect('SUM(p.amount)', 'total')
             .where('p.isDeleted = false')
+            .andWhere('(expense.isDeleted = false OR expense.isDeleted IS NULL)')
+            .andWhere('(expense.status = :approved OR expense.status IS NULL)', { approved: 'approved' })
             .groupBy('p.paymentType')
             .getRawMany();
     }
     async syncExpenses() {
-        const expenses = await this.expenseRepo.find({ where: { isDeleted: false } });
+        const expenses = await this.expenseRepo.find({ where: { isDeleted: false, status: enums_js_1.ExpenseStatus.APPROVED } });
         let count = 0;
         for (const exp of expenses) {
-            const exists = await this.paymentsRepo.findOne({ where: { expenseId: exp.id } });
+            const exists = await this.paymentsRepo.findOne({ where: { expenseId: exp.id, isDeleted: false } });
             if (!exists) {
                 let pType = enums_js_1.PaymentType.STAFF_EXPENSE;
                 if (exp.category === enums_js_1.ExpenseCategory.OFFICE)

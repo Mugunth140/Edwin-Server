@@ -6,7 +6,7 @@ export declare class DprController {
         projectId: string;
         reportDate: string;
     }, req: any): Promise<import("./entities/dpr-report.entity.js").DprReport>;
-    findAll(projectId?: string, dateFrom?: string, dateTo?: string, page?: number, limit?: number): Promise<{
+    findAll(projectId: string, dateFrom: string, dateTo: string, page: number, limit: number, req: any): Promise<{
         data: import("./entities/dpr-report.entity.js").DprReport[];
         total: number;
         page: number;

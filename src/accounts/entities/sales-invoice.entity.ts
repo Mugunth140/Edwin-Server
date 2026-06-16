@@ -11,6 +11,7 @@ import {
 import { InvoiceStatus } from '../../common/enums.js';
 import { Project } from '../../projects/entities/project.entity.js';
 import { InvoiceItem } from './invoice-item.entity.js';
+import { Payment } from '../../payments/entities/payment.entity.js';
 
 @Entity('sales_invoices')
 export class SalesInvoice {
@@ -32,6 +33,9 @@ export class SalesInvoice {
 
   @Column({ type: 'decimal', precision: 12, scale: 2, default: 0 })
   totalAmount: number;
+
+  @Column({ type: 'decimal', precision: 12, scale: 2, default: 0 })
+  paidAmount: number;
 
   @Column({ type: 'decimal', precision: 12, scale: 2, default: 0 })
   cgstAmount: number;
@@ -56,6 +60,9 @@ export class SalesInvoice {
 
   @OneToMany(() => InvoiceItem, (item) => item.invoice, { cascade: true, eager: true })
   items: InvoiceItem[];
+
+  @OneToMany(() => Payment, (payment) => payment.salesInvoice)
+  payments: Payment[];
 
   @Column({ default: false })
   isDeleted: boolean;
