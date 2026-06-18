@@ -48,7 +48,8 @@ let PurchaseOrdersService = class PurchaseOrdersService {
         const totalAmount = items.reduce((sum, item) => sum + Number(item.amount), 0);
         const po = this.poRepo.create({
             poNumber, vendorId: dto.vendorId, projectId: dto.projectId,
-            paymentTerms: dto.paymentTerms, totalAmount, items, createdBy: userId,
+            paymentTerms: dto.paymentTerms, billFileUrl: dto.billFileUrl,
+            billFileKey: dto.billFileKey, totalAmount, items, createdBy: userId,
         });
         return this.poRepo.save(po);
     }

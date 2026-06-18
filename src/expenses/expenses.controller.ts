@@ -14,7 +14,7 @@ import {
 } from '@nestjs/common';
 import { ApiTags, ApiOperation, ApiBearerAuth, ApiQuery, ApiConsumes } from '@nestjs/swagger';
 import { AuthGuard } from '@nestjs/passport';
-import { FilesInterceptor } from '@nestjs/platform-express';
+import { AnyFilesInterceptor } from '@nestjs/platform-express';
 import { diskStorage } from 'multer';
 import { extname } from 'path';
 import * as fs from 'fs';
@@ -34,7 +34,7 @@ export class ExpensesController {
   @Post()
   @Roles(Role.ADMIN, Role.ACCOUNTS_MANAGER, Role.SITE_ENGINEER)
   @UseInterceptors(
-    FilesInterceptor('files', 5, {
+    AnyFilesInterceptor({
       storage: diskStorage({
         destination: (req, file, cb) => {
           const uploadPath = './uploads/expenses';
@@ -92,7 +92,7 @@ export class ExpensesController {
   @Patch(':id')
   @Roles(Role.ADMIN, Role.ACCOUNTS_MANAGER, Role.SITE_ENGINEER)
   @UseInterceptors(
-    FilesInterceptor('files', 5, {
+    AnyFilesInterceptor({
       storage: diskStorage({
         destination: (req, file, cb) => {
           const uploadPath = './uploads/expenses';

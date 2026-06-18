@@ -69,6 +69,11 @@ __decorate([
 class BillItemDto {
     poItemId;
     quantity;
+    description;
+    unit;
+    rate;
+    orderedQty;
+    billedQty;
 }
 exports.BillItemDto = BillItemDto;
 __decorate([
@@ -81,6 +86,36 @@ __decorate([
     (0, class_validator_1.IsNumber)(),
     __metadata("design:type", Number)
 ], BillItemDto.prototype, "quantity", void 0);
+__decorate([
+    (0, swagger_1.ApiPropertyOptional)(),
+    (0, class_validator_1.IsString)(),
+    (0, class_validator_1.IsOptional)(),
+    __metadata("design:type", String)
+], BillItemDto.prototype, "description", void 0);
+__decorate([
+    (0, swagger_1.ApiPropertyOptional)(),
+    (0, class_validator_1.IsString)(),
+    (0, class_validator_1.IsOptional)(),
+    __metadata("design:type", String)
+], BillItemDto.prototype, "unit", void 0);
+__decorate([
+    (0, swagger_1.ApiPropertyOptional)(),
+    (0, class_validator_1.IsNumber)(),
+    (0, class_validator_1.IsOptional)(),
+    __metadata("design:type", Number)
+], BillItemDto.prototype, "rate", void 0);
+__decorate([
+    (0, swagger_1.ApiPropertyOptional)(),
+    (0, class_validator_1.IsNumber)(),
+    (0, class_validator_1.IsOptional)(),
+    __metadata("design:type", Number)
+], BillItemDto.prototype, "orderedQty", void 0);
+__decorate([
+    (0, swagger_1.ApiPropertyOptional)(),
+    (0, class_validator_1.IsNumber)(),
+    (0, class_validator_1.IsOptional)(),
+    __metadata("design:type", Number)
+], BillItemDto.prototype, "billedQty", void 0);
 class CreateBillDto {
     vendorId;
     purchaseOrderId;
@@ -90,6 +125,7 @@ class CreateBillDto {
     dueDate;
     billFileUrl;
     billFileKey;
+    notes;
     items;
 }
 exports.CreateBillDto = CreateBillDto;
@@ -139,6 +175,12 @@ __decorate([
     (0, class_validator_1.IsOptional)(),
     __metadata("design:type", String)
 ], CreateBillDto.prototype, "billFileKey", void 0);
+__decorate([
+    (0, swagger_1.ApiPropertyOptional)(),
+    (0, class_validator_1.IsString)(),
+    (0, class_validator_1.IsOptional)(),
+    __metadata("design:type", String)
+], CreateBillDto.prototype, "notes", void 0);
 __decorate([
     (0, swagger_1.ApiPropertyOptional)({ type: [BillItemDto] }),
     (0, class_validator_1.IsArray)(),

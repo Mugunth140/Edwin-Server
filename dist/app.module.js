@@ -31,6 +31,8 @@ const trades_module_js_1 = require("./trades/trades.module.js");
 const expense_types_module_js_1 = require("./expense-types/expense-types.module.js");
 const accounts_managers_module_js_1 = require("./accounts-managers/accounts-managers.module.js");
 const purchase_team_module_js_1 = require("./purchase-team/purchase-team.module.js");
+const item_descriptions_module_js_1 = require("./item-descriptions/item-descriptions.module.js");
+const purchase_enquiries_module_js_1 = require("./purchase-enquiries/purchase-enquiries.module.js");
 const user_entity_js_1 = require("./users/entities/user.entity.js");
 const vendor_entity_js_1 = require("./vendors/entities/vendor.entity.js");
 const project_entity_js_1 = require("./projects/entities/project.entity.js");
@@ -52,6 +54,7 @@ const po_item_entity_js_1 = require("./purchase-orders/entities/po-item.entity.j
 const sales_invoice_entity_js_1 = require("./accounts/entities/sales-invoice.entity.js");
 const invoice_item_entity_js_1 = require("./accounts/entities/invoice-item.entity.js");
 const purchase_bill_entity_js_1 = require("./accounts/entities/purchase-bill.entity.js");
+const bill_item_entity_js_1 = require("./accounts/entities/bill-item.entity.js");
 const boq_item_entity_js_1 = require("./accounts/entities/boq-item.entity.js");
 const advance_entity_js_1 = require("./accounts/entities/advance.entity.js");
 const expense_entity_js_1 = require("./expenses/entities/expense.entity.js");
@@ -63,6 +66,8 @@ const subcontract_work_order_entity_js_1 = require("./subcontract-work-orders/en
 const daily_labour_report_entity_js_1 = require("./daily-labour/entities/daily-labour-report.entity.js");
 const daily_worker_entity_js_1 = require("./daily-labour/entities/daily-worker.entity.js");
 const trade_entity_js_1 = require("./trades/entities/trade.entity.js");
+const item_description_entity_js_1 = require("./item-descriptions/entities/item-description.entity.js");
+const purchase_enquiry_entity_js_1 = require("./purchase-enquiries/entities/purchase-enquiry.entity.js");
 function getBooleanConfig(configService, key, fallback) {
     const value = configService.get(key);
     if (typeof value === 'boolean')
@@ -111,6 +116,7 @@ exports.AppModule = AppModule = __decorate([
                         sales_invoice_entity_js_1.SalesInvoice,
                         invoice_item_entity_js_1.InvoiceItem,
                         purchase_bill_entity_js_1.PurchaseBill,
+                        bill_item_entity_js_1.BillItem,
                         boq_item_entity_js_1.BoqItem,
                         advance_entity_js_1.Advance,
                         expense_entity_js_1.Expense,
@@ -122,6 +128,8 @@ exports.AppModule = AppModule = __decorate([
                         daily_worker_entity_js_1.DailyWorker,
                         trade_entity_js_1.Trade,
                         expense_type_entity_js_1.ExpenseType,
+                        item_description_entity_js_1.ItemDescription,
+                        purchase_enquiry_entity_js_1.PurchaseEnquiry,
                     ],
                     synchronize: getBooleanConfig(configService, 'TYPEORM_SYNCHRONIZE', false),
                     logging: getBooleanConfig(configService, 'TYPEORM_LOGGING', false),
@@ -148,6 +156,8 @@ exports.AppModule = AppModule = __decorate([
             expense_types_module_js_1.ExpenseTypesModule,
             accounts_managers_module_js_1.AccountsManagersModule,
             purchase_team_module_js_1.PurchaseTeamModule,
+            item_descriptions_module_js_1.ItemDescriptionsModule,
+            purchase_enquiries_module_js_1.PurchaseEnquiriesModule,
         ],
     })
 ], AppModule);

@@ -45,6 +45,8 @@ class CreatePurchaseOrderDto {
     vendorId;
     projectId;
     paymentTerms;
+    billFileUrl;
+    billFileKey;
     items;
 }
 exports.CreatePurchaseOrderDto = CreatePurchaseOrderDto;
@@ -64,6 +66,18 @@ __decorate([
     (0, class_validator_1.IsOptional)(),
     __metadata("design:type", String)
 ], CreatePurchaseOrderDto.prototype, "paymentTerms", void 0);
+__decorate([
+    (0, swagger_1.ApiPropertyOptional)(),
+    (0, class_validator_1.IsString)(),
+    (0, class_validator_1.IsOptional)(),
+    __metadata("design:type", String)
+], CreatePurchaseOrderDto.prototype, "billFileUrl", void 0);
+__decorate([
+    (0, swagger_1.ApiPropertyOptional)(),
+    (0, class_validator_1.IsString)(),
+    (0, class_validator_1.IsOptional)(),
+    __metadata("design:type", String)
+], CreatePurchaseOrderDto.prototype, "billFileKey", void 0);
 __decorate([
     (0, swagger_1.ApiProperty)({ type: [PoItemDto] }),
     (0, class_validator_1.IsArray)(),

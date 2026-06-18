@@ -3,15 +3,6 @@ import { Type } from 'class-transformer';
 import { ApiProperty } from '@nestjs/swagger';
 
 export class DailyWorkerDto {
-  @ApiProperty()
-  @IsString()
-  name: string;
-
-  @ApiProperty({ required: false })
-  @IsString()
-  @IsOptional()
-  phone?: string;
-
   @ApiProperty({ required: false })
   @IsString()
   @IsOptional()
@@ -20,6 +11,14 @@ export class DailyWorkerDto {
   @ApiProperty()
   @IsString()
   trade: string;
+
+  @ApiProperty()
+  @IsOptional()
+  count: number;
+
+  @ApiProperty()
+  @IsString()
+  shift: string;
 
   @ApiProperty({ required: false })
   @IsString()
@@ -35,6 +34,26 @@ export class DailyWorkerDto {
   @IsString()
   @IsOptional()
   remarks?: string;
+
+  @ApiProperty({ required: false })
+  @IsString()
+  @IsOptional()
+  morningPhoto1Url?: string;
+
+  @ApiProperty({ required: false })
+  @IsString()
+  @IsOptional()
+  morningPhoto2Url?: string;
+
+  @ApiProperty({ required: false })
+  @IsString()
+  @IsOptional()
+  eveningPhoto1Url?: string;
+
+  @ApiProperty({ required: false })
+  @IsString()
+  @IsOptional()
+  eveningPhoto2Url?: string;
 }
 
 export class CreateDailyLabourReportDto {

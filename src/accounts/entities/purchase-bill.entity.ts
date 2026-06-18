@@ -12,6 +12,7 @@ import { Vendor } from '../../vendors/entities/vendor.entity.js';
 import { PurchaseOrder } from '../../purchase-orders/entities/purchase-order.entity.js';
 import { Project } from '../../projects/entities/project.entity.js';
 import { Payment } from '../../payments/entities/payment.entity.js';
+import { BillItem } from './bill-item.entity.js';
 
 @Entity('purchase_bills')
 export class PurchaseBill {
@@ -63,11 +64,17 @@ export class PurchaseBill {
   @Column({ type: 'varchar', nullable: true })
   billFileKey: string;
 
+  @Column({ type: 'text', nullable: true })
+  notes: string;
+
   @Column({ type: 'timestamp', nullable: true })
   paidAt: Date;
 
   @OneToMany(() => Payment, (payment) => payment.purchaseBill)
   payments: Payment[];
+
+  @OneToMany(() => BillItem, (item) => item.bill, { cascade: true })
+  billItems: BillItem[];
 
   @Column({ default: false })
   isDeleted: boolean;

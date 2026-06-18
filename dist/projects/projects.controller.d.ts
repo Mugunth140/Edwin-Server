@@ -20,6 +20,14 @@ export declare class ProjectsController {
         rfis: import("./entities/rfi.entity.js").Rfi[];
         photos: import("./entities/site-photo.entity.js").SitePhoto[];
     }>;
+    getDetails(id: string): Promise<{
+        project: import("./entities/project.entity.js").Project;
+        expenses: import("../expenses/entities/expense.entity.js").Expense[];
+        subcontractWorkOrders: import("../subcontract-work-orders/entities/subcontract-work-order.entity.js").SubcontractWorkOrder[];
+        purchaseBills: import("../accounts/entities/purchase-bill.entity.js").PurchaseBill[];
+        invoices: import("../accounts/entities/sales-invoice.entity.js").SalesInvoice[];
+        payments: import("../payments/entities/payment.entity.js").Payment[];
+    }>;
     addProgress(id: string, body: any): Promise<import("./entities/project-progress.entity.js").ProjectProgress>;
     addMilestone(id: string, body: any): Promise<import("./entities/project-milestone.entity.js").ProjectMilestone>;
     updateMilestone(id: string, mid: string, body: any): Promise<import("./entities/project-milestone.entity.js").ProjectMilestone | null>;

@@ -16,7 +16,7 @@ export class SubcontractWorkOrdersController {
   constructor(private readonly subcontractWorkOrdersService: SubcontractWorkOrdersService) {}
 
   @Post()
-  @Roles(Role.ADMIN, Role.ACCOUNTS_MANAGER)
+  @Roles(Role.ADMIN, Role.ACCOUNTS_MANAGER, Role.PURCHASE_TEAM)
   @ApiOperation({ summary: 'Create a new subcontract work order' })
   create(@Body() dto: CreateSubcontractWorkOrderDto) {
     return this.subcontractWorkOrdersService.create(dto);
@@ -36,14 +36,14 @@ export class SubcontractWorkOrdersController {
   }
 
   @Patch(':id')
-  @Roles(Role.ADMIN, Role.ACCOUNTS_MANAGER)
+  @Roles(Role.ADMIN, Role.ACCOUNTS_MANAGER, Role.PURCHASE_TEAM)
   @ApiOperation({ summary: 'Update a subcontract work order' })
   update(@Param('id') id: string, @Body() dto: UpdateSubcontractWorkOrderDto) {
     return this.subcontractWorkOrdersService.update(id, dto);
   }
 
   @Patch(':id/status')
-  @Roles(Role.ADMIN, Role.ACCOUNTS_MANAGER)
+  @Roles(Role.ADMIN, Role.ACCOUNTS_MANAGER, Role.PURCHASE_TEAM)
   @ApiOperation({ summary: 'Update a subcontract work order status' })
   updateStatus(@Param('id') id: string, @Body() dto: UpdateSubcontractWorkOrderStatusDto) {
     return this.subcontractWorkOrdersService.updateStatus(id, dto.status);

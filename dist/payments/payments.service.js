@@ -47,11 +47,7 @@ let PaymentsService = class PaymentsService {
                 const newPaidAmount = Number(bill.paidAmount) + Number(dto.amount);
                 bill.paidAmount = newPaidAmount;
                 if (newPaidAmount >= Number(bill.amount)) {
-                    bill.status = enums_js_1.BillStatus.APPROVED;
                     bill.paidAt = new Date();
-                }
-                else if (newPaidAmount > 0) {
-                    bill.status = enums_js_1.BillStatus.APPROVED;
                 }
                 await manager.save(bill);
             }

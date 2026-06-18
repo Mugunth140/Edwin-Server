@@ -10,7 +10,7 @@ import {
 import { Project } from '../../projects/entities/project.entity.js';
 import { Subcontractor } from '../../subcontractors/entities/subcontractor.entity.js';
 import { WorkCategory } from '../../work-categories/entities/work-category.entity.js';
-import { WorkOrderStatus } from '../../common/enums.js';
+import { SubcontractWorkOrderStatus } from '../../common/enums.js';
 
 @Entity('subcontract_work_orders')
 export class SubcontractWorkOrder {
@@ -41,6 +41,9 @@ export class SubcontractWorkOrder {
   @Column()
   workCategoryId: string;
 
+  @Column({ type: 'text', nullable: true })
+  description: string;
+
   @Column({ type: 'decimal', precision: 12, scale: 2, default: 0 })
   quantity: number;
 
@@ -68,8 +71,8 @@ export class SubcontractWorkOrder {
   @Column({ type: 'date', nullable: true })
   endDate: Date;
 
-  @Column({ type: 'enum', enum: WorkOrderStatus, default: WorkOrderStatus.DRAFT })
-  status: WorkOrderStatus;
+  @Column({ type: 'enum', enum: SubcontractWorkOrderStatus, default: SubcontractWorkOrderStatus.PENDING })
+  status: SubcontractWorkOrderStatus;
 
   @Column({ type: 'text', nullable: true })
   notes: string;

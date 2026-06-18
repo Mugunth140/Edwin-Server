@@ -13,6 +13,7 @@ import { Advance } from './entities/advance.entity.js';
 import { Project } from '../projects/entities/project.entity.js';
 import { PurchaseOrder } from '../purchase-orders/entities/purchase-order.entity.js';
 import { PoItem } from '../purchase-orders/entities/po-item.entity.js';
+import { BillItem } from './entities/bill-item.entity.js';
 
 @Module({
   imports: [
@@ -20,6 +21,7 @@ import { PoItem } from '../purchase-orders/entities/po-item.entity.js';
       SalesInvoice,
       InvoiceItem,
       PurchaseBill,
+      BillItem,
       BoqItem,
       Advance,
       Project,

@@ -12,6 +12,8 @@ export declare class PurchaseOrder {
     paymentTerms: string;
     status: PurchaseOrderStatus;
     totalAmount: number;
+    billFileUrl: string;
+    billFileKey: string;
     items: PoItem[];
     isDeleted: boolean;
     createdBy: string;

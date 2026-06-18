@@ -26,6 +26,12 @@ const snag_item_entity_js_1 = require("./entities/snag-item.entity.js");
 const safety_incident_entity_js_1 = require("./entities/safety-incident.entity.js");
 const rfi_entity_js_1 = require("./entities/rfi.entity.js");
 const site_photo_entity_js_1 = require("./entities/site-photo.entity.js");
+const expense_entity_js_1 = require("../expenses/entities/expense.entity.js");
+const subcontract_work_order_entity_js_1 = require("../subcontract-work-orders/entities/subcontract-work-order.entity.js");
+const purchase_bill_entity_js_1 = require("../accounts/entities/purchase-bill.entity.js");
+const sales_invoice_entity_js_1 = require("../accounts/entities/sales-invoice.entity.js");
+const payment_entity_js_1 = require("../payments/entities/payment.entity.js");
+const enums_js_1 = require("../common/enums.js");
 let ProjectsService = class ProjectsService {
     projectsRepo;
     progressRepo;
@@ -37,7 +43,12 @@ let ProjectsService = class ProjectsService {
     incidentsRepo;
     rfisRepo;
     photosRepo;
-    constructor(projectsRepo, progressRepo, milestonesRepo, changeOrdersRepo, attendanceRepo, machineryRepo, snagsRepo, incidentsRepo, rfisRepo, photosRepo) {
+    expensesRepo;
+    swoRepo;
+    billsRepo;
+    invoicesRepo;
+    paymentsRepo;
+    constructor(projectsRepo, progressRepo, milestonesRepo, changeOrdersRepo, attendanceRepo, machineryRepo, snagsRepo, incidentsRepo, rfisRepo, photosRepo, expensesRepo, swoRepo, billsRepo, invoicesRepo, paymentsRepo) {
         this.projectsRepo = projectsRepo;
         this.progressRepo = progressRepo;
         this.milestonesRepo = milestonesRepo;
@@ -48,6 +59,11 @@ let ProjectsService = class ProjectsService {
         this.incidentsRepo = incidentsRepo;
         this.rfisRepo = rfisRepo;
         this.photosRepo = photosRepo;
+        this.expensesRepo = expensesRepo;
+        this.swoRepo = swoRepo;
+        this.billsRepo = billsRepo;
+        this.invoicesRepo = invoicesRepo;
+        this.paymentsRepo = paymentsRepo;
     }
     async create(dto, userId) {
         const project = this.projectsRepo.create({ ...dto, createdBy: userId });
@@ -99,6 +115,44 @@ let ProjectsService = class ProjectsService {
             incidents,
             rfis,
             photos,
+        };
+    }
+    async getProjectDetails(id) {
+        const project = await this.findOne(id);
+        const [expenses, subcontractWorkOrders, purchaseBills, invoices, payments] = await Promise.all([
+            this.expensesRepo.find({
+                where: { projectId: id, isDeleted: false, status: enums_js_1.ExpenseStatus.ADMIN_APPROVED },
+                relations: ['project', 'trade', 'expenseType', 'creator'],
+                order: { expenseDate: 'DESC' },
+            }),
+            this.swoRepo.find({
+                where: { projectId: id, isDeleted: false, status: enums_js_1.SubcontractWorkOrderStatus.ADMIN_APPROVED },
+                relations: ['project', 'subcontractor', 'workCategory'],
+                order: { createdAt: 'DESC' },
+            }),
+            this.billsRepo.find({
+                where: { projectId: id, isDeleted: false, status: enums_js_1.BillStatus.ADMIN_APPROVED },
+                relations: ['vendor', 'project'],
+                order: { createdAt: 'DESC' },
+            }),
+            this.invoicesRepo.find({
+                where: { projectId: id, isDeleted: false },
+                relations: ['project', 'items', 'payments'],
+                order: { createdAt: 'DESC' },
+            }),
+            this.paymentsRepo.find({
+                where: { projectId: id, isDeleted: false },
+                relations: ['project', 'vendor', 'purchaseBill', 'expense', 'salesInvoice'],
+                order: { paymentDate: 'DESC' },
+            }),
+        ]);
+        return {
+            project,
+            expenses,
+            subcontractWorkOrders,
+            purchaseBills,
+            invoices,
+            payments,
         };
     }
     async addProgress(projectId, data) {
@@ -170,7 +224,17 @@ exports.ProjectsService = ProjectsService = __decorate([
     __param(7, (0, typeorm_1.InjectRepository)(safety_incident_entity_js_1.SafetyIncident)),
     __param(8, (0, typeorm_1.InjectRepository)(rfi_entity_js_1.Rfi)),
     __param(9, (0, typeorm_1.InjectRepository)(site_photo_entity_js_1.SitePhoto)),
+    __param(10, (0, typeorm_1.InjectRepository)(expense_entity_js_1.Expense)),
+    __param(11, (0, typeorm_1.InjectRepository)(subcontract_work_order_entity_js_1.SubcontractWorkOrder)),
+    __param(12, (0, typeorm_1.InjectRepository)(purchase_bill_entity_js_1.PurchaseBill)),
+    __param(13, (0, typeorm_1.InjectRepository)(sales_invoice_entity_js_1.SalesInvoice)),
+    __param(14, (0, typeorm_1.InjectRepository)(payment_entity_js_1.Payment)),
     __metadata("design:paramtypes", [typeorm_2.Repository,
+        typeorm_2.Repository,
+        typeorm_2.Repository,
+        typeorm_2.Repository,
+        typeorm_2.Repository,
+        typeorm_2.Repository,
         typeorm_2.Repository,
         typeorm_2.Repository,
         typeorm_2.Repository,

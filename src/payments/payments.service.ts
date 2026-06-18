@@ -31,15 +31,12 @@ export class PaymentsService {
         projectId = bill.projectId;
         vendorId = bill.vendorId;
 
-        // Update bill status and amount
+        // Update bill paid amount
         const newPaidAmount = Number(bill.paidAmount) + Number(dto.amount);
         bill.paidAmount = newPaidAmount;
 
         if (newPaidAmount >= Number(bill.amount)) {
-          bill.status = BillStatus.APPROVED;
           bill.paidAt = new Date();
-        } else if (newPaidAmount > 0) {
-          bill.status = BillStatus.APPROVED;
         }
 
         await manager.save(bill);

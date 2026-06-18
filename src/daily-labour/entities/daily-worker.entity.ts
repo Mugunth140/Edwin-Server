@@ -20,12 +20,6 @@ export class DailyWorker {
   @Column()
   reportId: string;
 
-  @Column()
-  name: string;
-
-  @Column({ nullable: true })
-  phone: string;
-
   @ManyToOne(() => Trade, { nullable: true })
   @JoinColumn({ name: 'tradeId' })
   tradeRel: Trade;
@@ -36,6 +30,12 @@ export class DailyWorker {
   @Column()
   trade: string;
 
+  @Column({ type: 'int', default: 1 })
+  count: number;
+
+  @Column({ default: 'Morning' })
+  shift: string;
+
   @Column({ type: 'time', nullable: true })
   inTime: string;
 
@@ -44,4 +44,16 @@ export class DailyWorker {
 
   @Column({ type: 'text', nullable: true })
   remarks: string;
+
+  @Column({ nullable: true })
+  morningPhoto1Url: string;
+
+  @Column({ nullable: true })
+  morningPhoto2Url: string;
+
+  @Column({ nullable: true })
+  eveningPhoto1Url: string;
+
+  @Column({ nullable: true })
+  eveningPhoto2Url: string;
 }

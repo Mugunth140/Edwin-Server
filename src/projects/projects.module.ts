@@ -13,6 +13,11 @@ import { SnagItem } from './entities/snag-item.entity.js';
 import { SafetyIncident } from './entities/safety-incident.entity.js';
 import { Rfi } from './entities/rfi.entity.js';
 import { SitePhoto } from './entities/site-photo.entity.js';
+import { Expense } from '../expenses/entities/expense.entity.js';
+import { SubcontractWorkOrder } from '../subcontract-work-orders/entities/subcontract-work-order.entity.js';
+import { PurchaseBill } from '../accounts/entities/purchase-bill.entity.js';
+import { SalesInvoice } from '../accounts/entities/sales-invoice.entity.js';
+import { Payment } from '../payments/entities/payment.entity.js';
 
 @Module({
   imports: [
@@ -28,6 +33,11 @@ import { SitePhoto } from './entities/site-photo.entity.js';
       SafetyIncident,
       Rfi,
       SitePhoto,
+      Expense,
+      SubcontractWorkOrder,
+      PurchaseBill,
+      SalesInvoice,
+      Payment,
     ]),
   ],
   controllers: [ProjectsController],

@@ -1,6 +1,6 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.WorkCategory = exports.ProjectStatus = exports.AdvanceEntityType = exports.PaymentType = exports.ExpenseStatus = exports.ExpenseCategory = exports.DrawingCategory = exports.SeverityLevel = exports.RfiStatus = exports.SnagStatus = exports.MilestoneStatus = exports.InvoiceStatus = exports.PaymentMode = exports.BillStatus = exports.PurchaseOrderStatus = exports.WorkOrderStatus = exports.Role = void 0;
+exports.WorkCategory = exports.ProjectStatus = exports.AdvanceEntityType = exports.PaymentType = exports.ExpenseStatus = exports.ExpenseCategory = exports.DrawingCategory = exports.SeverityLevel = exports.RfiStatus = exports.SnagStatus = exports.MilestoneStatus = exports.InvoiceStatus = exports.PaymentMode = exports.BillStatus = exports.PurchaseOrderStatus = exports.SubcontractWorkOrderStatus = exports.WorkOrderStatus = exports.Role = void 0;
 var Role;
 (function (Role) {
     Role["ADMIN"] = "admin";
@@ -15,15 +15,26 @@ var WorkOrderStatus;
     WorkOrderStatus["SENT"] = "sent";
     WorkOrderStatus["APPROVED"] = "approved";
 })(WorkOrderStatus || (exports.WorkOrderStatus = WorkOrderStatus = {}));
+var SubcontractWorkOrderStatus;
+(function (SubcontractWorkOrderStatus) {
+    SubcontractWorkOrderStatus["PENDING"] = "pending";
+    SubcontractWorkOrderStatus["ADMIN_APPROVED"] = "admin_approved";
+    SubcontractWorkOrderStatus["APPROVED"] = "approved";
+    SubcontractWorkOrderStatus["REJECTED"] = "rejected";
+})(SubcontractWorkOrderStatus || (exports.SubcontractWorkOrderStatus = SubcontractWorkOrderStatus = {}));
 var PurchaseOrderStatus;
 (function (PurchaseOrderStatus) {
     PurchaseOrderStatus["DRAFT"] = "draft";
     PurchaseOrderStatus["SENT"] = "sent";
+    PurchaseOrderStatus["PENDING"] = "pending";
+    PurchaseOrderStatus["ADMIN_APPROVED"] = "admin_approved";
     PurchaseOrderStatus["APPROVED"] = "approved";
+    PurchaseOrderStatus["REJECTED"] = "rejected";
 })(PurchaseOrderStatus || (exports.PurchaseOrderStatus = PurchaseOrderStatus = {}));
 var BillStatus;
 (function (BillStatus) {
     BillStatus["PENDING"] = "pending";
+    BillStatus["ADMIN_APPROVED"] = "admin_approved";
     BillStatus["APPROVED"] = "approved";
     BillStatus["REJECTED"] = "rejected";
 })(BillStatus || (exports.BillStatus = BillStatus = {}));
@@ -89,6 +100,7 @@ var ExpenseCategory;
 var ExpenseStatus;
 (function (ExpenseStatus) {
     ExpenseStatus["PENDING"] = "pending";
+    ExpenseStatus["ADMIN_APPROVED"] = "admin_approved";
     ExpenseStatus["APPROVED"] = "approved";
     ExpenseStatus["REJECTED"] = "rejected";
 })(ExpenseStatus || (exports.ExpenseStatus = ExpenseStatus = {}));

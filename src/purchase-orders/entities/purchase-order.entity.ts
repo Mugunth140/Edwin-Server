@@ -38,11 +38,17 @@ export class PurchaseOrder {
   @Column({ type: 'text', nullable: true })
   paymentTerms: string;
 
-  @Column({ type: 'varchar', length: 50, default: PurchaseOrderStatus.DRAFT })
+  @Column({ type: 'varchar', length: 50, default: PurchaseOrderStatus.PENDING })
   status: PurchaseOrderStatus;
 
   @Column({ type: 'decimal', precision: 12, scale: 2, default: 0 })
   totalAmount: number;
+
+  @Column({ nullable: true })
+  billFileUrl: string;
+
+  @Column({ nullable: true })
+  billFileKey: string;
 
   @OneToMany(() => PoItem, (item) => item.purchaseOrder, { cascade: true, eager: true })
   items: PoItem[];

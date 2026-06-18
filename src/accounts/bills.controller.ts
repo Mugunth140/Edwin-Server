@@ -1,4 +1,4 @@
-import { Controller, Get, Post, Body, Param, UseGuards, Request, UploadedFile, UseInterceptors, Patch } from '@nestjs/common';
+import { Controller, Get, Post, Body, Param, UseGuards, Request, UploadedFile, UseInterceptors, Patch, Put, Delete } from '@nestjs/common';
 import { FileInterceptor } from '@nestjs/platform-express';
 import { ApiTags, ApiOperation, ApiBearerAuth, ApiConsumes } from '@nestjs/swagger';
 import { AuthGuard } from '@nestjs/passport';
@@ -63,6 +63,13 @@ export class BillsController {
     return this.accountsService.findBills();
   }
 
+  @Get(':id')
+  @Roles(Role.ADMIN, Role.ACCOUNTS_MANAGER, Role.PURCHASE_TEAM)
+  @ApiOperation({ summary: 'Get single bill' })
+  findOneBill(@Param('id') id: string) {
+    return this.accountsService.findOneBill(id);
+  }
+
   @Patch(':id/status')
   @Roles(Role.ADMIN, Role.ACCOUNTS_MANAGER)
   @ApiOperation({ summary: 'Update bill status' })
@@ -75,5 +82,19 @@ export class BillsController {
   @ApiOperation({ summary: 'Convert PO to bill' })
   convertPoToBill(@Param('id') id: string, @Request() req: any) {
     return this.accountsService.convertPoToBill(id, req.user.id);
+  }
+
+  @Put(':id')
+  @Roles(Role.ADMIN, Role.ACCOUNTS_MANAGER)
+  @ApiOperation({ summary: 'Update bill' })
+  updateBill(@Param('id') id: string, @Body() dto: CreateBillDto, @Request() req: any) {
+    return this.accountsService.updateBill(id, dto, req.user.id);
+  }
+
+  @Delete(':id')
+  @Roles(Role.ADMIN, Role.ACCOUNTS_MANAGER)
+  @ApiOperation({ summary: 'Delete bill' })
+  removeBill(@Param('id') id: string) {
+    return this.accountsService.removeBill(id);
   }
 }

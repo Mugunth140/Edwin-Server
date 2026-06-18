@@ -3,6 +3,7 @@ import { Vendor } from '../../vendors/entities/vendor.entity.js';
 import { PurchaseOrder } from '../../purchase-orders/entities/purchase-order.entity.js';
 import { Project } from '../../projects/entities/project.entity.js';
 import { Payment } from '../../payments/entities/payment.entity.js';
+import { BillItem } from './bill-item.entity.js';
 export declare class PurchaseBill {
     id: string;
     billNumber: string;
@@ -19,8 +20,10 @@ export declare class PurchaseBill {
     dueDate: Date;
     billFileUrl: string;
     billFileKey: string;
+    notes: string;
     paidAt: Date;
     payments: Payment[];
+    billItems: BillItem[];
     isDeleted: boolean;
     createdBy: string;
     createdAt: Date;

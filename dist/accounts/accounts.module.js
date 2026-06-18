@@ -22,6 +22,7 @@ const advance_entity_js_1 = require("./entities/advance.entity.js");
 const project_entity_js_1 = require("../projects/entities/project.entity.js");
 const purchase_order_entity_js_1 = require("../purchase-orders/entities/purchase-order.entity.js");
 const po_item_entity_js_1 = require("../purchase-orders/entities/po-item.entity.js");
+const bill_item_entity_js_1 = require("./entities/bill-item.entity.js");
 let AccountsModule = class AccountsModule {
 };
 exports.AccountsModule = AccountsModule;
@@ -32,6 +33,7 @@ exports.AccountsModule = AccountsModule = __decorate([
                 sales_invoice_entity_js_1.SalesInvoice,
                 invoice_item_entity_js_1.InvoiceItem,
                 purchase_bill_entity_js_1.PurchaseBill,
+                bill_item_entity_js_1.BillItem,
                 boq_item_entity_js_1.BoqItem,
                 advance_entity_js_1.Advance,
                 project_entity_js_1.Project,

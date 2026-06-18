@@ -22,6 +22,8 @@ import { TradesModule } from './trades/trades.module.js';
 import { ExpenseTypesModule } from './expense-types/expense-types.module.js';
 import { AccountsManagersModule } from './accounts-managers/accounts-managers.module.js';
 import { PurchaseTeamModule } from './purchase-team/purchase-team.module.js';
+import { ItemDescriptionsModule } from './item-descriptions/item-descriptions.module.js';
+import { PurchaseEnquiriesModule } from './purchase-enquiries/purchase-enquiries.module.js';
 
 // Entity imports
 import { User } from './users/entities/user.entity.js';
@@ -45,6 +47,7 @@ import { PoItem } from './purchase-orders/entities/po-item.entity.js';
 import { SalesInvoice } from './accounts/entities/sales-invoice.entity.js';
 import { InvoiceItem } from './accounts/entities/invoice-item.entity.js';
 import { PurchaseBill } from './accounts/entities/purchase-bill.entity.js';
+import { BillItem } from './accounts/entities/bill-item.entity.js';
 import { BoqItem } from './accounts/entities/boq-item.entity.js';
 import { Advance } from './accounts/entities/advance.entity.js';
 import { Expense } from './expenses/entities/expense.entity.js';
@@ -56,6 +59,8 @@ import { SubcontractWorkOrder } from './subcontract-work-orders/entities/subcont
 import { DailyLabourReport } from './daily-labour/entities/daily-labour-report.entity.js';
 import { DailyWorker } from './daily-labour/entities/daily-worker.entity.js';
 import { Trade } from './trades/entities/trade.entity.js';
+import { ItemDescription } from './item-descriptions/entities/item-description.entity.js';
+import { PurchaseEnquiry } from './purchase-enquiries/entities/purchase-enquiry.entity.js';
 
 function getBooleanConfig(
   configService: ConfigService,
@@ -106,6 +111,7 @@ function getBooleanConfig(
           SalesInvoice,
           InvoiceItem,
           PurchaseBill,
+          BillItem,
           BoqItem,
           Advance,
           Expense,
@@ -117,6 +123,8 @@ function getBooleanConfig(
           DailyWorker,
           Trade,
           ExpenseType,
+          ItemDescription,
+          PurchaseEnquiry,
         ],
         synchronize: getBooleanConfig(configService, 'TYPEORM_SYNCHRONIZE', false),
         logging: getBooleanConfig(configService, 'TYPEORM_LOGGING', false),
@@ -143,6 +151,8 @@ function getBooleanConfig(
     ExpenseTypesModule,
     AccountsManagersModule,
     PurchaseTeamModule,
+    ItemDescriptionsModule,
+    PurchaseEnquiriesModule,
   ],
 })
 export class AppModule {}

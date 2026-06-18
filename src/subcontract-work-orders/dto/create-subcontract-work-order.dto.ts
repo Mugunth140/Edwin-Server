@@ -18,6 +18,11 @@ export class CreateSubcontractWorkOrderDto {
   @IsUUID()
   workCategoryId: string;
 
+  @ApiProperty({ required: false })
+  @IsString()
+  @IsOptional()
+  description?: string;
+
   @ApiProperty()
   @IsNumber()
   quantity: number;

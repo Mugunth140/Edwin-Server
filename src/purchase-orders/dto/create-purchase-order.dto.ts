@@ -13,6 +13,8 @@ export class CreatePurchaseOrderDto {
   @ApiProperty() @IsUUID() vendorId: string;
   @ApiProperty() @IsUUID() projectId: string;
   @ApiPropertyOptional() @IsString() @IsOptional() paymentTerms?: string;
+  @ApiPropertyOptional() @IsString() @IsOptional() billFileUrl?: string;
+  @ApiPropertyOptional() @IsString() @IsOptional() billFileKey?: string;
   @ApiProperty({ type: [PoItemDto] })
   @IsArray() @ValidateNested({ each: true }) @Type(() => PoItemDto) items: PoItemDto[];
 }

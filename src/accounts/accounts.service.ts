@@ -9,6 +9,7 @@ import { Advance } from './entities/advance.entity.js';
 import { Project } from '../projects/entities/project.entity.js';
 import { PurchaseOrder } from '../purchase-orders/entities/purchase-order.entity.js';
 import { PoItem } from '../purchase-orders/entities/po-item.entity.js';
+import { BillItem } from './entities/bill-item.entity.js';
 import { CreateInvoiceDto, CreateBillDto, CreateAdvanceDto, CreateBoqDto } from './dto/accounts.dto.js';
 import { InvoiceStatus, BillStatus } from '../common/enums.js';
 
@@ -23,6 +24,7 @@ export class AccountsService {
     @InjectRepository(Project) private projectRepo: Repository<Project>,
     @InjectRepository(PurchaseOrder) private poRepo: Repository<PurchaseOrder>,
     @InjectRepository(PoItem) private poItemRepo: Repository<PoItem>,
+    @InjectRepository(BillItem) private billItemRepo: Repository<BillItem>,
   ) {}
 
   async convertPoToBill(poId: string, userId?: string): Promise<PurchaseBill> {
@@ -142,23 +144,76 @@ export class AccountsService {
     const savedBill = await this.billRepo.save(bill);
 
     if (items && items.length > 0) {
+      const billItems: BillItem[] = [];
       for (const item of items) {
         const poItem = await this.poItemRepo.findOne({ where: { id: item.poItemId } });
         if (poItem) {
           poItem.billedQuantity = Number(poItem.billedQuantity || 0) + Number(item.quantity);
           await this.poItemRepo.save(poItem);
         }
+        billItems.push(this.billItemRepo.create({
+          billId: savedBill.id,
+          poItemId: item.poItemId,
+          description: item.description || '',
+          quantity: item.quantity,
+          unit: item.unit || 'nos',
+          rate: item.rate || 0,
+          orderedQty: item.orderedQty || 0,
+          billedQty: item.billedQty || 0,
+        }));
       }
+      await this.billItemRepo.save(billItems);
     }
-    return savedBill;
+    return this.findOneBill(savedBill.id);
+  }
+
+  async findOneBill(id: string): Promise<PurchaseBill> {
+    const bill = await this.billRepo.findOne({
+      where: { id },
+      relations: ['vendor', 'project', 'payments', 'purchaseOrder', 'purchaseOrder.items', 'billItems'],
+    });
+    if (!bill) throw new NotFoundException('Bill not found');
+    return bill;
   }
 
   async findBills() {
     return this.billRepo.find({
       where: { isDeleted: false },
-      relations: ['vendor', 'payments', 'purchaseOrder', 'purchaseOrder.items'],
+      relations: ['vendor', 'project', 'payments', 'purchaseOrder', 'purchaseOrder.items', 'billItems'],
       order: { createdAt: 'DESC' },
     });
+  }
+
+  async updateBill(id: string, dto: CreateBillDto, userId?: string): Promise<PurchaseBill> {
+    const bill = await this.findOneBill(id);
+    const { items, ...billData } = dto;
+    Object.assign(bill, { ...billData, updatedBy: userId ?? '' });
+    const savedBill = await this.billRepo.save(bill);
+
+    if (items && items.length > 0) {
+      await this.billItemRepo.delete({ billId: id });
+      const billItems = items.map((item) =>
+        this.billItemRepo.create({
+          billId: id,
+          poItemId: item.poItemId,
+          description: item.description || '',
+          quantity: item.quantity,
+          unit: item.unit || 'nos',
+          rate: item.rate || 0,
+          orderedQty: item.orderedQty || 0,
+          billedQty: item.billedQty || 0,
+        }),
+      );
+      await this.billItemRepo.save(billItems);
+    }
+    return this.findOneBill(id);
+  }
+
+  async removeBill(id: string) {
+    const bill = await this.billRepo.findOne({ where: { id } });
+    if (!bill) throw new NotFoundException('Bill not found');
+    bill.isDeleted = true;
+    await this.billRepo.save(bill);
   }
 
   async updateBillStatus(id: string, status: BillStatus) {
@@ -227,8 +282,10 @@ export class AccountsService {
   async getReceivables() {
     return this.invoiceRepo.find({
       where: [
+        { isDeleted: false, status: InvoiceStatus.DRAFT },
         { isDeleted: false, status: InvoiceStatus.SENT },
         { isDeleted: false, status: InvoiceStatus.OVERDUE },
+        { isDeleted: false, status: InvoiceStatus.PARTIAL },
       ],
       relations: ['project'],
     });

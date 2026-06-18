@@ -42,6 +42,9 @@ let ProjectsController = class ProjectsController {
     getDashboard(id) {
         return this.projectsService.getDashboard(id);
     }
+    getDetails(id) {
+        return this.projectsService.getProjectDetails(id);
+    }
     addProgress(id, body) {
         return this.projectsService.addProgress(id, body);
     }
@@ -122,6 +125,14 @@ __decorate([
     __metadata("design:paramtypes", [String]),
     __metadata("design:returntype", void 0)
 ], ProjectsController.prototype, "getDashboard", null);
+__decorate([
+    (0, common_1.Get)(':id/details'),
+    (0, swagger_1.ApiOperation)({ summary: 'Get project financial details (expenses, SWOs, bills, invoices, payments)' }),
+    __param(0, (0, common_1.Param)('id')),
+    __metadata("design:type", Function),
+    __metadata("design:paramtypes", [String]),
+    __metadata("design:returntype", void 0)
+], ProjectsController.prototype, "getDetails", null);
 __decorate([
     (0, common_1.Post)(':id/progress'),
     (0, roles_decorator_js_1.Roles)(enums_js_1.Role.ADMIN, enums_js_1.Role.SITE_ENGINEER),

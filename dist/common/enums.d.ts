@@ -10,13 +10,23 @@ export declare enum WorkOrderStatus {
     SENT = "sent",
     APPROVED = "approved"
 }
+export declare enum SubcontractWorkOrderStatus {
+    PENDING = "pending",
+    ADMIN_APPROVED = "admin_approved",
+    APPROVED = "approved",
+    REJECTED = "rejected"
+}
 export declare enum PurchaseOrderStatus {
     DRAFT = "draft",
     SENT = "sent",
-    APPROVED = "approved"
+    PENDING = "pending",
+    ADMIN_APPROVED = "admin_approved",
+    APPROVED = "approved",
+    REJECTED = "rejected"
 }
 export declare enum BillStatus {
     PENDING = "pending",
+    ADMIN_APPROVED = "admin_approved",
     APPROVED = "approved",
     REJECTED = "rejected"
 }
@@ -73,6 +83,7 @@ export declare enum ExpenseCategory {
 }
 export declare enum ExpenseStatus {
     PENDING = "pending",
+    ADMIN_APPROVED = "admin_approved",
     APPROVED = "approved",
     REJECTED = "rejected"
 }

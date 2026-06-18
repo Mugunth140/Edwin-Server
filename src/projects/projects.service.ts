@@ -12,6 +12,12 @@ import { SnagItem } from './entities/snag-item.entity.js';
 import { SafetyIncident } from './entities/safety-incident.entity.js';
 import { Rfi } from './entities/rfi.entity.js';
 import { SitePhoto } from './entities/site-photo.entity.js';
+import { Expense } from '../expenses/entities/expense.entity.js';
+import { SubcontractWorkOrder } from '../subcontract-work-orders/entities/subcontract-work-order.entity.js';
+import { PurchaseBill } from '../accounts/entities/purchase-bill.entity.js';
+import { SalesInvoice } from '../accounts/entities/sales-invoice.entity.js';
+import { Payment } from '../payments/entities/payment.entity.js';
+import { SubcontractWorkOrderStatus, BillStatus, ExpenseStatus } from '../common/enums.js';
 import { CreateProjectDto } from './dto/create-project.dto.js';
 
 @Injectable()
@@ -27,6 +33,11 @@ export class ProjectsService {
     @InjectRepository(SafetyIncident) private incidentsRepo: Repository<SafetyIncident>,
     @InjectRepository(Rfi) private rfisRepo: Repository<Rfi>,
     @InjectRepository(SitePhoto) private photosRepo: Repository<SitePhoto>,
+    @InjectRepository(Expense) private expensesRepo: Repository<Expense>,
+    @InjectRepository(SubcontractWorkOrder) private swoRepo: Repository<SubcontractWorkOrder>,
+    @InjectRepository(PurchaseBill) private billsRepo: Repository<PurchaseBill>,
+    @InjectRepository(SalesInvoice) private invoicesRepo: Repository<SalesInvoice>,
+    @InjectRepository(Payment) private paymentsRepo: Repository<Payment>,
   ) {}
 
   async create(dto: CreateProjectDto, userId?: string): Promise<Project> {
@@ -86,6 +97,48 @@ export class ProjectsService {
       incidents,
       rfis,
       photos,
+    };
+  }
+
+  async getProjectDetails(id: string) {
+    const project = await this.findOne(id);
+
+    const [expenses, subcontractWorkOrders, purchaseBills, invoices, payments] =
+      await Promise.all([
+        this.expensesRepo.find({
+          where: { projectId: id, isDeleted: false, status: ExpenseStatus.ADMIN_APPROVED },
+          relations: ['project', 'trade', 'expenseType', 'creator'],
+          order: { expenseDate: 'DESC' },
+        }),
+        this.swoRepo.find({
+          where: { projectId: id, isDeleted: false, status: SubcontractWorkOrderStatus.ADMIN_APPROVED },
+          relations: ['project', 'subcontractor', 'workCategory'],
+          order: { createdAt: 'DESC' },
+        }),
+        this.billsRepo.find({
+          where: { projectId: id, isDeleted: false, status: BillStatus.ADMIN_APPROVED },
+          relations: ['vendor', 'project'],
+          order: { createdAt: 'DESC' },
+        }),
+        this.invoicesRepo.find({
+          where: { projectId: id, isDeleted: false },
+          relations: ['project', 'items', 'payments'],
+          order: { createdAt: 'DESC' },
+        }),
+        this.paymentsRepo.find({
+          where: { projectId: id, isDeleted: false },
+          relations: ['project', 'vendor', 'purchaseBill', 'expense', 'salesInvoice'],
+          order: { paymentDate: 'DESC' },
+        }),
+      ]);
+
+    return {
+      project,
+      expenses,
+      subcontractWorkOrders,
+      purchaseBills,
+      invoices,
+      payments,
     };
   }
 

@@ -20,6 +20,11 @@ export class CreateInvoiceDto {
 export class BillItemDto {
   @ApiProperty() @IsUUID() poItemId: string;
   @ApiProperty() @IsNumber() quantity: number;
+  @ApiPropertyOptional() @IsString() @IsOptional() description?: string;
+  @ApiPropertyOptional() @IsString() @IsOptional() unit?: string;
+  @ApiPropertyOptional() @IsNumber() @IsOptional() rate?: number;
+  @ApiPropertyOptional() @IsNumber() @IsOptional() orderedQty?: number;
+  @ApiPropertyOptional() @IsNumber() @IsOptional() billedQty?: number;
 }
 
 export class CreateBillDto {
@@ -31,6 +36,7 @@ export class CreateBillDto {
   @ApiPropertyOptional() @IsDateString() @IsOptional() dueDate?: string;
   @ApiPropertyOptional() @IsString() @IsOptional() billFileUrl?: string;
   @ApiPropertyOptional() @IsString() @IsOptional() billFileKey?: string;
+  @ApiPropertyOptional() @IsString() @IsOptional() notes?: string;
   @ApiPropertyOptional({ type: [BillItemDto] })
   @IsArray() @IsOptional() @ValidateNested({ each: true }) @Type(() => BillItemDto) items?: BillItemDto[];
 }

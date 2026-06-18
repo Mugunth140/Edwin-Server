@@ -22,6 +22,8 @@ export declare class Expense {
     receiptKey: string;
     receiptUrls: string[];
     receiptKeys: string[];
+    sitePhotoUrls: string[];
+    sitePhotoKeys: string[];
     isDeleted: boolean;
     creator: User;
     createdBy: string;

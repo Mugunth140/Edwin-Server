@@ -71,6 +71,12 @@ export class Expense {
   @Column({ type: 'simple-json', nullable: true })
   receiptKeys: string[];
 
+  @Column({ type: 'simple-json', nullable: true })
+  sitePhotoUrls: string[];
+
+  @Column({ type: 'simple-json', nullable: true })
+  sitePhotoKeys: string[];
+
   @Column({ default: false })
   isDeleted: boolean;
 

@@ -7,6 +7,7 @@ import { Advance } from './entities/advance.entity.js';
 import { Project } from '../projects/entities/project.entity.js';
 import { PurchaseOrder } from '../purchase-orders/entities/purchase-order.entity.js';
 import { PoItem } from '../purchase-orders/entities/po-item.entity.js';
+import { BillItem } from './entities/bill-item.entity.js';
 import { CreateInvoiceDto, CreateBillDto, CreateAdvanceDto, CreateBoqDto } from './dto/accounts.dto.js';
 import { InvoiceStatus, BillStatus } from '../common/enums.js';
 export declare class AccountsService {
@@ -18,7 +19,8 @@ export declare class AccountsService {
     private projectRepo;
     private poRepo;
     private poItemRepo;
-    constructor(invoiceRepo: Repository<SalesInvoice>, invoiceItemRepo: Repository<InvoiceItem>, billRepo: Repository<PurchaseBill>, boqRepo: Repository<BoqItem>, advanceRepo: Repository<Advance>, projectRepo: Repository<Project>, poRepo: Repository<PurchaseOrder>, poItemRepo: Repository<PoItem>);
+    private billItemRepo;
+    constructor(invoiceRepo: Repository<SalesInvoice>, invoiceItemRepo: Repository<InvoiceItem>, billRepo: Repository<PurchaseBill>, boqRepo: Repository<BoqItem>, advanceRepo: Repository<Advance>, projectRepo: Repository<Project>, poRepo: Repository<PurchaseOrder>, poItemRepo: Repository<PoItem>, billItemRepo: Repository<BillItem>);
     convertPoToBill(poId: string, userId?: string): Promise<PurchaseBill>;
     private generateInvoiceNumber;
     createInvoice(dto: CreateInvoiceDto, userId?: string): Promise<SalesInvoice>;
@@ -31,7 +33,10 @@ export declare class AccountsService {
     removeInvoice(id: string): Promise<void>;
     private generateBillNumber;
     createBill(dto: CreateBillDto, userId?: string): Promise<PurchaseBill>;
+    findOneBill(id: string): Promise<PurchaseBill>;
     findBills(): Promise<PurchaseBill[]>;
+    updateBill(id: string, dto: CreateBillDto, userId?: string): Promise<PurchaseBill>;
+    removeBill(id: string): Promise<void>;
     updateBillStatus(id: string, status: BillStatus): Promise<PurchaseBill>;
     createBoq(dto: CreateBoqDto): Promise<BoqItem>;
     findBoq(projectId: string): Promise<BoqItem[]>;

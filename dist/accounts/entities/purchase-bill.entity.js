@@ -16,6 +16,7 @@ const vendor_entity_js_1 = require("../../vendors/entities/vendor.entity.js");
 const purchase_order_entity_js_1 = require("../../purchase-orders/entities/purchase-order.entity.js");
 const project_entity_js_1 = require("../../projects/entities/project.entity.js");
 const payment_entity_js_1 = require("../../payments/entities/payment.entity.js");
+const bill_item_entity_js_1 = require("./bill-item.entity.js");
 let PurchaseBill = class PurchaseBill {
     id;
     billNumber;
@@ -32,8 +33,10 @@ let PurchaseBill = class PurchaseBill {
     dueDate;
     billFileUrl;
     billFileKey;
+    notes;
     paidAt;
     payments;
+    billItems;
     isDeleted;
     createdBy;
     createdAt;
@@ -103,6 +106,10 @@ __decorate([
     __metadata("design:type", String)
 ], PurchaseBill.prototype, "billFileKey", void 0);
 __decorate([
+    (0, typeorm_1.Column)({ type: 'text', nullable: true }),
+    __metadata("design:type", String)
+], PurchaseBill.prototype, "notes", void 0);
+__decorate([
     (0, typeorm_1.Column)({ type: 'timestamp', nullable: true }),
     __metadata("design:type", Date)
 ], PurchaseBill.prototype, "paidAt", void 0);
@@ -110,6 +117,10 @@ __decorate([
     (0, typeorm_1.OneToMany)(() => payment_entity_js_1.Payment, (payment) => payment.purchaseBill),
     __metadata("design:type", Array)
 ], PurchaseBill.prototype, "payments", void 0);
+__decorate([
+    (0, typeorm_1.OneToMany)(() => bill_item_entity_js_1.BillItem, (item) => item.bill, { cascade: true }),
+    __metadata("design:type", Array)
+], PurchaseBill.prototype, "billItems", void 0);
 __decorate([
     (0, typeorm_1.Column)({ default: false }),
     __metadata("design:type", Boolean)

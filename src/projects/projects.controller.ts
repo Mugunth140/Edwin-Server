@@ -58,6 +58,12 @@ export class ProjectsController {
     return this.projectsService.getDashboard(id);
   }
 
+  @Get(':id/details')
+  @ApiOperation({ summary: 'Get project financial details (expenses, SWOs, bills, invoices, payments)' })
+  getDetails(@Param('id') id: string) {
+    return this.projectsService.getProjectDetails(id);
+  }
+
   @Post(':id/progress')
   @Roles(Role.ADMIN, Role.SITE_ENGINEER)
   @ApiOperation({ summary: 'Add weekly progress entry' })

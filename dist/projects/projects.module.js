@@ -22,6 +22,11 @@ const snag_item_entity_js_1 = require("./entities/snag-item.entity.js");
 const safety_incident_entity_js_1 = require("./entities/safety-incident.entity.js");
 const rfi_entity_js_1 = require("./entities/rfi.entity.js");
 const site_photo_entity_js_1 = require("./entities/site-photo.entity.js");
+const expense_entity_js_1 = require("../expenses/entities/expense.entity.js");
+const subcontract_work_order_entity_js_1 = require("../subcontract-work-orders/entities/subcontract-work-order.entity.js");
+const purchase_bill_entity_js_1 = require("../accounts/entities/purchase-bill.entity.js");
+const sales_invoice_entity_js_1 = require("../accounts/entities/sales-invoice.entity.js");
+const payment_entity_js_1 = require("../payments/entities/payment.entity.js");
 let ProjectsModule = class ProjectsModule {
 };
 exports.ProjectsModule = ProjectsModule;
@@ -40,6 +45,11 @@ exports.ProjectsModule = ProjectsModule = __decorate([
                 safety_incident_entity_js_1.SafetyIncident,
                 rfi_entity_js_1.Rfi,
                 site_photo_entity_js_1.SitePhoto,
+                expense_entity_js_1.Expense,
+                subcontract_work_order_entity_js_1.SubcontractWorkOrder,
+                purchase_bill_entity_js_1.PurchaseBill,
+                sales_invoice_entity_js_1.SalesInvoice,
+                payment_entity_js_1.Payment,
             ]),
         ],
         controllers: [projects_controller_js_1.ProjectsController],

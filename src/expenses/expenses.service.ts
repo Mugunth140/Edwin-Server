@@ -19,11 +19,19 @@ export class ExpensesService {
       // Handle file uploads
       const receiptUrls: string[] = [];
       const receiptKeys: string[] = [];
+      const sitePhotoUrls: string[] = [];
+      const sitePhotoKeys: string[] = [];
       
       if (files && files.length > 0) {
         files.forEach(file => {
-          receiptUrls.push(`/uploads/expenses/${file.filename}`);
-          receiptKeys.push(file.filename);
+          if (file.fieldname === 'sitePhotos') {
+            sitePhotoUrls.push(`/uploads/expenses/${file.filename}`);
+            sitePhotoKeys.push(file.filename);
+          } else {
+            // Default to receipts if fieldname is 'files' or anything else
+            receiptUrls.push(`/uploads/expenses/${file.filename}`);
+            receiptKeys.push(file.filename);
+          }
         });
       }
 
@@ -33,6 +41,8 @@ export class ExpensesService {
         createdBy: userId,
         receiptUrls: receiptUrls.length > 0 ? receiptUrls : undefined,
         receiptKeys: receiptKeys.length > 0 ? receiptKeys : undefined,
+        sitePhotoUrls: sitePhotoUrls.length > 0 ? sitePhotoUrls : undefined,
+        sitePhotoKeys: sitePhotoKeys.length > 0 ? sitePhotoKeys : undefined,
         // For backward compatibility, set the first one as primary
         receiptUrl: receiptUrls.length > 0 ? receiptUrls[0] : undefined,
         receiptKey: receiptKeys.length > 0 ? receiptKeys[0] : undefined,
@@ -102,14 +112,24 @@ export class ExpensesService {
     if (files && files.length > 0) {
       const receiptUrls = expense.receiptUrls || [];
       const receiptKeys = expense.receiptKeys || [];
+      const sitePhotoUrls = expense.sitePhotoUrls || [];
+      const sitePhotoKeys = expense.sitePhotoKeys || [];
       
       files.forEach(file => {
-        receiptUrls.push(`/uploads/expenses/${file.filename}`);
-        receiptKeys.push(file.filename);
+        if (file.fieldname === 'sitePhotos') {
+          sitePhotoUrls.push(`/uploads/expenses/${file.filename}`);
+          sitePhotoKeys.push(file.filename);
+        } else {
+          receiptUrls.push(`/uploads/expenses/${file.filename}`);
+          receiptKeys.push(file.filename);
+        }
       });
       
-      expense.receiptUrls = receiptUrls;
-      expense.receiptKeys = receiptKeys;
+      expense.receiptUrls = receiptUrls.length > 0 ? receiptUrls : expense.receiptUrls;
+      expense.receiptKeys = receiptKeys.length > 0 ? receiptKeys : expense.receiptKeys;
+      expense.sitePhotoUrls = sitePhotoUrls.length > 0 ? sitePhotoUrls : expense.sitePhotoUrls;
+      expense.sitePhotoKeys = sitePhotoKeys.length > 0 ? sitePhotoKeys : expense.sitePhotoKeys;
+
       // Update primary if it was empty
       if (!expense.receiptUrl && receiptUrls.length > 0) {
         expense.receiptUrl = receiptUrls[0];

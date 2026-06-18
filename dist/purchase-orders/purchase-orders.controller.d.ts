@@ -9,5 +9,9 @@ export declare class PurchaseOrdersController {
     findOne(id: string): Promise<import("./entities/purchase-order.entity.js").PurchaseOrder>;
     updateStatus(id: string, dto: UpdatePurchaseOrderStatusDto): Promise<import("./entities/purchase-order.entity.js").PurchaseOrder>;
     update(id: string, dto: any, req: any): Promise<import("./entities/purchase-order.entity.js").PurchaseOrder>;
+    uploadFile(file: Express.Multer.File): Promise<{
+        fileUrl: string;
+        fileKey: string;
+    }>;
     remove(id: string): Promise<void>;
 }

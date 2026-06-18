@@ -38,6 +38,9 @@ bun-debug.log*
 *.sln
 *.sw?
 
+# --- Uploads ---
+uploads/
+
 # --- Bun Specific ---
 # If you use Bun's built-in SQLite or binary outputs
 *.sqlite

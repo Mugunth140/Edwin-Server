@@ -84,7 +84,7 @@ exports.ExpensesController = ExpensesController;
 __decorate([
     (0, common_1.Post)(),
     (0, roles_decorator_js_1.Roles)(enums_js_1.Role.ADMIN, enums_js_1.Role.ACCOUNTS_MANAGER, enums_js_1.Role.SITE_ENGINEER),
-    (0, common_1.UseInterceptors)((0, platform_express_1.FilesInterceptor)('files', 5, {
+    (0, common_1.UseInterceptors)((0, platform_express_1.AnyFilesInterceptor)({
         storage: (0, multer_1.diskStorage)({
             destination: (req, file, cb) => {
                 const uploadPath = './uploads/expenses';
@@ -145,7 +145,7 @@ __decorate([
 __decorate([
     (0, common_1.Patch)(':id'),
     (0, roles_decorator_js_1.Roles)(enums_js_1.Role.ADMIN, enums_js_1.Role.ACCOUNTS_MANAGER, enums_js_1.Role.SITE_ENGINEER),
-    (0, common_1.UseInterceptors)((0, platform_express_1.FilesInterceptor)('files', 5, {
+    (0, common_1.UseInterceptors)((0, platform_express_1.AnyFilesInterceptor)({
         storage: (0, multer_1.diskStorage)({
             destination: (req, file, cb) => {
                 const uploadPath = './uploads/expenses';

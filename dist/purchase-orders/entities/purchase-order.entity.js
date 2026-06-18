@@ -25,6 +25,8 @@ let PurchaseOrder = class PurchaseOrder {
     paymentTerms;
     status;
     totalAmount;
+    billFileUrl;
+    billFileKey;
     items;
     isDeleted;
     createdBy;
@@ -64,13 +66,21 @@ __decorate([
     __metadata("design:type", String)
 ], PurchaseOrder.prototype, "paymentTerms", void 0);
 __decorate([
-    (0, typeorm_1.Column)({ type: 'varchar', length: 50, default: enums_js_1.PurchaseOrderStatus.DRAFT }),
+    (0, typeorm_1.Column)({ type: 'varchar', length: 50, default: enums_js_1.PurchaseOrderStatus.PENDING }),
     __metadata("design:type", String)
 ], PurchaseOrder.prototype, "status", void 0);
 __decorate([
     (0, typeorm_1.Column)({ type: 'decimal', precision: 12, scale: 2, default: 0 }),
     __metadata("design:type", Number)
 ], PurchaseOrder.prototype, "totalAmount", void 0);
+__decorate([
+    (0, typeorm_1.Column)({ nullable: true }),
+    __metadata("design:type", String)
+], PurchaseOrder.prototype, "billFileUrl", void 0);
+__decorate([
+    (0, typeorm_1.Column)({ nullable: true }),
+    __metadata("design:type", String)
+], PurchaseOrder.prototype, "billFileKey", void 0);
 __decorate([
     (0, typeorm_1.OneToMany)(() => po_item_entity_js_1.PoItem, (item) => item.purchaseOrder, { cascade: true, eager: true }),
     __metadata("design:type", Array)

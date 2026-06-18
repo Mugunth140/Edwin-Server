@@ -35,6 +35,8 @@ let Expense = class Expense {
     receiptKey;
     receiptUrls;
     receiptKeys;
+    sitePhotoUrls;
+    sitePhotoKeys;
     isDeleted;
     creator;
     createdBy;
@@ -116,6 +118,14 @@ __decorate([
     (0, typeorm_1.Column)({ type: 'simple-json', nullable: true }),
     __metadata("design:type", Array)
 ], Expense.prototype, "receiptKeys", void 0);
+__decorate([
+    (0, typeorm_1.Column)({ type: 'simple-json', nullable: true }),
+    __metadata("design:type", Array)
+], Expense.prototype, "sitePhotoUrls", void 0);
+__decorate([
+    (0, typeorm_1.Column)({ type: 'simple-json', nullable: true }),
+    __metadata("design:type", Array)
+], Expense.prototype, "sitePhotoKeys", void 0);
 __decorate([
     (0, typeorm_1.Column)({ default: false }),
     __metadata("design:type", Boolean)

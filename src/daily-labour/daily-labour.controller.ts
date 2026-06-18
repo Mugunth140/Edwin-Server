@@ -2,6 +2,7 @@ import {
   Controller,
   Get,
   Post,
+  Patch,
   Delete,
   Param,
   Query,
@@ -11,7 +12,7 @@ import {
   Body,
   UploadedFiles,
 } from '@nestjs/common';
-import { FileFieldsInterceptor } from '@nestjs/platform-express';
+import { AnyFilesInterceptor } from '@nestjs/platform-express';
 import { ApiTags, ApiOperation, ApiBearerAuth, ApiConsumes, ApiQuery } from '@nestjs/swagger';
 import { AuthGuard } from '@nestjs/passport';
 import { diskStorage } from 'multer';
@@ -32,12 +33,7 @@ export class DailyLabourController {
   @Post()
   @Roles(Role.ADMIN, Role.SITE_ENGINEER, Role.ACCOUNTS_MANAGER)
   @UseInterceptors(
-    FileFieldsInterceptor([
-      { name: 'morningPhoto1', maxCount: 1 },
-      { name: 'morningPhoto2', maxCount: 1 },
-      { name: 'eveningPhoto1', maxCount: 1 },
-      { name: 'eveningPhoto2', maxCount: 1 },
-    ], {
+    AnyFilesInterceptor({
       storage: diskStorage({
         destination: (req, file, cb) => {
           const uploadPath = './uploads/dpw';
@@ -56,12 +52,7 @@ export class DailyLabourController {
   @ApiConsumes('multipart/form-data')
   @ApiOperation({ summary: 'Create Daily Labour Entry' })
   async create(
-    @UploadedFiles() files: {
-      morningPhoto1?: Express.Multer.File[],
-      morningPhoto2?: Express.Multer.File[],
-      eveningPhoto1?: Express.Multer.File[],
-      eveningPhoto2?: Express.Multer.File[]
-    },
+    @UploadedFiles() files: Express.Multer.File[],
     @Body() body: any,
     @Request() req: any,
   ) {
@@ -92,12 +83,7 @@ export class DailyLabourController {
   @Post(':id')
   @Roles(Role.ADMIN, Role.SITE_ENGINEER, Role.ACCOUNTS_MANAGER)
   @UseInterceptors(
-    FileFieldsInterceptor([
-      { name: 'morningPhoto1', maxCount: 1 },
-      { name: 'morningPhoto2', maxCount: 1 },
-      { name: 'eveningPhoto1', maxCount: 1 },
-      { name: 'eveningPhoto2', maxCount: 1 },
-    ], {
+    AnyFilesInterceptor({
       storage: diskStorage({
         destination: (req, file, cb) => {
           const uploadPath = './uploads/dpw';
@@ -117,12 +103,7 @@ export class DailyLabourController {
   @ApiOperation({ summary: 'Update Daily Labour Entry' })
   async update(
     @Param('id') id: string,
-    @UploadedFiles() files: {
-      morningPhoto1?: Express.Multer.File[],
-      morningPhoto2?: Express.Multer.File[],
-      eveningPhoto1?: Express.Multer.File[],
-      eveningPhoto2?: Express.Multer.File[]
-    },
+    @UploadedFiles() files: Express.Multer.File[],
     @Body() body: any,
   ) {
     const workers = body.workers ? JSON.parse(body.workers) : [];
@@ -133,6 +114,13 @@ export class DailyLabourController {
       remarks: body.remarks,
       workers: workers,
     }, files);
+  }
+
+  @Patch(':id/status')
+  @Roles(Role.ADMIN, Role.SITE_ENGINEER, Role.ACCOUNTS_MANAGER)
+  @ApiOperation({ summary: 'Update DPW report status' })
+  updateStatus(@Param('id') id: string, @Body('status') status: string) {
+    return this.dailyLabourService.updateStatus(id, status);
   }
 
   @Delete(':id')

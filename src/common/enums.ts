@@ -12,14 +12,25 @@ export enum WorkOrderStatus {
   APPROVED = 'approved',
 }
 
+export enum SubcontractWorkOrderStatus {
+  PENDING = 'pending',
+  ADMIN_APPROVED = 'admin_approved',
+  APPROVED = 'approved',
+  REJECTED = 'rejected',
+}
+
 export enum PurchaseOrderStatus {
   DRAFT = 'draft',
   SENT = 'sent',
+  PENDING = 'pending',
+  ADMIN_APPROVED = 'admin_approved',
   APPROVED = 'approved',
+  REJECTED = 'rejected',
 }
 
 export enum BillStatus {
   PENDING = 'pending',
+  ADMIN_APPROVED = 'admin_approved',
   APPROVED = 'approved',
   REJECTED = 'rejected',
 }
@@ -85,6 +96,7 @@ export enum ExpenseCategory {
 
 export enum ExpenseStatus {
   PENDING = 'pending',
+  ADMIN_APPROVED = 'admin_approved',
   APPROVED = 'approved',
   REJECTED = 'rejected',
 }

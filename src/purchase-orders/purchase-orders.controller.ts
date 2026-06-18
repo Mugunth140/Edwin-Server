@@ -1,5 +1,9 @@
-import { Controller, Get, Post, Body, Param, UseGuards, Request, Patch, Put, Delete } from '@nestjs/common';
-import { ApiTags, ApiOperation, ApiBearerAuth } from '@nestjs/swagger';
+import { Controller, Get, Post, Body, Param, UseGuards, Request, Patch, Put, Delete, UploadedFile, UseInterceptors } from '@nestjs/common';
+import { FileInterceptor } from '@nestjs/platform-express';
+import { ApiTags, ApiOperation, ApiBearerAuth, ApiConsumes } from '@nestjs/swagger';
+import { diskStorage } from 'multer';
+import { extname } from 'path';
+import * as fs from 'fs';
 import { AuthGuard } from '@nestjs/passport';
 import { RolesGuard } from '../auth/roles.guard.js';
 import { Roles } from '../auth/roles.decorator.js';
@@ -44,6 +48,35 @@ export class PurchaseOrdersController {
   @ApiOperation({ summary: 'Update purchase order' })
   update(@Param('id') id: string, @Body() dto: any, @Request() req: any) {
     return this.poService.update(id, dto, req.user.id);
+  }
+
+  @Post('upload')
+  @Roles(Role.ADMIN, Role.ACCOUNTS_MANAGER, Role.PURCHASE_TEAM)
+  @UseInterceptors(
+    FileInterceptor('file', {
+      storage: diskStorage({
+        destination: (req, file, cb) => {
+          const uploadPath = './uploads/quotation-bill';
+          if (!fs.existsSync(uploadPath)) {
+            fs.mkdirSync(uploadPath, { recursive: true });
+          }
+          cb(null, uploadPath);
+        },
+        filename: (req, file, cb) => {
+          const uniqueSuffix = Date.now() + '-' + Math.round(Math.random() * 1e9);
+          cb(null, `${file.fieldname}-${uniqueSuffix}${extname(file.originalname)}`);
+        },
+      }),
+    }),
+  )
+  @ApiConsumes('multipart/form-data')
+  @ApiOperation({ summary: 'Upload a quotation bill file' })
+  async uploadFile(@UploadedFile() file: Express.Multer.File) {
+    if (!file) throw new Error('File is required');
+    return {
+      fileUrl: `/uploads/quotation-bill/${file.filename}`,
+      fileKey: file.filename,
+    };
   }
 
   @Delete(':id')

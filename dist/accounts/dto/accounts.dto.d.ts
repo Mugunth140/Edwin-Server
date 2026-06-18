@@ -13,6 +13,11 @@ export declare class CreateInvoiceDto {
 export declare class BillItemDto {
     poItemId: string;
     quantity: number;
+    description?: string;
+    unit?: string;
+    rate?: number;
+    orderedQty?: number;
+    billedQty?: number;
 }
 export declare class CreateBillDto {
     vendorId: string;
@@ -23,6 +28,7 @@ export declare class CreateBillDto {
     dueDate?: string;
     billFileUrl?: string;
     billFileKey?: string;
+    notes?: string;
     items?: BillItemDto[];
 }
 export declare class CreateAdvanceDto {

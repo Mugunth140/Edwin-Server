@@ -24,6 +24,7 @@ const advance_entity_js_1 = require("./entities/advance.entity.js");
 const project_entity_js_1 = require("../projects/entities/project.entity.js");
 const purchase_order_entity_js_1 = require("../purchase-orders/entities/purchase-order.entity.js");
 const po_item_entity_js_1 = require("../purchase-orders/entities/po-item.entity.js");
+const bill_item_entity_js_1 = require("./entities/bill-item.entity.js");
 const enums_js_1 = require("../common/enums.js");
 let AccountsService = class AccountsService {
     invoiceRepo;
@@ -34,7 +35,8 @@ let AccountsService = class AccountsService {
     projectRepo;
     poRepo;
     poItemRepo;
-    constructor(invoiceRepo, invoiceItemRepo, billRepo, boqRepo, advanceRepo, projectRepo, poRepo, poItemRepo) {
+    billItemRepo;
+    constructor(invoiceRepo, invoiceItemRepo, billRepo, boqRepo, advanceRepo, projectRepo, poRepo, poItemRepo, billItemRepo) {
         this.invoiceRepo = invoiceRepo;
         this.invoiceItemRepo = invoiceItemRepo;
         this.billRepo = billRepo;
@@ -43,6 +45,7 @@ let AccountsService = class AccountsService {
         this.projectRepo = projectRepo;
         this.poRepo = poRepo;
         this.poItemRepo = poItemRepo;
+        this.billItemRepo = billItemRepo;
     }
     async convertPoToBill(poId, userId) {
         const po = await this.poRepo.findOne({ where: { id: poId }, relations: ['vendor'] });
@@ -161,22 +164,71 @@ let AccountsService = class AccountsService {
         const bill = this.billRepo.create({ ...billData, billNumber, createdBy: userId });
         const savedBill = await this.billRepo.save(bill);
         if (items && items.length > 0) {
+            const billItems = [];
             for (const item of items) {
                 const poItem = await this.poItemRepo.findOne({ where: { id: item.poItemId } });
                 if (poItem) {
                     poItem.billedQuantity = Number(poItem.billedQuantity || 0) + Number(item.quantity);
                     await this.poItemRepo.save(poItem);
                 }
+                billItems.push(this.billItemRepo.create({
+                    billId: savedBill.id,
+                    poItemId: item.poItemId,
+                    description: item.description || '',
+                    quantity: item.quantity,
+                    unit: item.unit || 'nos',
+                    rate: item.rate || 0,
+                    orderedQty: item.orderedQty || 0,
+                    billedQty: item.billedQty || 0,
+                }));
             }
+            await this.billItemRepo.save(billItems);
         }
-        return savedBill;
+        return this.findOneBill(savedBill.id);
+    }
+    async findOneBill(id) {
+        const bill = await this.billRepo.findOne({
+            where: { id },
+            relations: ['vendor', 'project', 'payments', 'purchaseOrder', 'purchaseOrder.items', 'billItems'],
+        });
+        if (!bill)
+            throw new common_1.NotFoundException('Bill not found');
+        return bill;
     }
     async findBills() {
         return this.billRepo.find({
             where: { isDeleted: false },
-            relations: ['vendor', 'payments', 'purchaseOrder', 'purchaseOrder.items'],
+            relations: ['vendor', 'project', 'payments', 'purchaseOrder', 'purchaseOrder.items', 'billItems'],
             order: { createdAt: 'DESC' },
         });
+    }
+    async updateBill(id, dto, userId) {
+        const bill = await this.findOneBill(id);
+        const { items, ...billData } = dto;
+        Object.assign(bill, { ...billData, updatedBy: userId ?? '' });
+        const savedBill = await this.billRepo.save(bill);
+        if (items && items.length > 0) {
+            await this.billItemRepo.delete({ billId: id });
+            const billItems = items.map((item) => this.billItemRepo.create({
+                billId: id,
+                poItemId: item.poItemId,
+                description: item.description || '',
+                quantity: item.quantity,
+                unit: item.unit || 'nos',
+                rate: item.rate || 0,
+                orderedQty: item.orderedQty || 0,
+                billedQty: item.billedQty || 0,
+            }));
+            await this.billItemRepo.save(billItems);
+        }
+        return this.findOneBill(id);
+    }
+    async removeBill(id) {
+        const bill = await this.billRepo.findOne({ where: { id } });
+        if (!bill)
+            throw new common_1.NotFoundException('Bill not found');
+        bill.isDeleted = true;
+        await this.billRepo.save(bill);
     }
     async updateBillStatus(id, status) {
         const bill = await this.billRepo.findOne({ where: { id } });
@@ -233,8 +285,10 @@ let AccountsService = class AccountsService {
     async getReceivables() {
         return this.invoiceRepo.find({
             where: [
+                { isDeleted: false, status: enums_js_1.InvoiceStatus.DRAFT },
                 { isDeleted: false, status: enums_js_1.InvoiceStatus.SENT },
                 { isDeleted: false, status: enums_js_1.InvoiceStatus.OVERDUE },
+                { isDeleted: false, status: enums_js_1.InvoiceStatus.PARTIAL },
             ],
             relations: ['project'],
         });
@@ -267,7 +321,9 @@ exports.AccountsService = AccountsService = __decorate([
     __param(5, (0, typeorm_1.InjectRepository)(project_entity_js_1.Project)),
     __param(6, (0, typeorm_1.InjectRepository)(purchase_order_entity_js_1.PurchaseOrder)),
     __param(7, (0, typeorm_1.InjectRepository)(po_item_entity_js_1.PoItem)),
+    __param(8, (0, typeorm_1.InjectRepository)(bill_item_entity_js_1.BillItem)),
     __metadata("design:paramtypes", [typeorm_2.Repository,
+        typeorm_2.Repository,
         typeorm_2.Repository,
         typeorm_2.Repository,
         typeorm_2.Repository,

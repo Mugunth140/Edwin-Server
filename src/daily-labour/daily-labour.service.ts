@@ -15,7 +15,7 @@ export class DailyLabourService {
     private readonly workerRepo: Repository<DailyWorker>,
   ) {}
 
-  async create(dto: CreateDailyLabourReportDto, userId: string, files?: any) {
+  async create(dto: CreateDailyLabourReportDto, userId: string, files?: Express.Multer.File[]) {
     const report = this.reportRepo.create({
       projectId: dto.projectId,
       reportDate: new Date(dto.reportDate),
@@ -23,22 +23,31 @@ export class DailyLabourService {
       createdById: userId,
     });
 
-    if (files) {
-      if (files.morningPhoto1) report.morningPhoto1Url = `/uploads/dpw/${files.morningPhoto1[0].filename}`;
-      if (files.morningPhoto2) report.morningPhoto2Url = `/uploads/dpw/${files.morningPhoto2[0].filename}`;
-      if (files.eveningPhoto1) report.eveningPhoto1Url = `/uploads/dpw/${files.eveningPhoto1[0].filename}`;
-      if (files.eveningPhoto2) report.eveningPhoto2Url = `/uploads/dpw/${files.eveningPhoto2[0].filename}`;
-    }
-
     // Save report first to get ID
     const savedReport = await this.reportRepo.save(report);
 
     // Create and save workers
     if (dto.workers && dto.workers.length > 0) {
-      const workers = dto.workers.map(w => this.workerRepo.create({
-        ...w,
-        reportId: savedReport.id
-      }));
+      const workers = dto.workers.map((w, index) => {
+        const worker = this.workerRepo.create({
+          ...w,
+          reportId: savedReport.id
+        });
+
+        if (files) {
+          const m1 = files.find(f => f.fieldname === `worker_${index}_morningPhoto1`);
+          const m2 = files.find(f => f.fieldname === `worker_${index}_morningPhoto2`);
+          const e1 = files.find(f => f.fieldname === `worker_${index}_eveningPhoto1`);
+          const e2 = files.find(f => f.fieldname === `worker_${index}_eveningPhoto2`);
+
+          if (m1) worker.morningPhoto1Url = `/uploads/dpw/${m1.filename}`;
+          if (m2) worker.morningPhoto2Url = `/uploads/dpw/${m2.filename}`;
+          if (e1) worker.eveningPhoto1Url = `/uploads/dpw/${e1.filename}`;
+          if (e2) worker.eveningPhoto2Url = `/uploads/dpw/${e2.filename}`;
+        }
+
+        return worker;
+      });
       await this.workerRepo.save(workers);
     }
 
@@ -80,6 +89,12 @@ export class DailyLabourService {
     return report;
   }
 
+  async updateStatus(id: string, status: string) {
+    const report = await this.findOne(id);
+    report.status = status;
+    return this.reportRepo.save(report);
+  }
+
   async remove(id: string) {
     const report = await this.reportRepo.findOne({
       where: { id, isDeleted: false },
@@ -91,19 +106,12 @@ export class DailyLabourService {
     return { success: true };
   }
 
-  async update(id: string, dto: CreateDailyLabourReportDto, files?: any) {
+  async update(id: string, dto: CreateDailyLabourReportDto, files?: Express.Multer.File[]) {
     const report = await this.findOne(id);
 
     report.projectId = dto.projectId;
     report.reportDate = new Date(dto.reportDate);
     report.remarks = dto.remarks || '';
-
-    if (files) {
-      if (files.morningPhoto1) report.morningPhoto1Url = `/uploads/dpw/${files.morningPhoto1[0].filename}`;
-      if (files.morningPhoto2) report.morningPhoto2Url = `/uploads/dpw/${files.morningPhoto2[0].filename}`;
-      if (files.eveningPhoto1) report.eveningPhoto1Url = `/uploads/dpw/${files.eveningPhoto1[0].filename}`;
-      if (files.eveningPhoto2) report.eveningPhoto2Url = `/uploads/dpw/${files.eveningPhoto2[0].filename}`;
-    }
 
     await this.reportRepo.save(report);
 
@@ -111,10 +119,33 @@ export class DailyLabourService {
     await this.workerRepo.delete({ reportId: id });
 
     if (dto.workers && dto.workers.length > 0) {
-      const workers = dto.workers.map(w => this.workerRepo.create({
-        ...w,
-        reportId: id
-      }));
+      const workers = dto.workers.map((w, index) => {
+        const worker = this.workerRepo.create({
+          ...w,
+          reportId: id
+        });
+
+        // Map photos from files if provided
+        if (files) {
+          const m1 = files.find(f => f.fieldname === `worker_${index}_morningPhoto1`);
+          const m2 = files.find(f => f.fieldname === `worker_${index}_morningPhoto2`);
+          const e1 = files.find(f => f.fieldname === `worker_${index}_eveningPhoto1`);
+          const e2 = files.find(f => f.fieldname === `worker_${index}_eveningPhoto2`);
+
+          if (m1) worker.morningPhoto1Url = `/uploads/dpw/${m1.filename}`;
+          if (m2) worker.morningPhoto2Url = `/uploads/dpw/${m2.filename}`;
+          if (e1) worker.eveningPhoto1Url = `/uploads/dpw/${e1.filename}`;
+          if (e2) worker.eveningPhoto2Url = `/uploads/dpw/${e2.filename}`;
+        }
+
+        // If photo URLs were already in DTO (not replaced by new files), keep them
+        if (!worker.morningPhoto1Url && w.morningPhoto1Url) worker.morningPhoto1Url = w.morningPhoto1Url;
+        if (!worker.morningPhoto2Url && w.morningPhoto2Url) worker.morningPhoto2Url = w.morningPhoto2Url;
+        if (!worker.eveningPhoto1Url && w.eveningPhoto1Url) worker.eveningPhoto1Url = w.eveningPhoto1Url;
+        if (!worker.eveningPhoto2Url && w.eveningPhoto2Url) worker.eveningPhoto2Url = w.eveningPhoto2Url;
+
+        return worker;
+      });
       await this.workerRepo.save(workers);
     }
 

@@ -30,18 +30,6 @@ export class DailyLabourReport {
   @Column({ type: 'text', nullable: true })
   remarks: string;
 
-  @Column({ nullable: true })
-  morningPhoto1Url: string;
-
-  @Column({ nullable: true })
-  morningPhoto2Url: string;
-
-  @Column({ nullable: true })
-  eveningPhoto1Url: string;
-
-  @Column({ nullable: true })
-  eveningPhoto2Url: string;
-
   @OneToMany(() => DailyWorker, worker => worker.report, { cascade: true, eager: true })
   workers: DailyWorker[];
 
@@ -54,6 +42,9 @@ export class DailyLabourReport {
 
   @Column({ default: false })
   isDeleted: boolean;
+
+  @Column({ type: 'varchar', default: 'pending' })
+  status: string;
 
   @CreateDateColumn()
   createdAt: Date;
