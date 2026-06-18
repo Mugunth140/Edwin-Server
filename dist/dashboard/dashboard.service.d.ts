@@ -40,6 +40,24 @@ export declare class DashboardService {
             bills: PurchaseBill[];
         };
     }>;
+    getAccountsDashboard(): Promise<{
+        kpis: {
+            totalReceivable: number;
+            pendingInvoiceCount: number;
+            totalPayable: number;
+            pendingBillCount: number;
+            monthInflow: number;
+            monthOutflow: number;
+        };
+        recentPayments: {
+            id: string;
+            amount: number;
+            date: Date;
+            mode: import("../common/enums.js").PaymentMode;
+            type: import("../common/enums.js").PaymentType;
+            party: string;
+        }[];
+    }>;
     getMasterDashboard(): Promise<{
         totalProjects: number;
         projects: {

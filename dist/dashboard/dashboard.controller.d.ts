@@ -20,6 +20,24 @@ export declare class DashboardController {
         }[];
         criticalActions: never[];
     }>;
+    getAccounts(): Promise<{
+        kpis: {
+            totalReceivable: number;
+            pendingInvoiceCount: number;
+            totalPayable: number;
+            pendingBillCount: number;
+            monthInflow: number;
+            monthOutflow: number;
+        };
+        recentPayments: {
+            id: string;
+            amount: number;
+            date: Date;
+            mode: import("../common/enums.js").PaymentMode;
+            type: import("../common/enums.js").PaymentType;
+            party: string;
+        }[];
+    }>;
     getPurchase(): Promise<{
         pendingPOs: {
             id: string;

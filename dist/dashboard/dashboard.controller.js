@@ -28,6 +28,9 @@ let DashboardController = class DashboardController {
     getMaster() {
         return this.dashboardService.getMasterDashboard();
     }
+    getAccounts() {
+        return this.dashboardService.getAccountsDashboard();
+    }
     getPurchase() {
         return this.dashboardService.getPurchaseDashboard();
     }
@@ -38,12 +41,20 @@ let DashboardController = class DashboardController {
 exports.DashboardController = DashboardController;
 __decorate([
     (0, common_1.Get)('master'),
-    (0, roles_decorator_js_1.Roles)(enums_js_1.Role.ADMIN, enums_js_1.Role.ACCOUNTS_MANAGER),
+    (0, roles_decorator_js_1.Roles)(enums_js_1.Role.ADMIN),
     (0, swagger_1.ApiOperation)({ summary: 'Get master dashboard KPIs' }),
     __metadata("design:type", Function),
     __metadata("design:paramtypes", []),
     __metadata("design:returntype", void 0)
 ], DashboardController.prototype, "getMaster", null);
+__decorate([
+    (0, common_1.Get)('accounts'),
+    (0, roles_decorator_js_1.Roles)(enums_js_1.Role.ACCOUNTS_MANAGER, enums_js_1.Role.ADMIN),
+    (0, swagger_1.ApiOperation)({ summary: 'Get accounts manager dashboard KPIs' }),
+    __metadata("design:type", Function),
+    __metadata("design:paramtypes", []),
+    __metadata("design:returntype", void 0)
+], DashboardController.prototype, "getAccounts", null);
 __decorate([
     (0, common_1.Get)('purchase'),
     (0, roles_decorator_js_1.Roles)(enums_js_1.Role.PURCHASE_TEAM),

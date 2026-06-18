@@ -103,6 +103,71 @@ let DashboardService = class DashboardService {
             }
         };
     }
+    async getAccountsDashboard() {
+        const invoices = await this.invoiceRepo.find({
+            where: { isDeleted: false },
+            relations: ['project'],
+        });
+        const totalReceivable = invoices.reduce((sum, inv) => {
+            if (inv.status === enums_js_1.InvoiceStatus.PAID || inv.status === enums_js_1.InvoiceStatus.CANCELLED)
+                return sum;
+            const balance = Number(inv.totalAmount) + Number(inv.gstAmount) - Number(inv.paidAmount || 0);
+            return sum + balance;
+        }, 0);
+        const pendingInvoiceCount = invoices.filter(inv => inv.status !== enums_js_1.InvoiceStatus.PAID && inv.status !== enums_js_1.InvoiceStatus.CANCELLED).length;
+        const bills = await this.billRepo.find({
+            where: { isDeleted: false },
+            relations: ['vendor'],
+        });
+        const totalPayable = bills.reduce((sum, bill) => {
+            const balance = Number(bill.amount) - Number(bill.paidAmount || 0);
+            return sum + balance;
+        }, 0);
+        const pendingBillCount = bills.filter(b => (Number(b.amount) - Number(b.paidAmount || 0)) > 0).length;
+        const recentPayments = await this.paymentRepo.find({
+            where: { isDeleted: false },
+            relations: ['vendor', 'project'],
+            order: { paymentDate: 'DESC' },
+            take: 10,
+        });
+        const startOfMonth = new Date();
+        startOfMonth.setDate(1);
+        startOfMonth.setHours(0, 0, 0, 0);
+        const monthInflow = await this.paymentRepo
+            .createQueryBuilder('p')
+            .select('SUM(p.amount)', 'total')
+            .where('p.isDeleted = false AND p.paymentType = :type AND p.paymentDate >= :start', {
+            type: 'revenue',
+            start: startOfMonth,
+        })
+            .getRawOne();
+        const monthOutflow = await this.paymentRepo
+            .createQueryBuilder('p')
+            .select('SUM(p.amount)', 'total')
+            .where('p.isDeleted = false AND p.paymentType != :type AND p.paymentDate >= :start', {
+            type: 'revenue',
+            start: startOfMonth,
+        })
+            .getRawOne();
+        return {
+            kpis: {
+                totalReceivable,
+                pendingInvoiceCount,
+                totalPayable,
+                pendingBillCount,
+                monthInflow: Number(monthInflow?.total || 0),
+                monthOutflow: Number(monthOutflow?.total || 0),
+            },
+            recentPayments: recentPayments.map(p => ({
+                id: p.id,
+                amount: p.amount,
+                date: p.paymentDate,
+                mode: p.paymentMode,
+                type: p.paymentType,
+                party: p.vendor?.name || p.project?.clientName || p.payeeName,
+            })),
+        };
+    }
     async getMasterDashboard() {
         const projects = await this.projectsRepo.find({ where: { isDeleted: false } });
         const totalProjects = projects.length;

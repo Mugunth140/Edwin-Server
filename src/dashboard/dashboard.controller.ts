@@ -14,10 +14,17 @@ export class DashboardController {
   constructor(private readonly dashboardService: DashboardService) {}
 
   @Get('master')
-  @Roles(Role.ADMIN, Role.ACCOUNTS_MANAGER)
+  @Roles(Role.ADMIN)
   @ApiOperation({ summary: 'Get master dashboard KPIs' })
   getMaster() {
     return this.dashboardService.getMasterDashboard();
+  }
+
+  @Get('accounts')
+  @Roles(Role.ACCOUNTS_MANAGER, Role.ADMIN)
+  @ApiOperation({ summary: 'Get accounts manager dashboard KPIs' })
+  getAccounts() {
+    return this.dashboardService.getAccountsDashboard();
   }
 
   @Get('purchase')
