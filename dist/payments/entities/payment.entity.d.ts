@@ -25,5 +25,6 @@ export declare class Payment {
     notes: string;
     isDeleted: boolean;
     createdBy: string;
+    timesheetId: string;
     createdAt: Date;
 }

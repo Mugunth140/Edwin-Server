@@ -7,6 +7,7 @@ import { Role } from '../common/enums.js';
 import { CreatePurchaseTeamDto } from './dto/create-purchase-team.dto.js';
 import { UpdatePurchaseTeamDto } from './dto/update-purchase-team.dto.js';
 import { Project } from '../projects/entities/project.entity.js';
+import { Salary } from '../salaries/entities/salary.entity.js';
 
 @Injectable()
 export class PurchaseTeamService {
@@ -15,6 +16,8 @@ export class PurchaseTeamService {
     private readonly userRepository: Repository<User>,
     @InjectRepository(Project)
     private readonly projectRepository: Repository<Project>,
+    @InjectRepository(Salary)
+    private readonly salaryRepository: Repository<Salary>,
   ) {}
 
   async create(dto: CreatePurchaseTeamDto) {
@@ -50,13 +53,15 @@ export class PurchaseTeamService {
       member.projects = [];
     }
 
+    member.salaryGradeId = dto.salaryGradeId || null;
+
     return await this.userRepository.save(member);
   }
 
   async findAll() {
     return await this.userRepository.find({
       where: { role: Role.PURCHASE_TEAM },
-      relations: ['projects'],
+      relations: ['projects', 'salaryGrade'],
       order: { name: 'ASC' },
     });
   }
@@ -64,7 +69,7 @@ export class PurchaseTeamService {
   async findOne(id: string) {
     const member = await this.userRepository.findOne({
       where: { id, role: Role.PURCHASE_TEAM },
-      relations: ['projects'],
+      relations: ['projects', 'salaryGrade'],
     });
     if (!member) {
       throw new NotFoundException(`Purchase Team Member with ID ${id} not found`);
@@ -104,6 +109,7 @@ export class PurchaseTeamService {
       phone: dto.phone !== undefined ? dto.phone : member.phone,
       address: dto.address !== undefined ? dto.address : member.address,
       isActive: dto.isActive !== undefined ? dto.isActive : member.isActive,
+      salaryGradeId: dto.salaryGradeId !== undefined ? dto.salaryGradeId : member.salaryGradeId,
     });
 
     return await this.userRepository.save(member);

@@ -29,13 +29,14 @@ export class SiteEngineersService {
 
     const engineer = this.userRepository.create({
       name: dto.name,
-      email: dto.email || `${dto.username || 'user'}_${Date.now()}@temp.com`, // Email is required in DB but might not be provided
+      email: dto.email || `${dto.username || 'user'}_${Date.now()}@temp.com`,
       username: dto.username,
       employeeId: dto.employeeId,
       phone: dto.phone,
       address: dto.address,
       role: Role.SITE_ENGINEER,
       isActive: dto.isActive !== undefined ? dto.isActive : true,
+      salaryGradeId: dto.salaryGradeId,
     });
 
     if (dto.password) {
@@ -56,7 +57,7 @@ export class SiteEngineersService {
   async findAll() {
     return await this.userRepository.find({
       where: { role: Role.SITE_ENGINEER },
-      relations: ['projects'],
+      relations: ['projects', 'salaryGrade'],
       order: { name: 'ASC' },
     });
   }
@@ -64,7 +65,7 @@ export class SiteEngineersService {
   async findOne(id: string) {
     const engineer = await this.userRepository.findOne({
       where: { id, role: Role.SITE_ENGINEER },
-      relations: ['projects'],
+      relations: ['projects', 'salaryGrade'],
     });
     if (!engineer) {
       throw new NotFoundException(`Site Engineer with ID ${id} not found`);
@@ -104,6 +105,7 @@ export class SiteEngineersService {
       phone: dto.phone !== undefined ? dto.phone : engineer.phone,
       address: dto.address !== undefined ? dto.address : engineer.address,
       isActive: dto.isActive !== undefined ? dto.isActive : engineer.isActive,
+      salaryGradeId: dto.salaryGradeId !== undefined ? dto.salaryGradeId : engineer.salaryGradeId,
     });
 
     return await this.userRepository.save(engineer);

@@ -36,6 +36,7 @@ import { ExpenseType } from './expense-types/entities/expense-type.entity.js';
 import { Payment } from './payments/entities/payment.entity.js';
 import { WorkCategory } from './work-categories/entities/work-category.entity.js';
 import { Trade } from './trades/entities/trade.entity.js';
+import { Salary } from './salaries/entities/salary.entity.js';
 import {
   ExpenseCategory,
   InvoiceStatus,
@@ -74,6 +75,7 @@ const entities = [
   Payment,
   WorkCategory,
   Trade,
+  Salary,
 ];
 
 function loadEnvironment() {
@@ -442,6 +444,23 @@ async function seedExpenseTypes(manager: EntityManager) {
   console.log(`✅ Expense Types verified: ${types.length}`);
 }
 
+async function seedSalaries(manager: EntityManager) {
+  const repo = manager.getRepository(Salary);
+  const salaries = [
+    { grades: 'Grade A', expInYears: '0-1', monthlySalary: 15000, avgCostPerHr: 93.75, bookingCost: 7500 },
+    { grades: 'Grade B', expInYears: '2-4', monthlySalary: 25000, avgCostPerHr: 156.25, bookingCost: 12500 },
+    { grades: 'Grade C', expInYears: '5-7', monthlySalary: 40000, avgCostPerHr: 250, bookingCost: 20000 },
+    { grades: 'Grade D', expInYears: '8-10', monthlySalary: 55000, avgCostPerHr: 343.75, bookingCost: 27500 },
+    { grades: 'Grade E', expInYears: '11-15', monthlySalary: 75000, avgCostPerHr: 468.75, bookingCost: 37500 },
+    { grades: 'Grade F', expInYears: '15+', monthlySalary: 100000, avgCostPerHr: 625, bookingCost: 50000 },
+  ];
+
+  for (const s of salaries) {
+    await upsertBy(repo, { grades: s.grades }, { ...s, isDeleted: false });
+  }
+  console.log(`✅ Salary grades seeded: ${salaries.length}`);
+}
+
 async function seed() {
   loadEnvironment();
 
@@ -458,6 +477,7 @@ async function seed() {
       await seedWorkCategories(manager);
       await seedTrades(manager);
       await seedExpenseTypes(manager);
+      await seedSalaries(manager);
       const referenceData = await seedReferenceData(manager, admin);
 
       if (includeSampleData) {

@@ -36,6 +36,7 @@ export class AccountsManagersService {
       address: dto.address,
       role: Role.ACCOUNTS_MANAGER,
       isActive: dto.isActive !== undefined ? dto.isActive : true,
+      salaryGradeId: dto.salaryGradeId,
     });
 
     if (dto.password) {
@@ -56,7 +57,7 @@ export class AccountsManagersService {
   async findAll() {
     return await this.userRepository.find({
       where: { role: Role.ACCOUNTS_MANAGER },
-      relations: ['projects'],
+      relations: ['projects', 'salaryGrade'],
       order: { name: 'ASC' },
     });
   }
@@ -64,7 +65,7 @@ export class AccountsManagersService {
   async findOne(id: string) {
     const manager = await this.userRepository.findOne({
       where: { id, role: Role.ACCOUNTS_MANAGER },
-      relations: ['projects'],
+      relations: ['projects', 'salaryGrade'],
     });
     if (!manager) {
       throw new NotFoundException(`Accounts Manager with ID ${id} not found`);
@@ -104,6 +105,7 @@ export class AccountsManagersService {
       phone: dto.phone !== undefined ? dto.phone : manager.phone,
       address: dto.address !== undefined ? dto.address : manager.address,
       isActive: dto.isActive !== undefined ? dto.isActive : manager.isActive,
+      salaryGradeId: dto.salaryGradeId !== undefined ? dto.salaryGradeId : manager.salaryGradeId,
     });
 
     return await this.userRepository.save(manager);

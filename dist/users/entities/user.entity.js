@@ -13,6 +13,7 @@ exports.User = void 0;
 const typeorm_1 = require("typeorm");
 const enums_js_1 = require("../../common/enums.js");
 const project_entity_js_1 = require("../../projects/entities/project.entity.js");
+const salary_entity_js_1 = require("../../salaries/entities/salary.entity.js");
 let User = class User {
     id;
     name;
@@ -24,6 +25,8 @@ let User = class User {
     passwordHash;
     role;
     isActive;
+    salaryGradeId;
+    salaryGrade;
     projects;
     createdAt;
     updatedAt;
@@ -69,6 +72,15 @@ __decorate([
     (0, typeorm_1.Column)({ default: true }),
     __metadata("design:type", Boolean)
 ], User.prototype, "isActive", void 0);
+__decorate([
+    (0, typeorm_1.Column)({ nullable: true }),
+    __metadata("design:type", Object)
+], User.prototype, "salaryGradeId", void 0);
+__decorate([
+    (0, typeorm_1.ManyToOne)(() => salary_entity_js_1.Salary, { nullable: true }),
+    (0, typeorm_1.JoinColumn)({ name: 'salaryGradeId' }),
+    __metadata("design:type", salary_entity_js_1.Salary)
+], User.prototype, "salaryGrade", void 0);
 __decorate([
     (0, typeorm_1.ManyToMany)(() => project_entity_js_1.Project),
     (0, typeorm_1.JoinTable)({ name: 'user_projects' }),

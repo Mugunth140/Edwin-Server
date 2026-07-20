@@ -38,6 +38,7 @@ let Payment = class Payment {
     notes;
     isDeleted;
     createdBy;
+    timesheetId;
     createdAt;
 };
 exports.Payment = Payment;
@@ -126,6 +127,10 @@ __decorate([
     (0, typeorm_1.Column)({ nullable: true }),
     __metadata("design:type", String)
 ], Payment.prototype, "createdBy", void 0);
+__decorate([
+    (0, typeorm_1.Column)({ nullable: true }),
+    __metadata("design:type", String)
+], Payment.prototype, "timesheetId", void 0);
 __decorate([
     (0, typeorm_1.CreateDateColumn)(),
     __metadata("design:type", Date)

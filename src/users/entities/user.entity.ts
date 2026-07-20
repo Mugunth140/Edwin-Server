@@ -5,10 +5,13 @@ import {
   CreateDateColumn,
   UpdateDateColumn,
   ManyToMany,
+  ManyToOne,
+  JoinColumn,
   JoinTable,
 } from 'typeorm';
 import { Role } from '../../common/enums.js';
 import { Project } from '../../projects/entities/project.entity.js';
+import { Salary } from '../../salaries/entities/salary.entity.js';
 
 @Entity('users')
 export class User {
@@ -41,6 +44,13 @@ export class User {
 
   @Column({ default: true })
   isActive: boolean;
+
+  @Column({ nullable: true })
+  salaryGradeId: string | null;
+
+  @ManyToOne(() => Salary, { nullable: true })
+  @JoinColumn({ name: 'salaryGradeId' })
+  salaryGrade: Salary;
 
   @ManyToMany(() => Project)
   @JoinTable({ name: 'user_projects' })

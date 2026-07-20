@@ -33,6 +33,8 @@ const accounts_managers_module_js_1 = require("./accounts-managers/accounts-mana
 const purchase_team_module_js_1 = require("./purchase-team/purchase-team.module.js");
 const item_descriptions_module_js_1 = require("./item-descriptions/item-descriptions.module.js");
 const purchase_enquiries_module_js_1 = require("./purchase-enquiries/purchase-enquiries.module.js");
+const salaries_module_js_1 = require("./salaries/salaries.module.js");
+const timesheet_attendance_module_js_1 = require("./timesheet-attendance/timesheet-attendance.module.js");
 const user_entity_js_1 = require("./users/entities/user.entity.js");
 const vendor_entity_js_1 = require("./vendors/entities/vendor.entity.js");
 const project_entity_js_1 = require("./projects/entities/project.entity.js");
@@ -68,6 +70,9 @@ const daily_worker_entity_js_1 = require("./daily-labour/entities/daily-worker.e
 const trade_entity_js_1 = require("./trades/entities/trade.entity.js");
 const item_description_entity_js_1 = require("./item-descriptions/entities/item-description.entity.js");
 const purchase_enquiry_entity_js_1 = require("./purchase-enquiries/entities/purchase-enquiry.entity.js");
+const salary_entity_js_1 = require("./salaries/entities/salary.entity.js");
+const weekly_timesheet_entity_js_1 = require("./timesheet-attendance/entities/weekly-timesheet.entity.js");
+const timesheet_row_entity_js_1 = require("./timesheet-attendance/entities/timesheet-row.entity.js");
 function getBooleanConfig(configService, key, fallback) {
     const value = configService.get(key);
     if (typeof value === 'boolean')
@@ -130,6 +135,9 @@ exports.AppModule = AppModule = __decorate([
                         expense_type_entity_js_1.ExpenseType,
                         item_description_entity_js_1.ItemDescription,
                         purchase_enquiry_entity_js_1.PurchaseEnquiry,
+                        salary_entity_js_1.Salary,
+                        weekly_timesheet_entity_js_1.WeeklyTimesheet,
+                        timesheet_row_entity_js_1.TimesheetRow,
                     ],
                     synchronize: getBooleanConfig(configService, 'TYPEORM_SYNCHRONIZE', false),
                     logging: getBooleanConfig(configService, 'TYPEORM_LOGGING', false),
@@ -158,6 +166,8 @@ exports.AppModule = AppModule = __decorate([
             purchase_team_module_js_1.PurchaseTeamModule,
             item_descriptions_module_js_1.ItemDescriptionsModule,
             purchase_enquiries_module_js_1.PurchaseEnquiriesModule,
+            salaries_module_js_1.SalariesModule,
+            timesheet_attendance_module_js_1.TimesheetAttendanceModule,
         ],
     })
 ], AppModule);

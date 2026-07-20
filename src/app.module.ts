@@ -24,6 +24,8 @@ import { AccountsManagersModule } from './accounts-managers/accounts-managers.mo
 import { PurchaseTeamModule } from './purchase-team/purchase-team.module.js';
 import { ItemDescriptionsModule } from './item-descriptions/item-descriptions.module.js';
 import { PurchaseEnquiriesModule } from './purchase-enquiries/purchase-enquiries.module.js';
+import { SalariesModule } from './salaries/salaries.module.js';
+import { TimesheetAttendanceModule } from './timesheet-attendance/timesheet-attendance.module.js';
 
 // Entity imports
 import { User } from './users/entities/user.entity.js';
@@ -61,6 +63,9 @@ import { DailyWorker } from './daily-labour/entities/daily-worker.entity.js';
 import { Trade } from './trades/entities/trade.entity.js';
 import { ItemDescription } from './item-descriptions/entities/item-description.entity.js';
 import { PurchaseEnquiry } from './purchase-enquiries/entities/purchase-enquiry.entity.js';
+import { Salary } from './salaries/entities/salary.entity.js';
+import { WeeklyTimesheet } from './timesheet-attendance/entities/weekly-timesheet.entity.js';
+import { TimesheetRow } from './timesheet-attendance/entities/timesheet-row.entity.js';
 
 function getBooleanConfig(
   configService: ConfigService,
@@ -125,6 +130,9 @@ function getBooleanConfig(
           ExpenseType,
           ItemDescription,
           PurchaseEnquiry,
+          Salary,
+          WeeklyTimesheet,
+          TimesheetRow,
         ],
         synchronize: getBooleanConfig(configService, 'TYPEORM_SYNCHRONIZE', false),
         logging: getBooleanConfig(configService, 'TYPEORM_LOGGING', false),
@@ -153,6 +161,8 @@ function getBooleanConfig(
     PurchaseTeamModule,
     ItemDescriptionsModule,
     PurchaseEnquiriesModule,
+    SalariesModule,
+    TimesheetAttendanceModule,
   ],
 })
 export class AppModule {}

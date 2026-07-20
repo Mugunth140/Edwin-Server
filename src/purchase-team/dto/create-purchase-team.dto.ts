@@ -47,4 +47,9 @@ export class CreatePurchaseTeamDto {
   @IsUUID('4', { each: true })
   @IsOptional()
   projectIds?: string[];
+
+  @ApiPropertyOptional({ example: 'salary-grade-uuid' })
+  @IsString()
+  @IsOptional()
+  salaryGradeId?: string;
 }

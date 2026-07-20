@@ -42,6 +42,11 @@ export class CreateAccountsManagerDto {
   @IsOptional()
   isActive?: boolean;
 
+  @ApiPropertyOptional()
+  @IsUUID()
+  @IsOptional()
+  salaryGradeId?: string;
+
   @ApiPropertyOptional({ type: [String], example: ['uuid-1', 'uuid-2'] })
   @IsArray()
   @IsUUID('4', { each: true })

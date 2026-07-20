@@ -80,6 +80,9 @@ export class Payment {
   @Column({ nullable: true })
   createdBy: string;
 
+  @Column({ nullable: true })
+  timesheetId: string;
+
   @CreateDateColumn()
   createdAt: Date;
 }
