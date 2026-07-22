@@ -1,4 +1,8 @@
-import { Injectable, NotFoundException, ConflictException } from '@nestjs/common';
+import {
+  Injectable,
+  NotFoundException,
+  ConflictException,
+} from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository, In } from 'typeorm';
 import * as bcrypt from 'bcrypt';
@@ -22,12 +26,17 @@ export class PurchaseTeamService {
 
   async create(dto: CreatePurchaseTeamDto) {
     if (dto.email) {
-      const existingEmail = await this.userRepository.findOne({ where: { email: dto.email } });
+      const existingEmail = await this.userRepository.findOne({
+        where: { email: dto.email },
+      });
       if (existingEmail) throw new ConflictException('Email already in use');
     }
     if (dto.username) {
-      const existingUsername = await this.userRepository.findOne({ where: { username: dto.username } });
-      if (existingUsername) throw new ConflictException('Username already in use');
+      const existingUsername = await this.userRepository.findOne({
+        where: { username: dto.username },
+      });
+      if (existingUsername)
+        throw new ConflictException('Username already in use');
     }
 
     const member = this.userRepository.create({
@@ -48,7 +57,9 @@ export class PurchaseTeamService {
     }
 
     if (dto.projectIds && dto.projectIds.length > 0) {
-      member.projects = await this.projectRepository.findBy({ id: In(dto.projectIds) });
+      member.projects = await this.projectRepository.findBy({
+        id: In(dto.projectIds),
+      });
     } else {
       member.projects = [];
     }
@@ -72,7 +83,9 @@ export class PurchaseTeamService {
       relations: ['projects', 'salaryGrade'],
     });
     if (!member) {
-      throw new NotFoundException(`Purchase Team Member with ID ${id} not found`);
+      throw new NotFoundException(
+        `Purchase Team Member with ID ${id} not found`,
+      );
     }
     return member;
   }
@@ -81,12 +94,17 @@ export class PurchaseTeamService {
     const member = await this.findOne(id);
 
     if (dto.email && dto.email !== member.email) {
-      const existingEmail = await this.userRepository.findOne({ where: { email: dto.email } });
+      const existingEmail = await this.userRepository.findOne({
+        where: { email: dto.email },
+      });
       if (existingEmail) throw new ConflictException('Email already in use');
     }
     if (dto.username && dto.username !== member.username) {
-      const existingUsername = await this.userRepository.findOne({ where: { username: dto.username } });
-      if (existingUsername) throw new ConflictException('Username already in use');
+      const existingUsername = await this.userRepository.findOne({
+        where: { username: dto.username },
+      });
+      if (existingUsername)
+        throw new ConflictException('Username already in use');
     }
 
     if (dto.password) {
@@ -95,7 +113,9 @@ export class PurchaseTeamService {
 
     if (dto.projectIds !== undefined) {
       if (dto.projectIds.length > 0) {
-        member.projects = await this.projectRepository.findBy({ id: In(dto.projectIds) });
+        member.projects = await this.projectRepository.findBy({
+          id: In(dto.projectIds),
+        });
       } else {
         member.projects = [];
       }
@@ -105,11 +125,15 @@ export class PurchaseTeamService {
       name: dto.name !== undefined ? dto.name : member.name,
       email: dto.email !== undefined ? dto.email : member.email,
       username: dto.username !== undefined ? dto.username : member.username,
-      employeeId: dto.employeeId !== undefined ? dto.employeeId : member.employeeId,
+      employeeId:
+        dto.employeeId !== undefined ? dto.employeeId : member.employeeId,
       phone: dto.phone !== undefined ? dto.phone : member.phone,
       address: dto.address !== undefined ? dto.address : member.address,
       isActive: dto.isActive !== undefined ? dto.isActive : member.isActive,
-      salaryGradeId: dto.salaryGradeId !== undefined ? dto.salaryGradeId : member.salaryGradeId,
+      salaryGradeId:
+        dto.salaryGradeId !== undefined
+          ? dto.salaryGradeId
+          : member.salaryGradeId,
     });
 
     return await this.userRepository.save(member);

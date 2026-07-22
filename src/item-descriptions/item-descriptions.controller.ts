@@ -1,4 +1,13 @@
-import { Controller, Get, Post, Body, Patch, Param, Delete, UseGuards } from '@nestjs/common';
+import {
+  Controller,
+  Get,
+  Post,
+  Body,
+  Patch,
+  Param,
+  Delete,
+  UseGuards,
+} from '@nestjs/common';
 import { ApiTags, ApiOperation, ApiBearerAuth } from '@nestjs/swagger';
 import { AuthGuard } from '@nestjs/passport';
 import { RolesGuard } from '../auth/roles.guard.js';
@@ -13,7 +22,9 @@ import { UpdateItemDescriptionDto } from './dto/update-item-description.dto.js';
 @UseGuards(AuthGuard('jwt'), RolesGuard)
 @ApiBearerAuth()
 export class ItemDescriptionsController {
-  constructor(private readonly itemDescriptionsService: ItemDescriptionsService) {}
+  constructor(
+    private readonly itemDescriptionsService: ItemDescriptionsService,
+  ) {}
 
   @Post()
   @Roles(Role.ADMIN, Role.ACCOUNTS_MANAGER, Role.PURCHASE_TEAM)

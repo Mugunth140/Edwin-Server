@@ -1,4 +1,13 @@
-import { IsString, IsUUID, IsOptional, IsNumber, IsDateString, IsArray, ValidateNested, IsEnum } from 'class-validator';
+import {
+  IsString,
+  IsUUID,
+  IsOptional,
+  IsNumber,
+  IsDateString,
+  IsArray,
+  ValidateNested,
+  IsEnum,
+} from 'class-validator';
 import { Type } from 'class-transformer';
 import { ApiProperty, ApiPropertyOptional } from '@nestjs/swagger';
 import { AdvanceEntityType } from '../../common/enums.js';
@@ -6,7 +15,10 @@ import { AdvanceEntityType } from '../../common/enums.js';
 export class InvoiceItemDto {
   @ApiProperty() @IsString() description: string;
   @ApiProperty() @IsNumber() quantity: number;
-  @ApiPropertyOptional({ default: 'nos' }) @IsString() @IsOptional() unit?: string;
+  @ApiPropertyOptional({ default: 'nos' })
+  @IsString()
+  @IsOptional()
+  unit?: string;
   @ApiProperty() @IsNumber() rate: number;
 }
 
@@ -14,7 +26,10 @@ export class CreateInvoiceDto {
   @ApiProperty() @IsUUID() projectId: string;
   @ApiPropertyOptional() @IsDateString() @IsOptional() dueDate?: string;
   @ApiProperty({ type: [InvoiceItemDto] })
-  @IsArray() @ValidateNested({ each: true }) @Type(() => InvoiceItemDto) items: InvoiceItemDto[];
+  @IsArray()
+  @ValidateNested({ each: true })
+  @Type(() => InvoiceItemDto)
+  items: InvoiceItemDto[];
 }
 
 export class BillItemDto {
@@ -38,11 +53,17 @@ export class CreateBillDto {
   @ApiPropertyOptional() @IsString() @IsOptional() billFileKey?: string;
   @ApiPropertyOptional() @IsString() @IsOptional() notes?: string;
   @ApiPropertyOptional({ type: [BillItemDto] })
-  @IsArray() @IsOptional() @ValidateNested({ each: true }) @Type(() => BillItemDto) items?: BillItemDto[];
+  @IsArray()
+  @IsOptional()
+  @ValidateNested({ each: true })
+  @Type(() => BillItemDto)
+  items?: BillItemDto[];
 }
 
 export class CreateAdvanceDto {
-  @ApiProperty({ enum: AdvanceEntityType }) @IsEnum(AdvanceEntityType) entityType: AdvanceEntityType;
+  @ApiProperty({ enum: AdvanceEntityType })
+  @IsEnum(AdvanceEntityType)
+  entityType: AdvanceEntityType;
   @ApiProperty() @IsUUID() entityId: string;
   @ApiProperty() @IsNumber() amount: number;
   @ApiProperty() @IsDateString() date: string;

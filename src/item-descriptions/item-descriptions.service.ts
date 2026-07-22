@@ -1,4 +1,8 @@
-import { Injectable, NotFoundException, ConflictException } from '@nestjs/common';
+import {
+  Injectable,
+  NotFoundException,
+  ConflictException,
+} from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
 import { ItemDescription } from './entities/item-description.entity.js';
@@ -13,7 +17,9 @@ export class ItemDescriptionsService {
   ) {}
 
   async create(dto: CreateItemDescriptionDto) {
-    const existing = await this.repository.findOne({ where: { name: dto.name } });
+    const existing = await this.repository.findOne({
+      where: { name: dto.name },
+    });
     if (existing) {
       if (existing.isDeleted) {
         existing.isDeleted = false;
@@ -33,7 +39,9 @@ export class ItemDescriptionsService {
   }
 
   async findOne(id: string) {
-    const item = await this.repository.findOne({ where: { id, isDeleted: false } });
+    const item = await this.repository.findOne({
+      where: { id, isDeleted: false },
+    });
     if (!item) {
       throw new NotFoundException(`Item description with ID ${id} not found`);
     }
@@ -43,7 +51,9 @@ export class ItemDescriptionsService {
   async update(id: string, dto: UpdateItemDescriptionDto) {
     const item = await this.findOne(id);
     if (dto.name && dto.name !== item.name) {
-      const existing = await this.repository.findOne({ where: { name: dto.name } });
+      const existing = await this.repository.findOne({
+        where: { name: dto.name },
+      });
       if (existing && existing.id !== id) {
         throw new ConflictException('Item description already exists');
       }

@@ -28,40 +28,69 @@ export class PurchaseOrdersService {
     return `PO-${year}-${String(seq).padStart(3, '0')}`;
   }
 
-  async create(dto: CreatePurchaseOrderDto, userId?: string): Promise<PurchaseOrder> {
+  async create(
+    dto: CreatePurchaseOrderDto,
+    userId?: string,
+  ): Promise<PurchaseOrder> {
     const poNumber = await this.generatePoNumber();
     const items = dto.items.map((item) => {
       const amount = item.quantity * item.rate;
-      return this.poItemRepo.create({ ...item, unit: item.unit || 'nos', amount });
+      return this.poItemRepo.create({
+        ...item,
+        unit: item.unit || 'nos',
+        amount,
+      });
     });
-    const totalAmount = items.reduce((sum, item) => sum + Number(item.amount), 0);
+    const totalAmount = items.reduce(
+      (sum, item) => sum + Number(item.amount),
+      0,
+    );
     const po = this.poRepo.create({
-      poNumber, vendorId: dto.vendorId, projectId: dto.projectId,
-      paymentTerms: dto.paymentTerms, billFileUrl: dto.billFileUrl,
-      billFileKey: dto.billFileKey, totalAmount, items, createdBy: userId,
+      poNumber,
+      vendorId: dto.vendorId,
+      projectId: dto.projectId,
+      paymentTerms: dto.paymentTerms,
+      billFileUrl: dto.billFileUrl,
+      billFileKey: dto.billFileKey,
+      totalAmount,
+      items,
+      createdBy: userId,
     });
     return this.poRepo.save(po);
   }
 
   async findAll() {
-    return this.poRepo.find({ where: { isDeleted: false }, relations: ['vendor', 'items', 'project'], order: { createdAt: 'DESC' } });
+    return this.poRepo.find({
+      where: { isDeleted: false },
+      relations: ['vendor', 'items', 'project'],
+      order: { createdAt: 'DESC' },
+    });
   }
 
   async findOne(id: string) {
-    const po = await this.poRepo.findOne({ where: { id, isDeleted: false }, relations: ['vendor', 'items', 'project'] });
+    const po = await this.poRepo.findOne({
+      where: { id, isDeleted: false },
+      relations: ['vendor', 'items', 'project'],
+    });
     if (!po) throw new NotFoundException('Purchase Order not found');
     return po;
   }
 
-  async updateStatus(id: string, status: PurchaseOrderStatus): Promise<PurchaseOrder> {
+  async updateStatus(
+    id: string,
+    status: PurchaseOrderStatus,
+  ): Promise<PurchaseOrder> {
     try {
       const po = await this.findOne(id);
       po.status = status;
       return await this.poRepo.save(po);
     } catch (error) {
       console.error('Error updating PO status:', error);
-      if (error.code === '22P02') { // Postgres invalid text representation (often enum error)
-        throw new Error(`Database rejected status '${status}'. Please ensure the database schema is updated.`);
+      if (error.code === '22P02') {
+        // Postgres invalid text representation (often enum error)
+        throw new Error(
+          `Database rejected status '${status}'. Please ensure the database schema is updated.`,
+        );
       }
       throw error;
     }
@@ -96,7 +125,10 @@ export class PurchaseOrdersService {
     });
 
     // Recalculate total
-    po.totalAmount = po.items.reduce((sum, item) => sum + Number(item.amount), 0);
+    po.totalAmount = po.items.reduce(
+      (sum, item) => sum + Number(item.amount),
+      0,
+    );
 
     return this.poRepo.save(po);
   }

@@ -12,7 +12,13 @@ import {
   UseInterceptors,
   UploadedFiles,
 } from '@nestjs/common';
-import { ApiTags, ApiOperation, ApiBearerAuth, ApiQuery, ApiConsumes } from '@nestjs/swagger';
+import {
+  ApiTags,
+  ApiOperation,
+  ApiBearerAuth,
+  ApiQuery,
+  ApiConsumes,
+} from '@nestjs/swagger';
 import { AuthGuard } from '@nestjs/passport';
 import { AnyFilesInterceptor } from '@nestjs/platform-express';
 import { diskStorage } from 'multer';
@@ -44,7 +50,8 @@ export class ExpensesController {
           cb(null, uploadPath);
         },
         filename: (req, file, cb) => {
-          const uniqueSuffix = Date.now() + '-' + Math.round(Math.random() * 1e9);
+          const uniqueSuffix =
+            Date.now() + '-' + Math.round(Math.random() * 1e9);
           cb(null, `expense-${uniqueSuffix}${extname(file.originalname)}`);
         },
       }),
@@ -75,13 +82,18 @@ export class ExpensesController {
     @Query('limit') limit: number,
     @Request() req: any,
   ) {
-    return this.expensesService.findAll({ category, projectId, dateFrom, dateTo, page, limit }, req.user);
+    return this.expensesService.findAll(
+      { category, projectId, dateFrom, dateTo, page, limit },
+      req.user,
+    );
   }
 
   @Get('summary')
   @Roles(Role.ADMIN, Role.ACCOUNTS_MANAGER, Role.PURCHASE_TEAM)
   @ApiOperation({ summary: 'Category-wise expense totals' })
-  getSummary() { return this.expensesService.getSummary(); }
+  getSummary() {
+    return this.expensesService.getSummary();
+  }
 
   @Get(':id')
   @ApiOperation({ summary: 'Get expense by id' })
@@ -102,7 +114,8 @@ export class ExpensesController {
           cb(null, uploadPath);
         },
         filename: (req, file, cb) => {
-          const uniqueSuffix = Date.now() + '-' + Math.round(Math.random() * 1e9);
+          const uniqueSuffix =
+            Date.now() + '-' + Math.round(Math.random() * 1e9);
           cb(null, `expense-${uniqueSuffix}${extname(file.originalname)}`);
         },
       }),

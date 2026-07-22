@@ -64,7 +64,11 @@ __decorate([
     __metadata("design:type", String)
 ], WorkOrder.prototype, "projectId", void 0);
 __decorate([
-    (0, typeorm_1.Column)({ type: 'enum', enum: enums_js_1.WorkOrderStatus, default: enums_js_1.WorkOrderStatus.DRAFT }),
+    (0, typeorm_1.Column)({
+        type: 'enum',
+        enum: enums_js_1.WorkOrderStatus,
+        default: enums_js_1.WorkOrderStatus.DRAFT,
+    }),
     __metadata("design:type", String)
 ], WorkOrder.prototype, "status", void 0);
 __decorate([
@@ -92,7 +96,10 @@ __decorate([
     __metadata("design:type", Number)
 ], WorkOrder.prototype, "gstAmount", void 0);
 __decorate([
-    (0, typeorm_1.OneToMany)(() => work_order_item_entity_js_1.WorkOrderItem, (item) => item.workOrder, { cascade: true, eager: true }),
+    (0, typeorm_1.OneToMany)(() => work_order_item_entity_js_1.WorkOrderItem, (item) => item.workOrder, {
+        cascade: true,
+        eager: true,
+    }),
     __metadata("design:type", Array)
 ], WorkOrder.prototype, "items", void 0);
 __decorate([

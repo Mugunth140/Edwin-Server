@@ -127,7 +127,9 @@ __decorate([
 ], ProjectsController.prototype, "getDashboard", null);
 __decorate([
     (0, common_1.Get)(':id/details'),
-    (0, swagger_1.ApiOperation)({ summary: 'Get project financial details (expenses, SWOs, bills, invoices, payments)' }),
+    (0, swagger_1.ApiOperation)({
+        summary: 'Get project financial details (expenses, SWOs, bills, invoices, payments)',
+    }),
     __param(0, (0, common_1.Param)('id')),
     __metadata("design:type", Function),
     __metadata("design:paramtypes", [String]),

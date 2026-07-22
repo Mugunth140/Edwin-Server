@@ -11,14 +11,22 @@ import {
   UseGuards,
   Request,
 } from '@nestjs/common';
-import { ApiTags, ApiOperation, ApiBearerAuth, ApiQuery } from '@nestjs/swagger';
+import {
+  ApiTags,
+  ApiOperation,
+  ApiBearerAuth,
+  ApiQuery,
+} from '@nestjs/swagger';
 import { AuthGuard } from '@nestjs/passport';
 import { RolesGuard } from '../auth/roles.guard.js';
 import { Roles } from '../auth/roles.decorator.js';
 import { Role, WorkOrderStatus } from '../common/enums.js';
 import { WorkOrdersService } from './work-orders.service.js';
 import { CreateWorkOrderDto } from './dto/create-work-order.dto.js';
-import { UpdateWorkOrderDto, UpdateWorkOrderStatusDto } from './dto/update-work-order.dto.js';
+import {
+  UpdateWorkOrderDto,
+  UpdateWorkOrderStatusDto,
+} from './dto/update-work-order.dto.js';
 
 @ApiTags('Work Orders')
 @Controller({ path: 'work-orders', version: '1' })
@@ -60,14 +68,22 @@ export class WorkOrdersController {
   @Patch(':id')
   @Roles(Role.ADMIN, Role.ACCOUNTS_MANAGER)
   @ApiOperation({ summary: 'Update work order' })
-  update(@Param('id') id: string, @Body() dto: UpdateWorkOrderDto, @Request() req: any) {
+  update(
+    @Param('id') id: string,
+    @Body() dto: UpdateWorkOrderDto,
+    @Request() req: any,
+  ) {
     return this.woService.update(id, dto, req.user.id);
   }
 
   @Patch(':id/status')
   @Roles(Role.ADMIN, Role.ACCOUNTS_MANAGER)
   @ApiOperation({ summary: 'Update work order status' })
-  updateStatus(@Param('id') id: string, @Body() dto: UpdateWorkOrderStatusDto, @Request() req: any) {
+  updateStatus(
+    @Param('id') id: string,
+    @Body() dto: UpdateWorkOrderStatusDto,
+    @Request() req: any,
+  ) {
     return this.woService.updateStatus(id, dto.status, req.user.id);
   }
 

@@ -39,4 +39,3 @@ import { BillItem } from './entities/bill-item.entity.js';
   exports: [AccountsService],
 })
 export class AccountsModule {}
-

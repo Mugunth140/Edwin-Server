@@ -69,7 +69,9 @@ let ExpensesController = class ExpensesController {
     findAll(category, projectId, dateFrom, dateTo, page, limit, req) {
         return this.expensesService.findAll({ category, projectId, dateFrom, dateTo, page, limit }, req.user);
     }
-    getSummary() { return this.expensesService.getSummary(); }
+    getSummary() {
+        return this.expensesService.getSummary();
+    }
     findOne(id) {
         return this.expensesService.findOne(id);
     }

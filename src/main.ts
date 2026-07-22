@@ -44,7 +44,7 @@ async function bootstrap() {
   const config = new DocumentBuilder()
     .setTitle('Edwin Constructions ERP API')
     .setDescription(
-      'ERP API for managing projects, accounts, expenses, and payments'
+      'ERP API for managing projects, accounts, expenses, and payments',
     )
     .setVersion('1.0')
     .addBearerAuth()

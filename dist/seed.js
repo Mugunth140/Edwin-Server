@@ -156,7 +156,9 @@ function createDataSource() {
         synchronize,
         logging: boolEnv('SEED_LOG_SQL', false),
         ssl: ssl
-            ? { rejectUnauthorized: boolEnv('DATABASE_SSL_REJECT_UNAUTHORIZED', true) }
+            ? {
+                rejectUnauthorized: boolEnv('DATABASE_SSL_REJECT_UNAUTHORIZED', true),
+            }
             : false,
     });
 }
@@ -416,12 +418,48 @@ async function seedExpenseTypes(manager) {
 async function seedSalaries(manager) {
     const repo = manager.getRepository(salary_entity_js_1.Salary);
     const salaries = [
-        { grades: 'Grade A', expInYears: '0-1', monthlySalary: 15000, avgCostPerHr: 93.75, bookingCost: 7500 },
-        { grades: 'Grade B', expInYears: '2-4', monthlySalary: 25000, avgCostPerHr: 156.25, bookingCost: 12500 },
-        { grades: 'Grade C', expInYears: '5-7', monthlySalary: 40000, avgCostPerHr: 250, bookingCost: 20000 },
-        { grades: 'Grade D', expInYears: '8-10', monthlySalary: 55000, avgCostPerHr: 343.75, bookingCost: 27500 },
-        { grades: 'Grade E', expInYears: '11-15', monthlySalary: 75000, avgCostPerHr: 468.75, bookingCost: 37500 },
-        { grades: 'Grade F', expInYears: '15+', monthlySalary: 100000, avgCostPerHr: 625, bookingCost: 50000 },
+        {
+            grades: 'Grade A',
+            expInYears: '0-1',
+            monthlySalary: 15000,
+            avgCostPerHr: 93.75,
+            bookingCost: 7500,
+        },
+        {
+            grades: 'Grade B',
+            expInYears: '2-4',
+            monthlySalary: 25000,
+            avgCostPerHr: 156.25,
+            bookingCost: 12500,
+        },
+        {
+            grades: 'Grade C',
+            expInYears: '5-7',
+            monthlySalary: 40000,
+            avgCostPerHr: 250,
+            bookingCost: 20000,
+        },
+        {
+            grades: 'Grade D',
+            expInYears: '8-10',
+            monthlySalary: 55000,
+            avgCostPerHr: 343.75,
+            bookingCost: 27500,
+        },
+        {
+            grades: 'Grade E',
+            expInYears: '11-15',
+            monthlySalary: 75000,
+            avgCostPerHr: 468.75,
+            bookingCost: 37500,
+        },
+        {
+            grades: 'Grade F',
+            expInYears: '15+',
+            monthlySalary: 100000,
+            avgCostPerHr: 625,
+            bookingCost: 50000,
+        },
     ];
     for (const s of salaries) {
         await upsertBy(repo, { grades: s.grades }, { ...s, isDeleted: false });

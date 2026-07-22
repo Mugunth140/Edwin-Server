@@ -109,6 +109,19 @@ export declare enum ProjectStatus {
     ON_HOLD = "on_hold",
     COMPLETED = "completed"
 }
+export declare enum ProjectNature {
+    BROWNFIELD = "brownfield",
+    GREENFIELD = "greenfield"
+}
+export declare enum JobType {
+    CONTRACTING = "contracting",
+    DESIGN_BUILD = "design_build",
+    DESIGN = "design"
+}
+export declare enum JobStatus {
+    BIDDING = "bidding",
+    AWARDED = "awarded"
+}
 export declare enum WorkCategory {
     CIVIL = "civil",
     ELECTRICAL = "electrical",

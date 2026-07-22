@@ -43,21 +43,38 @@ let PurchaseOrdersService = class PurchaseOrdersService {
         const poNumber = await this.generatePoNumber();
         const items = dto.items.map((item) => {
             const amount = item.quantity * item.rate;
-            return this.poItemRepo.create({ ...item, unit: item.unit || 'nos', amount });
+            return this.poItemRepo.create({
+                ...item,
+                unit: item.unit || 'nos',
+                amount,
+            });
         });
         const totalAmount = items.reduce((sum, item) => sum + Number(item.amount), 0);
         const po = this.poRepo.create({
-            poNumber, vendorId: dto.vendorId, projectId: dto.projectId,
-            paymentTerms: dto.paymentTerms, billFileUrl: dto.billFileUrl,
-            billFileKey: dto.billFileKey, totalAmount, items, createdBy: userId,
+            poNumber,
+            vendorId: dto.vendorId,
+            projectId: dto.projectId,
+            paymentTerms: dto.paymentTerms,
+            billFileUrl: dto.billFileUrl,
+            billFileKey: dto.billFileKey,
+            totalAmount,
+            items,
+            createdBy: userId,
         });
         return this.poRepo.save(po);
     }
     async findAll() {
-        return this.poRepo.find({ where: { isDeleted: false }, relations: ['vendor', 'items', 'project'], order: { createdAt: 'DESC' } });
+        return this.poRepo.find({
+            where: { isDeleted: false },
+            relations: ['vendor', 'items', 'project'],
+            order: { createdAt: 'DESC' },
+        });
     }
     async findOne(id) {
-        const po = await this.poRepo.findOne({ where: { id, isDeleted: false }, relations: ['vendor', 'items', 'project'] });
+        const po = await this.poRepo.findOne({
+            where: { id, isDeleted: false },
+            relations: ['vendor', 'items', 'project'],
+        });
         if (!po)
             throw new common_1.NotFoundException('Purchase Order not found');
         return po;

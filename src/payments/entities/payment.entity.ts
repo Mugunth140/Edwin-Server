@@ -28,7 +28,9 @@ export class Payment {
   @Column({ nullable: true })
   purchaseBillId: string;
 
-  @ManyToOne(() => SalesInvoice, (invoice) => invoice.payments, { nullable: true })
+  @ManyToOne(() => SalesInvoice, (invoice) => invoice.payments, {
+    nullable: true,
+  })
   @JoinColumn({ name: 'salesInvoiceId' })
   salesInvoice: SalesInvoice;
 

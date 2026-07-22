@@ -1,7 +1,10 @@
-import { ProjectStatus } from '../../common/enums.js';
+import { ProjectStatus, ProjectNature, JobType, JobStatus } from '../../common/enums.js';
+import { ProjectCategory } from '../../project-categories/entities/project-category.entity.js';
+import { User } from '../../users/entities/user.entity.js';
 export declare class Project {
     id: string;
     name: string;
+    projectCode: string;
     description: string;
     location: string;
     email: string;
@@ -9,6 +12,14 @@ export declare class Project {
     phone2: string;
     clientName: string;
     status: ProjectStatus;
+    projectCategoryId: string;
+    projectCategory: ProjectCategory;
+    projectNature: ProjectNature;
+    jobType: JobType;
+    jobStatus: JobStatus;
+    financialYear: string;
+    dateOfCreation: Date;
+    resources: User[];
     completionPct: number;
     estimatedBudget: number;
     startDate: Date;

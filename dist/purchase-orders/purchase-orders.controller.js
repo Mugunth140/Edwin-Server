@@ -67,8 +67,12 @@ let PurchaseOrdersController = class PurchaseOrdersController {
     create(dto, req) {
         return this.poService.create(dto, req.user.id);
     }
-    findAll() { return this.poService.findAll(); }
-    findOne(id) { return this.poService.findOne(id); }
+    findAll() {
+        return this.poService.findAll();
+    }
+    findOne(id) {
+        return this.poService.findOne(id);
+    }
     updateStatus(id, dto) {
         return this.poService.updateStatus(id, dto.status);
     }

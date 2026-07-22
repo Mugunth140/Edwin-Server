@@ -1,6 +1,6 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.WorkCategory = exports.ProjectStatus = exports.AdvanceEntityType = exports.PaymentType = exports.ExpenseStatus = exports.ExpenseCategory = exports.DrawingCategory = exports.SeverityLevel = exports.RfiStatus = exports.SnagStatus = exports.MilestoneStatus = exports.InvoiceStatus = exports.PaymentMode = exports.BillStatus = exports.PurchaseOrderStatus = exports.SubcontractWorkOrderStatus = exports.WorkOrderStatus = exports.Role = void 0;
+exports.WorkCategory = exports.JobStatus = exports.JobType = exports.ProjectNature = exports.ProjectStatus = exports.AdvanceEntityType = exports.PaymentType = exports.ExpenseStatus = exports.ExpenseCategory = exports.DrawingCategory = exports.SeverityLevel = exports.RfiStatus = exports.SnagStatus = exports.MilestoneStatus = exports.InvoiceStatus = exports.PaymentMode = exports.BillStatus = exports.PurchaseOrderStatus = exports.SubcontractWorkOrderStatus = exports.WorkOrderStatus = exports.Role = void 0;
 var Role;
 (function (Role) {
     Role["ADMIN"] = "admin";
@@ -129,6 +129,22 @@ var ProjectStatus;
     ProjectStatus["ON_HOLD"] = "on_hold";
     ProjectStatus["COMPLETED"] = "completed";
 })(ProjectStatus || (exports.ProjectStatus = ProjectStatus = {}));
+var ProjectNature;
+(function (ProjectNature) {
+    ProjectNature["BROWNFIELD"] = "brownfield";
+    ProjectNature["GREENFIELD"] = "greenfield";
+})(ProjectNature || (exports.ProjectNature = ProjectNature = {}));
+var JobType;
+(function (JobType) {
+    JobType["CONTRACTING"] = "contracting";
+    JobType["DESIGN_BUILD"] = "design_build";
+    JobType["DESIGN"] = "design";
+})(JobType || (exports.JobType = JobType = {}));
+var JobStatus;
+(function (JobStatus) {
+    JobStatus["BIDDING"] = "bidding";
+    JobStatus["AWARDED"] = "awarded";
+})(JobStatus || (exports.JobStatus = JobStatus = {}));
 var WorkCategory;
 (function (WorkCategory) {
     WorkCategory["CIVIL"] = "civil";

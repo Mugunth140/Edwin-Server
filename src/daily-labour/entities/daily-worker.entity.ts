@@ -13,7 +13,9 @@ export class DailyWorker {
   @PrimaryGeneratedColumn('uuid')
   id: string;
 
-  @ManyToOne(() => DailyLabourReport, report => report.workers, { onDelete: 'CASCADE' })
+  @ManyToOne(() => DailyLabourReport, (report) => report.workers, {
+    onDelete: 'CASCADE',
+  })
   @JoinColumn({ name: 'reportId' })
   report: DailyLabourReport;
 

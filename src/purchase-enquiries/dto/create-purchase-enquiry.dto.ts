@@ -1,4 +1,12 @@
-import { IsString, IsUUID, IsArray, IsNumber, Min, ValidateNested, IsOptional } from 'class-validator';
+import {
+  IsString,
+  IsUUID,
+  IsArray,
+  IsNumber,
+  Min,
+  ValidateNested,
+  IsOptional,
+} from 'class-validator';
 import { Type } from 'class-transformer';
 import { ApiProperty, ApiPropertyOptional } from '@nestjs/swagger';
 
@@ -12,5 +20,8 @@ export class CreatePurchaseEnquiryDto {
   @ApiProperty() @IsUUID() projectId: string;
   @ApiPropertyOptional() @IsString() @IsOptional() notes?: string;
   @ApiProperty({ type: [EnquiryItemDto] })
-  @IsArray() @ValidateNested({ each: true }) @Type(() => EnquiryItemDto) items: EnquiryItemDto[];
+  @IsArray()
+  @ValidateNested({ each: true })
+  @Type(() => EnquiryItemDto)
+  items: EnquiryItemDto[];
 }

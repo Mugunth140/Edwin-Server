@@ -17,14 +17,25 @@ export class DrawingsService {
     return this.drawingsRepo.save(drawing);
   }
 
-  async findAll(query: { projectId?: string; category?: DrawingCategory; revision?: string }, user?: any) {
-    const qb = this.drawingsRepo.createQueryBuilder('d')
+  async findAll(
+    query: {
+      projectId?: string;
+      category?: DrawingCategory;
+      revision?: string;
+    },
+    user?: any,
+  ) {
+    const qb = this.drawingsRepo
+      .createQueryBuilder('d')
       .leftJoinAndSelect('d.project', 'project')
       .where('d.isDeleted = false');
 
-    if (query.projectId) qb.andWhere('d.projectId = :projectId', { projectId: query.projectId });
-    if (query.category) qb.andWhere('d.category = :category', { category: query.category });
-    if (query.revision) qb.andWhere('d.revision = :revision', { revision: query.revision });
+    if (query.projectId)
+      qb.andWhere('d.projectId = :projectId', { projectId: query.projectId });
+    if (query.category)
+      qb.andWhere('d.category = :category', { category: query.category });
+    if (query.revision)
+      qb.andWhere('d.revision = :revision', { revision: query.revision });
 
     // Site engineers only see their own uploads
     if (user && user.role === Role.SITE_ENGINEER) {
@@ -35,14 +46,17 @@ export class DrawingsService {
   }
 
   async findOne(id: string): Promise<Drawing> {
-    const drawing = await this.drawingsRepo.findOne({ where: { id, isDeleted: false }, relations: ['project'] });
+    const drawing = await this.drawingsRepo.findOne({
+      where: { id, isDeleted: false },
+      relations: ['project'],
+    });
     if (!drawing) throw new NotFoundException('Drawing not found');
     return drawing;
   }
 
   async update(id: string, data: Partial<Drawing>): Promise<Drawing> {
     const drawing = await this.findOne(id);
-    
+
     // Delete old file if new one is uploaded
     if (data.fileUrl && drawing.fileUrl && data.fileUrl !== drawing.fileUrl) {
       const oldPath = `.${drawing.fileUrl}`;

@@ -1,4 +1,8 @@
-import { Injectable, NotFoundException, ConflictException } from '@nestjs/common';
+import {
+  Injectable,
+  NotFoundException,
+  ConflictException,
+} from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
 import { WorkCategory } from './entities/work-category.entity.js';
@@ -12,7 +16,9 @@ export class WorkCategoriesService {
   ) {}
 
   async create(dto: CreateWorkCategoryDto) {
-    const existing = await this.repository.findOne({ where: { name: dto.name } });
+    const existing = await this.repository.findOne({
+      where: { name: dto.name },
+    });
     if (existing) {
       if (existing.isDeleted) {
         existing.isDeleted = false;
@@ -32,7 +38,9 @@ export class WorkCategoriesService {
   }
 
   async remove(id: string) {
-    const category = await this.repository.findOne({ where: { id, isDeleted: false } });
+    const category = await this.repository.findOne({
+      where: { id, isDeleted: false },
+    });
     if (!category) {
       throw new NotFoundException(`Work category with ID ${id} not found`);
     }

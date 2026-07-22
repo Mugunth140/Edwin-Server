@@ -1,5 +1,21 @@
-import { Controller, Get, Post, Body, Patch, Param, Delete, UseGuards, Request, Query } from '@nestjs/common';
-import { ApiTags, ApiOperation, ApiBearerAuth, ApiQuery } from '@nestjs/swagger';
+import {
+  Controller,
+  Get,
+  Post,
+  Body,
+  Patch,
+  Param,
+  Delete,
+  UseGuards,
+  Request,
+  Query,
+} from '@nestjs/common';
+import {
+  ApiTags,
+  ApiOperation,
+  ApiBearerAuth,
+  ApiQuery,
+} from '@nestjs/swagger';
 import { AuthGuard } from '@nestjs/passport';
 import { RolesGuard } from '../auth/roles.guard.js';
 import { Roles } from '../auth/roles.decorator.js';
@@ -43,7 +59,12 @@ export class TimesheetAttendanceController {
   }
 
   @Get(':id')
-  @Roles(Role.SITE_ENGINEER, Role.ADMIN, Role.ACCOUNTS_MANAGER, Role.PURCHASE_TEAM)
+  @Roles(
+    Role.SITE_ENGINEER,
+    Role.ADMIN,
+    Role.ACCOUNTS_MANAGER,
+    Role.PURCHASE_TEAM,
+  )
   @ApiOperation({ summary: 'Get timesheet by ID' })
   findOne(@Param('id') id: string) {
     return this.service.findOne(id);
@@ -52,7 +73,11 @@ export class TimesheetAttendanceController {
   @Patch(':id')
   @Roles(Role.SITE_ENGINEER, Role.PURCHASE_TEAM)
   @ApiOperation({ summary: 'Update timesheet' })
-  update(@Param('id') id: string, @Body() dto: CreateTimesheetDto, @Request() req: any) {
+  update(
+    @Param('id') id: string,
+    @Body() dto: CreateTimesheetDto,
+    @Request() req: any,
+  ) {
     return this.service.update(id, dto, req.user.id);
   }
 

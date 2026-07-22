@@ -30,10 +30,21 @@ let PaymentsController = class PaymentsController {
         return this.paymentsService.create(dto, req.user.id);
     }
     findAll(type, projectId, dateFrom, dateTo, page, limit) {
-        return this.paymentsService.findAll({ type, projectId, dateFrom, dateTo, page, limit });
+        return this.paymentsService.findAll({
+            type,
+            projectId,
+            dateFrom,
+            dateTo,
+            page,
+            limit,
+        });
     }
-    getSummary() { return this.paymentsService.getSummary(); }
-    syncExpenses() { return this.paymentsService.syncExpenses(); }
+    getSummary() {
+        return this.paymentsService.getSummary();
+    }
+    syncExpenses() {
+        return this.paymentsService.syncExpenses();
+    }
 };
 exports.PaymentsController = PaymentsController;
 __decorate([

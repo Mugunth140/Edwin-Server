@@ -1,8 +1,12 @@
-import { Injectable, NotFoundException } from '@nestjs/common';
+import {
+  Injectable,
+  NotFoundException,
+  ConflictException,
+} from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
-import { Repository } from 'typeorm';
+import { In, Repository } from 'typeorm';
 import { Project } from './entities/project.entity.js';
-import { Customer } from '../customers/entities/customer.entity.js';
+import { User } from '../users/entities/user.entity.js';
 import { ProjectProgress } from './entities/project-progress.entity.js';
 import { ProjectMilestone } from './entities/project-milestone.entity.js';
 import { ChangeOrder } from './entities/change-order.entity.js';
@@ -17,31 +21,55 @@ import { SubcontractWorkOrder } from '../subcontract-work-orders/entities/subcon
 import { PurchaseBill } from '../accounts/entities/purchase-bill.entity.js';
 import { SalesInvoice } from '../accounts/entities/sales-invoice.entity.js';
 import { Payment } from '../payments/entities/payment.entity.js';
-import { SubcontractWorkOrderStatus, BillStatus, ExpenseStatus } from '../common/enums.js';
+import {
+  SubcontractWorkOrderStatus,
+  BillStatus,
+  ExpenseStatus,
+} from '../common/enums.js';
 import { CreateProjectDto } from './dto/create-project.dto.js';
+import { UpdateProjectDto } from './dto/update-project.dto.js';
 
 @Injectable()
 export class ProjectsService {
   constructor(
     @InjectRepository(Project) private projectsRepo: Repository<Project>,
-    @InjectRepository(ProjectProgress) private progressRepo: Repository<ProjectProgress>,
-    @InjectRepository(ProjectMilestone) private milestonesRepo: Repository<ProjectMilestone>,
-    @InjectRepository(ChangeOrder) private changeOrdersRepo: Repository<ChangeOrder>,
-    @InjectRepository(AttendanceLog) private attendanceRepo: Repository<AttendanceLog>,
-    @InjectRepository(MachineryLog) private machineryRepo: Repository<MachineryLog>,
+    @InjectRepository(ProjectProgress)
+    private progressRepo: Repository<ProjectProgress>,
+    @InjectRepository(ProjectMilestone)
+    private milestonesRepo: Repository<ProjectMilestone>,
+    @InjectRepository(ChangeOrder)
+    private changeOrdersRepo: Repository<ChangeOrder>,
+    @InjectRepository(AttendanceLog)
+    private attendanceRepo: Repository<AttendanceLog>,
+    @InjectRepository(MachineryLog)
+    private machineryRepo: Repository<MachineryLog>,
     @InjectRepository(SnagItem) private snagsRepo: Repository<SnagItem>,
-    @InjectRepository(SafetyIncident) private incidentsRepo: Repository<SafetyIncident>,
+    @InjectRepository(SafetyIncident)
+    private incidentsRepo: Repository<SafetyIncident>,
     @InjectRepository(Rfi) private rfisRepo: Repository<Rfi>,
     @InjectRepository(SitePhoto) private photosRepo: Repository<SitePhoto>,
     @InjectRepository(Expense) private expensesRepo: Repository<Expense>,
-    @InjectRepository(SubcontractWorkOrder) private swoRepo: Repository<SubcontractWorkOrder>,
+    @InjectRepository(SubcontractWorkOrder)
+    private swoRepo: Repository<SubcontractWorkOrder>,
     @InjectRepository(PurchaseBill) private billsRepo: Repository<PurchaseBill>,
-    @InjectRepository(SalesInvoice) private invoicesRepo: Repository<SalesInvoice>,
+    @InjectRepository(SalesInvoice)
+    private invoicesRepo: Repository<SalesInvoice>,
     @InjectRepository(Payment) private paymentsRepo: Repository<Payment>,
+    @InjectRepository(User) private usersRepo: Repository<User>,
   ) {}
 
   async create(dto: CreateProjectDto, userId?: string): Promise<Project> {
-    const project = this.projectsRepo.create({ ...dto, createdBy: userId });
+    const existingCode = await this.projectsRepo.findOne({
+      where: { projectCode: dto.projectCode },
+    });
+    if (existingCode)
+      throw new ConflictException('Project code already in use');
+
+    const { resourceIds, ...rest } = dto;
+    const project = this.projectsRepo.create({ ...rest, createdBy: userId });
+    if (resourceIds && resourceIds.length > 0) {
+      project.resources = await this.usersRepo.findBy({ id: In(resourceIds) });
+    }
     return this.projectsRepo.save(project);
   }
 
@@ -53,14 +81,37 @@ export class ProjectsService {
   }
 
   async findOne(id: string): Promise<Project> {
-    const project = await this.projectsRepo.findOne({ where: { id, isDeleted: false } });
+    const project = await this.projectsRepo.findOne({
+      where: { id, isDeleted: false },
+    });
     if (!project) throw new NotFoundException('Project not found');
     return project;
   }
 
-  async update(id: string, dto: any, userId?: string): Promise<Project> {
+  async update(
+    id: string,
+    dto: UpdateProjectDto,
+    userId?: string,
+  ): Promise<Project> {
     const project = await this.findOne(id);
-    Object.assign(project, { ...dto, updatedBy: userId });
+
+    if (dto.projectCode && dto.projectCode !== project.projectCode) {
+      const existingCode = await this.projectsRepo.findOne({
+        where: { projectCode: dto.projectCode },
+      });
+      if (existingCode)
+        throw new ConflictException('Project code already in use');
+    }
+
+    const { resourceIds, ...rest } = dto;
+    if (resourceIds !== undefined) {
+      project.resources =
+        resourceIds.length > 0
+          ? await this.usersRepo.findBy({ id: In(resourceIds) })
+          : [];
+    }
+
+    Object.assign(project, { ...rest, updatedBy: userId });
     return this.projectsRepo.save(project);
   }
 
@@ -73,18 +124,57 @@ export class ProjectsService {
   async getDashboard(id: string) {
     const project = await this.findOne(id);
 
-    const [progress, milestones, changeOrders, attendance, machinery, snags, incidents, rfis, photos] =
-      await Promise.all([
-        this.progressRepo.find({ where: { projectId: id }, order: { weekStartDate: 'DESC' } }),
-        this.milestonesRepo.find({ where: { projectId: id }, order: { plannedDate: 'ASC' } }),
-        this.changeOrdersRepo.find({ where: { projectId: id }, order: { date: 'DESC' } }),
-        this.attendanceRepo.find({ where: { projectId: id }, order: { logDate: 'DESC' }, take: 30 }),
-        this.machineryRepo.find({ where: { projectId: id }, order: { logDate: 'DESC' }, take: 30 }),
-        this.snagsRepo.find({ where: { projectId: id }, order: { createdAt: 'DESC' } }),
-        this.incidentsRepo.find({ where: { projectId: id }, order: { incidentDate: 'DESC' } }),
-        this.rfisRepo.find({ where: { projectId: id }, order: { raisedDate: 'DESC' } }),
-        this.photosRepo.find({ where: { projectId: id }, order: { weekDate: 'DESC' }, take: 20 }),
-      ]);
+    const [
+      progress,
+      milestones,
+      changeOrders,
+      attendance,
+      machinery,
+      snags,
+      incidents,
+      rfis,
+      photos,
+    ] = await Promise.all([
+      this.progressRepo.find({
+        where: { projectId: id },
+        order: { weekStartDate: 'DESC' },
+      }),
+      this.milestonesRepo.find({
+        where: { projectId: id },
+        order: { plannedDate: 'ASC' },
+      }),
+      this.changeOrdersRepo.find({
+        where: { projectId: id },
+        order: { date: 'DESC' },
+      }),
+      this.attendanceRepo.find({
+        where: { projectId: id },
+        order: { logDate: 'DESC' },
+        take: 30,
+      }),
+      this.machineryRepo.find({
+        where: { projectId: id },
+        order: { logDate: 'DESC' },
+        take: 30,
+      }),
+      this.snagsRepo.find({
+        where: { projectId: id },
+        order: { createdAt: 'DESC' },
+      }),
+      this.incidentsRepo.find({
+        where: { projectId: id },
+        order: { incidentDate: 'DESC' },
+      }),
+      this.rfisRepo.find({
+        where: { projectId: id },
+        order: { raisedDate: 'DESC' },
+      }),
+      this.photosRepo.find({
+        where: { projectId: id },
+        order: { weekDate: 'DESC' },
+        take: 20,
+      }),
+    ]);
 
     return {
       project,
@@ -106,17 +196,29 @@ export class ProjectsService {
     const [expenses, subcontractWorkOrders, purchaseBills, invoices, payments] =
       await Promise.all([
         this.expensesRepo.find({
-          where: { projectId: id, isDeleted: false, status: ExpenseStatus.ADMIN_APPROVED },
+          where: {
+            projectId: id,
+            isDeleted: false,
+            status: ExpenseStatus.ADMIN_APPROVED,
+          },
           relations: ['project', 'trade', 'expenseType', 'creator'],
           order: { expenseDate: 'DESC' },
         }),
         this.swoRepo.find({
-          where: { projectId: id, isDeleted: false, status: SubcontractWorkOrderStatus.ADMIN_APPROVED },
+          where: {
+            projectId: id,
+            isDeleted: false,
+            status: SubcontractWorkOrderStatus.ADMIN_APPROVED,
+          },
           relations: ['project', 'subcontractor', 'workCategory'],
           order: { createdAt: 'DESC' },
         }),
         this.billsRepo.find({
-          where: { projectId: id, isDeleted: false, status: BillStatus.ADMIN_APPROVED },
+          where: {
+            projectId: id,
+            isDeleted: false,
+            status: BillStatus.ADMIN_APPROVED,
+          },
           relations: ['vendor', 'project'],
           order: { createdAt: 'DESC' },
         }),
@@ -127,7 +229,13 @@ export class ProjectsService {
         }),
         this.paymentsRepo.find({
           where: { projectId: id, isDeleted: false },
-          relations: ['project', 'vendor', 'purchaseBill', 'expense', 'salesInvoice'],
+          relations: [
+            'project',
+            'vendor',
+            'purchaseBill',
+            'expense',
+            'salesInvoice',
+          ],
           order: { paymentDate: 'DESC' },
         }),
       ]);
@@ -155,7 +263,11 @@ export class ProjectsService {
     return this.milestonesRepo.save(entry);
   }
 
-  async updateMilestone(projectId: string, milestoneId: string, data: Partial<ProjectMilestone>) {
+  async updateMilestone(
+    projectId: string,
+    milestoneId: string,
+    data: Partial<ProjectMilestone>,
+  ) {
     await this.findOne(projectId);
     await this.milestonesRepo.update(milestoneId, data);
     return this.milestonesRepo.findOne({ where: { id: milestoneId } });

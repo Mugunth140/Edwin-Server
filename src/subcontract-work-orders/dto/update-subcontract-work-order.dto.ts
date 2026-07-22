@@ -3,7 +3,9 @@ import { CreateSubcontractWorkOrderDto } from './create-subcontract-work-order.d
 import { IsEnum } from 'class-validator';
 import { SubcontractWorkOrderStatus } from '../../common/enums.js';
 
-export class UpdateSubcontractWorkOrderDto extends PartialType(CreateSubcontractWorkOrderDto) {}
+export class UpdateSubcontractWorkOrderDto extends PartialType(
+  CreateSubcontractWorkOrderDto,
+) {}
 
 export class UpdateSubcontractWorkOrderStatusDto {
   @ApiProperty({ enum: SubcontractWorkOrderStatus })

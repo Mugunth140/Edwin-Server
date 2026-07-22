@@ -30,7 +30,8 @@ let DprService = class DprService {
     async findAll(query, user) {
         const { projectId, dateFrom, dateTo, page = 1, limit = 20 } = query;
         console.log('DPR Filter Query:', { projectId, dateFrom, dateTo });
-        const qb = this.dprRepo.createQueryBuilder('dpr')
+        const qb = this.dprRepo
+            .createQueryBuilder('dpr')
             .leftJoinAndSelect('dpr.project', 'project')
             .where('dpr.isDeleted = false');
         if (projectId && projectId !== 'undefined' && projectId !== '') {
@@ -40,7 +41,7 @@ let DprService = class DprService {
             const fromDate = new Date(dateFrom);
             if (!isNaN(fromDate.getTime())) {
                 qb.andWhere('dpr.reportDate >= :dateFromFormatted', {
-                    dateFromFormatted: fromDate.toISOString().split('T')[0]
+                    dateFromFormatted: fromDate.toISOString().split('T')[0],
                 });
             }
         }
@@ -48,7 +49,7 @@ let DprService = class DprService {
             const toDate = new Date(dateTo);
             if (!isNaN(toDate.getTime())) {
                 qb.andWhere('dpr.reportDate <= :dateToFormatted', {
-                    dateToFormatted: toDate.toISOString().split('T')[0]
+                    dateToFormatted: toDate.toISOString().split('T')[0],
                 });
             }
         }
@@ -64,7 +65,10 @@ let DprService = class DprService {
         return { data, total, page, limit };
     }
     async findOne(id) {
-        const report = await this.dprRepo.findOne({ where: { id, isDeleted: false }, relations: ['project'] });
+        const report = await this.dprRepo.findOne({
+            where: { id, isDeleted: false },
+            relations: ['project'],
+        });
         if (!report)
             throw new common_1.NotFoundException('DPR Report not found');
         return report;

@@ -31,7 +31,11 @@ export class ProjectMilestone {
   @Column({ type: 'date', nullable: true })
   actualDate: Date;
 
-  @Column({ type: 'enum', enum: MilestoneStatus, default: MilestoneStatus.PENDING })
+  @Column({
+    type: 'enum',
+    enum: MilestoneStatus,
+    default: MilestoneStatus.PENDING,
+  })
   status: MilestoneStatus;
 
   @CreateDateColumn()

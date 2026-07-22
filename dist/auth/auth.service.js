@@ -86,7 +86,7 @@ let AuthService = class AuthService {
                 name: user.name,
                 email: user.email,
                 role: user.role,
-                projects: user.projects?.map(p => ({ id: p.id })) || [],
+                projects: user.projects?.map((p) => ({ id: p.id })) || [],
             },
         };
     }
@@ -103,7 +103,7 @@ let AuthService = class AuthService {
             name: user.name,
             email: user.email,
             role: user.role,
-            projects: user.projects?.map(p => ({ id: p.id })) || [],
+            projects: user.projects?.map((p) => ({ id: p.id })) || [],
         };
     }
 };

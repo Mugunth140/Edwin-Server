@@ -58,7 +58,10 @@ export class SalesInvoice {
   @Column({ type: 'timestamp', nullable: true })
   reminderSentAt: Date;
 
-  @OneToMany(() => InvoiceItem, (item) => item.invoice, { cascade: true, eager: true })
+  @OneToMany(() => InvoiceItem, (item) => item.invoice, {
+    cascade: true,
+    eager: true,
+  })
   items: InvoiceItem[];
 
   @OneToMany(() => Payment, (payment) => payment.salesInvoice)

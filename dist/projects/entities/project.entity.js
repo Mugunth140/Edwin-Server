@@ -12,9 +12,12 @@ Object.defineProperty(exports, "__esModule", { value: true });
 exports.Project = void 0;
 const typeorm_1 = require("typeorm");
 const enums_js_1 = require("../../common/enums.js");
+const project_category_entity_js_1 = require("../../project-categories/entities/project-category.entity.js");
+const user_entity_js_1 = require("../../users/entities/user.entity.js");
 let Project = class Project {
     id;
     name;
+    projectCode;
     description;
     location;
     email;
@@ -22,6 +25,14 @@ let Project = class Project {
     phone2;
     clientName;
     status;
+    projectCategoryId;
+    projectCategory;
+    projectNature;
+    jobType;
+    jobStatus;
+    financialYear;
+    dateOfCreation;
+    resources;
     completionPct;
     estimatedBudget;
     startDate;
@@ -41,6 +52,10 @@ __decorate([
     (0, typeorm_1.Column)(),
     __metadata("design:type", String)
 ], Project.prototype, "name", void 0);
+__decorate([
+    (0, typeorm_1.Column)({ unique: true, nullable: true }),
+    __metadata("design:type", String)
+], Project.prototype, "projectCode", void 0);
 __decorate([
     (0, typeorm_1.Column)({ nullable: true }),
     __metadata("design:type", String)
@@ -66,9 +81,47 @@ __decorate([
     __metadata("design:type", String)
 ], Project.prototype, "clientName", void 0);
 __decorate([
-    (0, typeorm_1.Column)({ type: 'enum', enum: enums_js_1.ProjectStatus, default: enums_js_1.ProjectStatus.PLANNING }),
+    (0, typeorm_1.Column)({
+        type: 'enum',
+        enum: enums_js_1.ProjectStatus,
+        default: enums_js_1.ProjectStatus.PLANNING,
+    }),
     __metadata("design:type", String)
 ], Project.prototype, "status", void 0);
+__decorate([
+    (0, typeorm_1.Column)({ nullable: true }),
+    __metadata("design:type", String)
+], Project.prototype, "projectCategoryId", void 0);
+__decorate([
+    (0, typeorm_1.ManyToOne)(() => project_category_entity_js_1.ProjectCategory, { eager: true, nullable: true }),
+    (0, typeorm_1.JoinColumn)({ name: 'projectCategoryId' }),
+    __metadata("design:type", project_category_entity_js_1.ProjectCategory)
+], Project.prototype, "projectCategory", void 0);
+__decorate([
+    (0, typeorm_1.Column)({ type: 'enum', enum: enums_js_1.ProjectNature, nullable: true }),
+    __metadata("design:type", String)
+], Project.prototype, "projectNature", void 0);
+__decorate([
+    (0, typeorm_1.Column)({ type: 'enum', enum: enums_js_1.JobType, nullable: true }),
+    __metadata("design:type", String)
+], Project.prototype, "jobType", void 0);
+__decorate([
+    (0, typeorm_1.Column)({ type: 'enum', enum: enums_js_1.JobStatus, default: enums_js_1.JobStatus.BIDDING }),
+    __metadata("design:type", String)
+], Project.prototype, "jobStatus", void 0);
+__decorate([
+    (0, typeorm_1.Column)({ nullable: true }),
+    __metadata("design:type", String)
+], Project.prototype, "financialYear", void 0);
+__decorate([
+    (0, typeorm_1.Column)({ type: 'date', nullable: true }),
+    __metadata("design:type", Date)
+], Project.prototype, "dateOfCreation", void 0);
+__decorate([
+    (0, typeorm_1.ManyToMany)(() => user_entity_js_1.User),
+    (0, typeorm_1.JoinTable)({ name: 'project_resources' }),
+    __metadata("design:type", Array)
+], Project.prototype, "resources", void 0);
 __decorate([
     (0, typeorm_1.Column)({ type: 'decimal', precision: 5, scale: 2, default: 0 }),
     __metadata("design:type", Number)

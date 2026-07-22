@@ -126,6 +126,22 @@ export enum ProjectStatus {
   COMPLETED = 'completed',
 }
 
+export enum ProjectNature {
+  BROWNFIELD = 'brownfield',
+  GREENFIELD = 'greenfield',
+}
+
+export enum JobType {
+  CONTRACTING = 'contracting',
+  DESIGN_BUILD = 'design_build',
+  DESIGN = 'design',
+}
+
+export enum JobStatus {
+  BIDDING = 'bidding',
+  AWARDED = 'awarded',
+}
+
 export enum WorkCategory {
   CIVIL = 'civil',
   ELECTRICAL = 'electrical',

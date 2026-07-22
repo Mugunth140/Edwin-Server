@@ -3,7 +3,12 @@ import { InjectRepository } from '@nestjs/typeorm';
 import { Repository, DataSource } from 'typeorm';
 import { Expense } from './entities/expense.entity.js';
 import { CreateExpenseDto } from './dto/create-expense.dto.js';
-import { ExpenseCategory, PaymentType, PaymentMode, Role } from '../common/enums.js';
+import {
+  ExpenseCategory,
+  PaymentType,
+  PaymentMode,
+  Role,
+} from '../common/enums.js';
 import { Payment } from '../payments/entities/payment.entity.js';
 
 @Injectable()
@@ -14,16 +19,20 @@ export class ExpensesService {
     private dataSource: DataSource,
   ) {}
 
-  async create(dto: CreateExpenseDto, userId?: string, files?: Express.Multer.File[]): Promise<Expense> {
+  async create(
+    dto: CreateExpenseDto,
+    userId?: string,
+    files?: Express.Multer.File[],
+  ): Promise<Expense> {
     return await this.dataSource.transaction(async (manager) => {
       // Handle file uploads
       const receiptUrls: string[] = [];
       const receiptKeys: string[] = [];
       const sitePhotoUrls: string[] = [];
       const sitePhotoKeys: string[] = [];
-      
+
       if (files && files.length > 0) {
-        files.forEach(file => {
+        files.forEach((file) => {
           if (file.fieldname === 'sitePhotos') {
             sitePhotoUrls.push(`/uploads/expenses/${file.filename}`);
             sitePhotoKeys.push(file.filename);
@@ -36,8 +45,8 @@ export class ExpensesService {
       }
 
       // 1. Create the Expense
-      const expense = manager.create(Expense, { 
-        ...dto, 
+      const expense = manager.create(Expense, {
+        ...dto,
         createdBy: userId,
         receiptUrls: receiptUrls.length > 0 ? receiptUrls : undefined,
         receiptKeys: receiptKeys.length > 0 ? receiptKeys : undefined,
@@ -52,8 +61,10 @@ export class ExpensesService {
       // 2. Create Payment record only if expense is approved
       if (dto.status === 'approved') {
         let pType = PaymentType.STAFF_EXPENSE;
-        if (dto.category === ExpenseCategory.OFFICE) pType = PaymentType.OFFICE_MAINTENANCE;
-        if (dto.category === ExpenseCategory.TRANSPORT) pType = PaymentType.TRANSPORT;
+        if (dto.category === ExpenseCategory.OFFICE)
+          pType = PaymentType.OFFICE_MAINTENANCE;
+        if (dto.category === ExpenseCategory.TRANSPORT)
+          pType = PaymentType.TRANSPORT;
         if (dto.category === ExpenseCategory.TRAVEL) pType = PaymentType.TRAVEL;
 
         const payment = manager.create(Payment, {
@@ -74,9 +85,27 @@ export class ExpensesService {
     });
   }
 
-  async findAll(query: { category?: ExpenseCategory; projectId?: string; dateFrom?: string; dateTo?: string; page?: number; limit?: number }, user?: any) {
-    const { category, projectId, dateFrom, dateTo, page = 1, limit = 20 } = query;
-    const qb = this.expensesRepo.createQueryBuilder('e')
+  async findAll(
+    query: {
+      category?: ExpenseCategory;
+      projectId?: string;
+      dateFrom?: string;
+      dateTo?: string;
+      page?: number;
+      limit?: number;
+    },
+    user?: any,
+  ) {
+    const {
+      category,
+      projectId,
+      dateFrom,
+      dateTo,
+      page = 1,
+      limit = 20,
+    } = query;
+    const qb = this.expensesRepo
+      .createQueryBuilder('e')
       .leftJoinAndSelect('e.project', 'project')
       .leftJoinAndSelect('e.trade', 'trade')
       .leftJoinAndSelect('e.creator', 'creator')
@@ -84,14 +113,20 @@ export class ExpensesService {
       .where('e.isDeleted = false');
     if (category) qb.andWhere('e.category = :category', { category });
     if (projectId) qb.andWhere('e.projectId = :projectId', { projectId });
-    if (dateFrom && dateTo) qb.andWhere('e.expenseDate BETWEEN :dateFrom AND :dateTo', { dateFrom, dateTo });
-    
+    if (dateFrom && dateTo)
+      qb.andWhere('e.expenseDate BETWEEN :dateFrom AND :dateTo', {
+        dateFrom,
+        dateTo,
+      });
+
     // Site engineers only see their own expenses
     if (user && user.role === Role.SITE_ENGINEER) {
       qb.andWhere('e.createdBy = :userId', { userId: user.id });
     }
 
-    qb.orderBy('e.expenseDate', 'DESC').skip((page - 1) * limit).take(limit);
+    qb.orderBy('e.expenseDate', 'DESC')
+      .skip((page - 1) * limit)
+      .take(limit);
     const [data, total] = await qb.getManyAndCount();
     return { data, total, page, limit };
   }
@@ -105,17 +140,21 @@ export class ExpensesService {
     return expense;
   }
 
-  async update(id: string, dto: Partial<CreateExpenseDto>, files?: Express.Multer.File[]): Promise<Expense> {
+  async update(
+    id: string,
+    dto: Partial<CreateExpenseDto>,
+    files?: Express.Multer.File[],
+  ): Promise<Expense> {
     const expense = await this.findOne(id);
-    
+
     // Handle new file uploads
     if (files && files.length > 0) {
       const receiptUrls = expense.receiptUrls || [];
       const receiptKeys = expense.receiptKeys || [];
       const sitePhotoUrls = expense.sitePhotoUrls || [];
       const sitePhotoKeys = expense.sitePhotoKeys || [];
-      
-      files.forEach(file => {
+
+      files.forEach((file) => {
         if (file.fieldname === 'sitePhotos') {
           sitePhotoUrls.push(`/uploads/expenses/${file.filename}`);
           sitePhotoKeys.push(file.filename);
@@ -124,11 +163,15 @@ export class ExpensesService {
           receiptKeys.push(file.filename);
         }
       });
-      
-      expense.receiptUrls = receiptUrls.length > 0 ? receiptUrls : expense.receiptUrls;
-      expense.receiptKeys = receiptKeys.length > 0 ? receiptKeys : expense.receiptKeys;
-      expense.sitePhotoUrls = sitePhotoUrls.length > 0 ? sitePhotoUrls : expense.sitePhotoUrls;
-      expense.sitePhotoKeys = sitePhotoKeys.length > 0 ? sitePhotoKeys : expense.sitePhotoKeys;
+
+      expense.receiptUrls =
+        receiptUrls.length > 0 ? receiptUrls : expense.receiptUrls;
+      expense.receiptKeys =
+        receiptKeys.length > 0 ? receiptKeys : expense.receiptKeys;
+      expense.sitePhotoUrls =
+        sitePhotoUrls.length > 0 ? sitePhotoUrls : expense.sitePhotoUrls;
+      expense.sitePhotoKeys =
+        sitePhotoKeys.length > 0 ? sitePhotoKeys : expense.sitePhotoKeys;
 
       // Update primary if it was empty
       if (!expense.receiptUrl && receiptUrls.length > 0) {
@@ -139,16 +182,24 @@ export class ExpensesService {
 
     // If status changed to approved, ensure a payment record exists and is active
     if (dto.status === 'approved' && expense.status !== 'approved') {
-      const existing = await this.paymentsRepo.findOne({ where: { expenseId: id } });
+      const existing = await this.paymentsRepo.findOne({
+        where: { expenseId: id },
+      });
       if (existing) {
         if (existing.isDeleted) {
-          await this.paymentsRepo.update({ expenseId: id }, { isDeleted: false });
+          await this.paymentsRepo.update(
+            { expenseId: id },
+            { isDeleted: false },
+          );
         }
       } else {
         let pType = PaymentType.STAFF_EXPENSE;
-        if (expense.category === ExpenseCategory.OFFICE) pType = PaymentType.OFFICE_MAINTENANCE;
-        if (expense.category === ExpenseCategory.TRANSPORT) pType = PaymentType.TRANSPORT;
-        if (expense.category === ExpenseCategory.TRAVEL) pType = PaymentType.TRAVEL;
+        if (expense.category === ExpenseCategory.OFFICE)
+          pType = PaymentType.OFFICE_MAINTENANCE;
+        if (expense.category === ExpenseCategory.TRANSPORT)
+          pType = PaymentType.TRANSPORT;
+        if (expense.category === ExpenseCategory.TRAVEL)
+          pType = PaymentType.TRAVEL;
 
         const payment = this.paymentsRepo.create({
           paymentType: pType,
@@ -158,7 +209,9 @@ export class ExpensesService {
           paymentMode: PaymentMode.CASH,
           payeeName: expense.paidBy || 'Staff',
           projectId: expense.projectId,
-          notes: expense.description + (expense.remarks ? ` - ${expense.remarks}` : ''),
+          notes:
+            expense.description +
+            (expense.remarks ? ` - ${expense.remarks}` : ''),
           createdBy: expense.createdBy,
         });
         await this.paymentsRepo.save(payment);
@@ -166,7 +219,11 @@ export class ExpensesService {
     }
 
     // If status changed away from approved, soft-delete the payment
-    if (dto.status && dto.status !== 'approved' && expense.status === 'approved') {
+    if (
+      dto.status &&
+      dto.status !== 'approved' &&
+      expense.status === 'approved'
+    ) {
       await this.paymentsRepo.update({ expenseId: id }, { isDeleted: true });
     }
 

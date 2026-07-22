@@ -7,7 +7,8 @@ import { CreatePurchaseEnquiryDto } from './dto/create-purchase-enquiry.dto.js';
 @Injectable()
 export class PurchaseEnquiriesService {
   constructor(
-    @InjectRepository(PurchaseEnquiry) private repo: Repository<PurchaseEnquiry>,
+    @InjectRepository(PurchaseEnquiry)
+    private repo: Repository<PurchaseEnquiry>,
   ) {}
 
   private async generateEnquiryNo(): Promise<string> {
@@ -25,7 +26,10 @@ export class PurchaseEnquiriesService {
     return `PE-${year}-${String(seq).padStart(3, '0')}`;
   }
 
-  async create(dto: CreatePurchaseEnquiryDto, userId?: string): Promise<PurchaseEnquiry> {
+  async create(
+    dto: CreatePurchaseEnquiryDto,
+    userId?: string,
+  ): Promise<PurchaseEnquiry> {
     const enquiryNo = await this.generateEnquiryNo();
     const enquiry = this.repo.create({
       enquiryNo,
@@ -55,7 +59,11 @@ export class PurchaseEnquiriesService {
     return enquiry;
   }
 
-  async update(id: string, dto: CreatePurchaseEnquiryDto, userId?: string): Promise<PurchaseEnquiry> {
+  async update(
+    id: string,
+    dto: CreatePurchaseEnquiryDto,
+    userId?: string,
+  ): Promise<PurchaseEnquiry> {
     const enquiry = await this.findOne(id);
     Object.assign(enquiry, {
       vendorId: dto.vendorId,

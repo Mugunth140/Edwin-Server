@@ -23,7 +23,9 @@ import { UpdateAccountsManagerDto } from './dto/update-accounts-manager.dto.js';
 @UseGuards(AuthGuard('jwt'), RolesGuard)
 @Controller({ path: 'accounts-managers', version: '1' })
 export class AccountsManagersController {
-  constructor(private readonly accountsManagersService: AccountsManagersService) {}
+  constructor(
+    private readonly accountsManagersService: AccountsManagersService,
+  ) {}
 
   @Post()
   @Roles(Role.ADMIN)

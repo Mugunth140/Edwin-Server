@@ -37,7 +37,10 @@ export class WeeklyTimesheet {
   @Column({ default: false })
   isDeleted: boolean;
 
-  @OneToMany(() => TimesheetRow, (row) => row.timesheet, { cascade: true, eager: true })
+  @OneToMany(() => TimesheetRow, (row) => row.timesheet, {
+    cascade: true,
+    eager: true,
+  })
   rows: TimesheetRow[];
 
   @CreateDateColumn()

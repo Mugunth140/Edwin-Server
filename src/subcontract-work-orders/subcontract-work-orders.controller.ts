@@ -1,19 +1,39 @@
-import { Controller, Get, Post, Body, Patch, Param, Delete, UseGuards, Query } from '@nestjs/common';
-import { ApiTags, ApiOperation, ApiBearerAuth, ApiQuery } from '@nestjs/swagger';
+import {
+  Controller,
+  Get,
+  Post,
+  Body,
+  Patch,
+  Param,
+  Delete,
+  UseGuards,
+  Query,
+} from '@nestjs/common';
+import {
+  ApiTags,
+  ApiOperation,
+  ApiBearerAuth,
+  ApiQuery,
+} from '@nestjs/swagger';
 import { AuthGuard } from '@nestjs/passport';
 import { RolesGuard } from '../auth/roles.guard.js';
 import { Roles } from '../auth/roles.decorator.js';
 import { Role } from '../common/enums.js';
 import { SubcontractWorkOrdersService } from './subcontract-work-orders.service.js';
 import { CreateSubcontractWorkOrderDto } from './dto/create-subcontract-work-order.dto.js';
-import { UpdateSubcontractWorkOrderDto, UpdateSubcontractWorkOrderStatusDto } from './dto/update-subcontract-work-order.dto.js';
+import {
+  UpdateSubcontractWorkOrderDto,
+  UpdateSubcontractWorkOrderStatusDto,
+} from './dto/update-subcontract-work-order.dto.js';
 
 @ApiTags('Subcontract Work Orders')
 @Controller({ path: 'subcontract-work-orders', version: '1' })
 @UseGuards(AuthGuard('jwt'), RolesGuard)
 @ApiBearerAuth()
 export class SubcontractWorkOrdersController {
-  constructor(private readonly subcontractWorkOrdersService: SubcontractWorkOrdersService) {}
+  constructor(
+    private readonly subcontractWorkOrdersService: SubcontractWorkOrdersService,
+  ) {}
 
   @Post()
   @Roles(Role.ADMIN, Role.ACCOUNTS_MANAGER, Role.PURCHASE_TEAM)
@@ -45,7 +65,10 @@ export class SubcontractWorkOrdersController {
   @Patch(':id/status')
   @Roles(Role.ADMIN, Role.ACCOUNTS_MANAGER, Role.PURCHASE_TEAM)
   @ApiOperation({ summary: 'Update a subcontract work order status' })
-  updateStatus(@Param('id') id: string, @Body() dto: UpdateSubcontractWorkOrderStatusDto) {
+  updateStatus(
+    @Param('id') id: string,
+    @Body() dto: UpdateSubcontractWorkOrderStatusDto,
+  ) {
     return this.subcontractWorkOrdersService.updateStatus(id, dto.status);
   }
 

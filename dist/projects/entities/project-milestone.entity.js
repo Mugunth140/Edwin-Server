@@ -51,7 +51,11 @@ __decorate([
     __metadata("design:type", Date)
 ], ProjectMilestone.prototype, "actualDate", void 0);
 __decorate([
-    (0, typeorm_1.Column)({ type: 'enum', enum: enums_js_1.MilestoneStatus, default: enums_js_1.MilestoneStatus.PENDING }),
+    (0, typeorm_1.Column)({
+        type: 'enum',
+        enum: enums_js_1.MilestoneStatus,
+        default: enums_js_1.MilestoneStatus.PENDING,
+    }),
     __metadata("design:type", String)
 ], ProjectMilestone.prototype, "status", void 0);
 __decorate([

@@ -1,4 +1,8 @@
-import { Injectable, NotFoundException, ConflictException } from '@nestjs/common';
+import {
+  Injectable,
+  NotFoundException,
+  ConflictException,
+} from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository, In } from 'typeorm';
 import * as bcrypt from 'bcrypt';
@@ -19,12 +23,17 @@ export class AccountsManagersService {
 
   async create(dto: CreateAccountsManagerDto) {
     if (dto.email) {
-      const existingEmail = await this.userRepository.findOne({ where: { email: dto.email } });
+      const existingEmail = await this.userRepository.findOne({
+        where: { email: dto.email },
+      });
       if (existingEmail) throw new ConflictException('Email already in use');
     }
     if (dto.username) {
-      const existingUsername = await this.userRepository.findOne({ where: { username: dto.username } });
-      if (existingUsername) throw new ConflictException('Username already in use');
+      const existingUsername = await this.userRepository.findOne({
+        where: { username: dto.username },
+      });
+      if (existingUsername)
+        throw new ConflictException('Username already in use');
     }
 
     const manager = this.userRepository.create({
@@ -46,7 +55,9 @@ export class AccountsManagersService {
     }
 
     if (dto.projectIds && dto.projectIds.length > 0) {
-      manager.projects = await this.projectRepository.findBy({ id: In(dto.projectIds) });
+      manager.projects = await this.projectRepository.findBy({
+        id: In(dto.projectIds),
+      });
     } else {
       manager.projects = [];
     }
@@ -77,12 +88,17 @@ export class AccountsManagersService {
     const manager = await this.findOne(id);
 
     if (dto.email && dto.email !== manager.email) {
-      const existingEmail = await this.userRepository.findOne({ where: { email: dto.email } });
+      const existingEmail = await this.userRepository.findOne({
+        where: { email: dto.email },
+      });
       if (existingEmail) throw new ConflictException('Email already in use');
     }
     if (dto.username && dto.username !== manager.username) {
-      const existingUsername = await this.userRepository.findOne({ where: { username: dto.username } });
-      if (existingUsername) throw new ConflictException('Username already in use');
+      const existingUsername = await this.userRepository.findOne({
+        where: { username: dto.username },
+      });
+      if (existingUsername)
+        throw new ConflictException('Username already in use');
     }
 
     if (dto.password) {
@@ -91,7 +107,9 @@ export class AccountsManagersService {
 
     if (dto.projectIds !== undefined) {
       if (dto.projectIds.length > 0) {
-        manager.projects = await this.projectRepository.findBy({ id: In(dto.projectIds) });
+        manager.projects = await this.projectRepository.findBy({
+          id: In(dto.projectIds),
+        });
       } else {
         manager.projects = [];
       }
@@ -101,11 +119,15 @@ export class AccountsManagersService {
       name: dto.name !== undefined ? dto.name : manager.name,
       email: dto.email !== undefined ? dto.email : manager.email,
       username: dto.username !== undefined ? dto.username : manager.username,
-      employeeId: dto.employeeId !== undefined ? dto.employeeId : manager.employeeId,
+      employeeId:
+        dto.employeeId !== undefined ? dto.employeeId : manager.employeeId,
       phone: dto.phone !== undefined ? dto.phone : manager.phone,
       address: dto.address !== undefined ? dto.address : manager.address,
       isActive: dto.isActive !== undefined ? dto.isActive : manager.isActive,
-      salaryGradeId: dto.salaryGradeId !== undefined ? dto.salaryGradeId : manager.salaryGradeId,
+      salaryGradeId:
+        dto.salaryGradeId !== undefined
+          ? dto.salaryGradeId
+          : manager.salaryGradeId,
     });
 
     return await this.userRepository.save(manager);

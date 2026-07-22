@@ -97,7 +97,10 @@ __decorate([
     __metadata("design:type", Date)
 ], SalesInvoice.prototype, "reminderSentAt", void 0);
 __decorate([
-    (0, typeorm_1.OneToMany)(() => invoice_item_entity_js_1.InvoiceItem, (item) => item.invoice, { cascade: true, eager: true }),
+    (0, typeorm_1.OneToMany)(() => invoice_item_entity_js_1.InvoiceItem, (item) => item.invoice, {
+        cascade: true,
+        eager: true,
+    }),
     __metadata("design:type", Array)
 ], SalesInvoice.prototype, "items", void 0);
 __decorate([

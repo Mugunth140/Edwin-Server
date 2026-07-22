@@ -62,7 +62,8 @@ let DrawingsService = class DrawingsService {
         return this.drawingsRepo.save(drawing);
     }
     async findAll(query, user) {
-        const qb = this.drawingsRepo.createQueryBuilder('d')
+        const qb = this.drawingsRepo
+            .createQueryBuilder('d')
             .leftJoinAndSelect('d.project', 'project')
             .where('d.isDeleted = false');
         if (query.projectId)
@@ -77,7 +78,10 @@ let DrawingsService = class DrawingsService {
         return qb.orderBy('d.createdAt', 'DESC').getMany();
     }
     async findOne(id) {
-        const drawing = await this.drawingsRepo.findOne({ where: { id, isDeleted: false }, relations: ['project'] });
+        const drawing = await this.drawingsRepo.findOne({
+            where: { id, isDeleted: false },
+            relations: ['project'],
+        });
         if (!drawing)
             throw new common_1.NotFoundException('Drawing not found');
         return drawing;

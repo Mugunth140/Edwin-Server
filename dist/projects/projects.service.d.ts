@@ -1,5 +1,6 @@
 import { Repository } from 'typeorm';
 import { Project } from './entities/project.entity.js';
+import { User } from '../users/entities/user.entity.js';
 import { ProjectProgress } from './entities/project-progress.entity.js';
 import { ProjectMilestone } from './entities/project-milestone.entity.js';
 import { ChangeOrder } from './entities/change-order.entity.js';
@@ -15,6 +16,7 @@ import { PurchaseBill } from '../accounts/entities/purchase-bill.entity.js';
 import { SalesInvoice } from '../accounts/entities/sales-invoice.entity.js';
 import { Payment } from '../payments/entities/payment.entity.js';
 import { CreateProjectDto } from './dto/create-project.dto.js';
+import { UpdateProjectDto } from './dto/update-project.dto.js';
 export declare class ProjectsService {
     private projectsRepo;
     private progressRepo;
@@ -31,11 +33,12 @@ export declare class ProjectsService {
     private billsRepo;
     private invoicesRepo;
     private paymentsRepo;
-    constructor(projectsRepo: Repository<Project>, progressRepo: Repository<ProjectProgress>, milestonesRepo: Repository<ProjectMilestone>, changeOrdersRepo: Repository<ChangeOrder>, attendanceRepo: Repository<AttendanceLog>, machineryRepo: Repository<MachineryLog>, snagsRepo: Repository<SnagItem>, incidentsRepo: Repository<SafetyIncident>, rfisRepo: Repository<Rfi>, photosRepo: Repository<SitePhoto>, expensesRepo: Repository<Expense>, swoRepo: Repository<SubcontractWorkOrder>, billsRepo: Repository<PurchaseBill>, invoicesRepo: Repository<SalesInvoice>, paymentsRepo: Repository<Payment>);
+    private usersRepo;
+    constructor(projectsRepo: Repository<Project>, progressRepo: Repository<ProjectProgress>, milestonesRepo: Repository<ProjectMilestone>, changeOrdersRepo: Repository<ChangeOrder>, attendanceRepo: Repository<AttendanceLog>, machineryRepo: Repository<MachineryLog>, snagsRepo: Repository<SnagItem>, incidentsRepo: Repository<SafetyIncident>, rfisRepo: Repository<Rfi>, photosRepo: Repository<SitePhoto>, expensesRepo: Repository<Expense>, swoRepo: Repository<SubcontractWorkOrder>, billsRepo: Repository<PurchaseBill>, invoicesRepo: Repository<SalesInvoice>, paymentsRepo: Repository<Payment>, usersRepo: Repository<User>);
     create(dto: CreateProjectDto, userId?: string): Promise<Project>;
     findAll(): Promise<Project[]>;
     findOne(id: string): Promise<Project>;
-    update(id: string, dto: any, userId?: string): Promise<Project>;
+    update(id: string, dto: UpdateProjectDto, userId?: string): Promise<Project>;
     remove(id: string): Promise<void>;
     getDashboard(id: string): Promise<{
         project: Project;

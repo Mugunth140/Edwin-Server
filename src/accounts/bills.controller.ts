@@ -1,6 +1,24 @@
-import { Controller, Get, Post, Body, Param, UseGuards, Request, UploadedFile, UseInterceptors, Patch, Put, Delete } from '@nestjs/common';
+import {
+  Controller,
+  Get,
+  Post,
+  Body,
+  Param,
+  UseGuards,
+  Request,
+  UploadedFile,
+  UseInterceptors,
+  Patch,
+  Put,
+  Delete,
+} from '@nestjs/common';
 import { FileInterceptor } from '@nestjs/platform-express';
-import { ApiTags, ApiOperation, ApiBearerAuth, ApiConsumes } from '@nestjs/swagger';
+import {
+  ApiTags,
+  ApiOperation,
+  ApiBearerAuth,
+  ApiConsumes,
+} from '@nestjs/swagger';
 import { AuthGuard } from '@nestjs/passport';
 import { diskStorage } from 'multer';
 import { extname } from 'path';
@@ -38,8 +56,12 @@ export class BillsController {
           cb(null, uploadPath);
         },
         filename: (req, file, cb) => {
-          const uniqueSuffix = Date.now() + '-' + Math.round(Math.random() * 1e9);
-          cb(null, `${file.fieldname}-${uniqueSuffix}${extname(file.originalname)}`);
+          const uniqueSuffix =
+            Date.now() + '-' + Math.round(Math.random() * 1e9);
+          cb(
+            null,
+            `${file.fieldname}-${uniqueSuffix}${extname(file.originalname)}`,
+          );
         },
       }),
     }),
@@ -73,7 +95,10 @@ export class BillsController {
   @Patch(':id/status')
   @Roles(Role.ADMIN, Role.ACCOUNTS_MANAGER)
   @ApiOperation({ summary: 'Update bill status' })
-  updateBillStatus(@Param('id') id: string, @Body('status') status: BillStatus) {
+  updateBillStatus(
+    @Param('id') id: string,
+    @Body('status') status: BillStatus,
+  ) {
     return this.accountsService.updateBillStatus(id, status);
   }
 
@@ -87,7 +112,11 @@ export class BillsController {
   @Put(':id')
   @Roles(Role.ADMIN, Role.ACCOUNTS_MANAGER)
   @ApiOperation({ summary: 'Update bill' })
-  updateBill(@Param('id') id: string, @Body() dto: CreateBillDto, @Request() req: any) {
+  updateBill(
+    @Param('id') id: string,
+    @Body() dto: CreateBillDto,
+    @Request() req: any,
+  ) {
     return this.accountsService.updateBill(id, dto, req.user.id);
   }
 

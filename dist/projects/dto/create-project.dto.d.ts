@@ -1,6 +1,7 @@
-import { ProjectStatus } from '../../common/enums.js';
+import { ProjectStatus, ProjectNature, JobType, JobStatus } from '../../common/enums.js';
 export declare class CreateProjectDto {
     name: string;
+    projectCode: string;
     description?: string;
     location?: string;
     email?: string;
@@ -13,4 +14,11 @@ export declare class CreateProjectDto {
     estimatedBudget?: number;
     startDate?: string;
     endDate?: string;
+    projectCategoryId?: string;
+    projectNature?: ProjectNature;
+    jobType?: JobType;
+    jobStatus?: JobStatus;
+    financialYear?: string;
+    dateOfCreation?: string;
+    resourceIds?: string[];
 }

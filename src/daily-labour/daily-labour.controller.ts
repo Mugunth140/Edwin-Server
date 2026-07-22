@@ -13,7 +13,13 @@ import {
   UploadedFiles,
 } from '@nestjs/common';
 import { AnyFilesInterceptor } from '@nestjs/platform-express';
-import { ApiTags, ApiOperation, ApiBearerAuth, ApiConsumes, ApiQuery } from '@nestjs/swagger';
+import {
+  ApiTags,
+  ApiOperation,
+  ApiBearerAuth,
+  ApiConsumes,
+  ApiQuery,
+} from '@nestjs/swagger';
 import { AuthGuard } from '@nestjs/passport';
 import { diskStorage } from 'multer';
 import { extname } from 'path';
@@ -43,8 +49,12 @@ export class DailyLabourController {
           cb(null, uploadPath);
         },
         filename: (req, file, cb) => {
-          const uniqueSuffix = Date.now() + '-' + Math.round(Math.random() * 1e9);
-          cb(null, `dpw-${file.fieldname}-${uniqueSuffix}${extname(file.originalname)}`);
+          const uniqueSuffix =
+            Date.now() + '-' + Math.round(Math.random() * 1e9);
+          cb(
+            null,
+            `dpw-${file.fieldname}-${uniqueSuffix}${extname(file.originalname)}`,
+          );
         },
       }),
     }),
@@ -59,12 +69,16 @@ export class DailyLabourController {
     // Parse workers array since it comes as a stringified JSON in multipart form data
     const workers = body.workers ? JSON.parse(body.workers) : [];
 
-    return this.dailyLabourService.create({
-      projectId: body.projectId,
-      reportDate: body.reportDate,
-      remarks: body.remarks,
-      workers: workers,
-    }, req.user.id, files);
+    return this.dailyLabourService.create(
+      {
+        projectId: body.projectId,
+        reportDate: body.reportDate,
+        remarks: body.remarks,
+        workers: workers,
+      },
+      req.user.id,
+      files,
+    );
   }
 
   @Get()
@@ -93,8 +107,12 @@ export class DailyLabourController {
           cb(null, uploadPath);
         },
         filename: (req, file, cb) => {
-          const uniqueSuffix = Date.now() + '-' + Math.round(Math.random() * 1e9);
-          cb(null, `dpw-${file.fieldname}-${uniqueSuffix}${extname(file.originalname)}`);
+          const uniqueSuffix =
+            Date.now() + '-' + Math.round(Math.random() * 1e9);
+          cb(
+            null,
+            `dpw-${file.fieldname}-${uniqueSuffix}${extname(file.originalname)}`,
+          );
         },
       }),
     }),
@@ -108,12 +126,16 @@ export class DailyLabourController {
   ) {
     const workers = body.workers ? JSON.parse(body.workers) : [];
 
-    return this.dailyLabourService.update(id, {
-      projectId: body.projectId,
-      reportDate: body.reportDate,
-      remarks: body.remarks,
-      workers: workers,
-    }, files);
+    return this.dailyLabourService.update(
+      id,
+      {
+        projectId: body.projectId,
+        reportDate: body.reportDate,
+        remarks: body.remarks,
+        workers: workers,
+      },
+      files,
+    );
   }
 
   @Patch(':id/status')

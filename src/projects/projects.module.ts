@@ -18,12 +18,16 @@ import { SubcontractWorkOrder } from '../subcontract-work-orders/entities/subcon
 import { PurchaseBill } from '../accounts/entities/purchase-bill.entity.js';
 import { SalesInvoice } from '../accounts/entities/sales-invoice.entity.js';
 import { Payment } from '../payments/entities/payment.entity.js';
+import { User } from '../users/entities/user.entity.js';
+import { ProjectCategory } from '../project-categories/entities/project-category.entity.js';
 
 @Module({
   imports: [
     TypeOrmModule.forFeature([
       Project,
       Customer,
+      User,
+      ProjectCategory,
       ProjectProgress,
       ProjectMilestone,
       ChangeOrder,

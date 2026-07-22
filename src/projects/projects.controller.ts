@@ -41,7 +41,11 @@ export class ProjectsController {
   @Patch(':id')
   @Roles(Role.ADMIN)
   @ApiOperation({ summary: 'Update a project' })
-  update(@Param('id') id: string, @Body() dto: UpdateProjectDto, @Request() req: any) {
+  update(
+    @Param('id') id: string,
+    @Body() dto: UpdateProjectDto,
+    @Request() req: any,
+  ) {
     return this.projectsService.update(id, dto, req.user.id);
   }
 
@@ -59,7 +63,10 @@ export class ProjectsController {
   }
 
   @Get(':id/details')
-  @ApiOperation({ summary: 'Get project financial details (expenses, SWOs, bills, invoices, payments)' })
+  @ApiOperation({
+    summary:
+      'Get project financial details (expenses, SWOs, bills, invoices, payments)',
+  })
   getDetails(@Param('id') id: string) {
     return this.projectsService.getProjectDetails(id);
   }
@@ -81,7 +88,11 @@ export class ProjectsController {
   @Patch(':id/milestones/:mid')
   @Roles(Role.ADMIN, Role.SITE_ENGINEER)
   @ApiOperation({ summary: 'Update milestone status' })
-  updateMilestone(@Param('id') id: string, @Param('mid') mid: string, @Body() body: any) {
+  updateMilestone(
+    @Param('id') id: string,
+    @Param('mid') mid: string,
+    @Body() body: any,
+  ) {
     return this.projectsService.updateMilestone(id, mid, body);
   }
 
@@ -102,7 +113,11 @@ export class ProjectsController {
   @Patch(':id/snag/:snagId')
   @Roles(Role.ADMIN, Role.SITE_ENGINEER)
   @ApiOperation({ summary: 'Update snag status' })
-  updateSnag(@Param('id') id: string, @Param('snagId') snagId: string, @Body() body: any) {
+  updateSnag(
+    @Param('id') id: string,
+    @Param('snagId') snagId: string,
+    @Body() body: any,
+  ) {
     return this.projectsService.updateSnag(id, snagId, body);
   }
 
@@ -116,7 +131,11 @@ export class ProjectsController {
   @Patch(':id/rfi/:rfiId')
   @Roles(Role.ADMIN, Role.SITE_ENGINEER)
   @ApiOperation({ summary: 'Update RFI status' })
-  updateRfi(@Param('id') id: string, @Param('rfiId') rfiId: string, @Body() body: any) {
+  updateRfi(
+    @Param('id') id: string,
+    @Param('rfiId') rfiId: string,
+    @Body() body: any,
+  ) {
     return this.projectsService.updateRfi(id, rfiId, body);
   }
 

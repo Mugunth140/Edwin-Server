@@ -35,6 +35,7 @@ const item_descriptions_module_js_1 = require("./item-descriptions/item-descript
 const purchase_enquiries_module_js_1 = require("./purchase-enquiries/purchase-enquiries.module.js");
 const salaries_module_js_1 = require("./salaries/salaries.module.js");
 const timesheet_attendance_module_js_1 = require("./timesheet-attendance/timesheet-attendance.module.js");
+const project_categories_module_js_1 = require("./project-categories/project-categories.module.js");
 const user_entity_js_1 = require("./users/entities/user.entity.js");
 const vendor_entity_js_1 = require("./vendors/entities/vendor.entity.js");
 const project_entity_js_1 = require("./projects/entities/project.entity.js");
@@ -73,6 +74,7 @@ const purchase_enquiry_entity_js_1 = require("./purchase-enquiries/entities/purc
 const salary_entity_js_1 = require("./salaries/entities/salary.entity.js");
 const weekly_timesheet_entity_js_1 = require("./timesheet-attendance/entities/weekly-timesheet.entity.js");
 const timesheet_row_entity_js_1 = require("./timesheet-attendance/entities/timesheet-row.entity.js");
+const project_category_entity_js_1 = require("./project-categories/entities/project-category.entity.js");
 function getBooleanConfig(configService, key, fallback) {
     const value = configService.get(key);
     if (typeof value === 'boolean')
@@ -138,6 +140,7 @@ exports.AppModule = AppModule = __decorate([
                         salary_entity_js_1.Salary,
                         weekly_timesheet_entity_js_1.WeeklyTimesheet,
                         timesheet_row_entity_js_1.TimesheetRow,
+                        project_category_entity_js_1.ProjectCategory,
                     ],
                     synchronize: getBooleanConfig(configService, 'TYPEORM_SYNCHRONIZE', false),
                     logging: getBooleanConfig(configService, 'TYPEORM_LOGGING', false),
@@ -168,6 +171,7 @@ exports.AppModule = AppModule = __decorate([
             purchase_enquiries_module_js_1.PurchaseEnquiriesModule,
             salaries_module_js_1.SalariesModule,
             timesheet_attendance_module_js_1.TimesheetAttendanceModule,
+            project_categories_module_js_1.ProjectCategoriesModule,
         ],
     })
 ], AppModule);

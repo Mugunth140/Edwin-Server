@@ -27,6 +27,8 @@ const subcontract_work_order_entity_js_1 = require("../subcontract-work-orders/e
 const purchase_bill_entity_js_1 = require("../accounts/entities/purchase-bill.entity.js");
 const sales_invoice_entity_js_1 = require("../accounts/entities/sales-invoice.entity.js");
 const payment_entity_js_1 = require("../payments/entities/payment.entity.js");
+const user_entity_js_1 = require("../users/entities/user.entity.js");
+const project_category_entity_js_1 = require("../project-categories/entities/project-category.entity.js");
 let ProjectsModule = class ProjectsModule {
 };
 exports.ProjectsModule = ProjectsModule;
@@ -36,6 +38,8 @@ exports.ProjectsModule = ProjectsModule = __decorate([
             typeorm_1.TypeOrmModule.forFeature([
                 project_entity_js_1.Project,
                 customer_entity_js_1.Customer,
+                user_entity_js_1.User,
+                project_category_entity_js_1.ProjectCategory,
                 project_progress_entity_js_1.ProjectProgress,
                 project_milestone_entity_js_1.ProjectMilestone,
                 change_order_entity_js_1.ChangeOrder,

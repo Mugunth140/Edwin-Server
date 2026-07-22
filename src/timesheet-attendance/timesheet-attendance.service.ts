@@ -1,4 +1,9 @@
-import { Injectable, NotFoundException, ForbiddenException, BadRequestException } from '@nestjs/common';
+import {
+  Injectable,
+  NotFoundException,
+  ForbiddenException,
+  BadRequestException,
+} from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository, In } from 'typeorm';
 import { WeeklyTimesheet } from './entities/weekly-timesheet.entity.js';
@@ -37,7 +42,9 @@ export class TimesheetAttendanceService {
     });
     const saved = await this.tsRepo.save(ts);
 
-    const rows = dto.rows.map((r) => this.rowRepo.create({ ...r, timesheetId: saved.id }));
+    const rows = dto.rows.map((r) =>
+      this.rowRepo.create({ ...r, timesheetId: saved.id }),
+    );
     saved.rows = await this.rowRepo.save(rows);
     saved.totalHours = this.calcTotal(saved.rows);
     return this.tsRepo.save(saved);
@@ -45,7 +52,11 @@ export class TimesheetAttendanceService {
 
   async findByWeek(siteEngineerId: string, weekStart: string) {
     return this.tsRepo.findOne({
-      where: { siteEngineerId, weekStart: new Date(weekStart) as any, isDeleted: false },
+      where: {
+        siteEngineerId,
+        weekStart: new Date(weekStart),
+        isDeleted: false,
+      },
       relations: ['rows'],
     });
   }
@@ -75,11 +86,15 @@ export class TimesheetAttendanceService {
 
   async update(id: string, dto: CreateTimesheetDto, userId: string) {
     const ts = await this.findOne(id);
-    if (ts.siteEngineerId !== userId) throw new ForbiddenException('Not your timesheet');
-    if (ts.status !== 'pending') throw new BadRequestException('Cannot edit verified/approved timesheet');
+    if (ts.siteEngineerId !== userId)
+      throw new ForbiddenException('Not your timesheet');
+    if (ts.status !== 'pending')
+      throw new BadRequestException('Cannot edit verified/approved timesheet');
 
     await this.rowRepo.delete({ timesheetId: id });
-    const rows = dto.rows.map((r) => this.rowRepo.create({ ...r, timesheetId: id }));
+    const rows = dto.rows.map((r) =>
+      this.rowRepo.create({ ...r, timesheetId: id }),
+    );
     ts.rows = await this.rowRepo.save(rows);
     ts.totalHours = this.calcTotal(ts.rows);
     return this.tsRepo.save(ts);
@@ -87,7 +102,8 @@ export class TimesheetAttendanceService {
 
   async verify(id: string, userId: string) {
     const ts = await this.findOne(id);
-    if (ts.status !== 'pending') throw new BadRequestException('Only pending timesheets can be verified');
+    if (ts.status !== 'pending')
+      throw new BadRequestException('Only pending timesheets can be verified');
     ts.status = 'verified';
     ts.approvedById = userId;
     ts.approvedAt = new Date();
@@ -96,22 +112,32 @@ export class TimesheetAttendanceService {
 
   async approve(id: string, userId: string) {
     const ts = await this.findOne(id);
-    if (ts.status !== 'verified') throw new BadRequestException('Only verified timesheets can be approved');
+    if (ts.status !== 'verified')
+      throw new BadRequestException('Only verified timesheets can be approved');
 
     const user = await this.userRepo.findOne({
       where: { id: ts.siteEngineerId },
       relations: ['salaryGrade'],
     });
     if (!user) throw new NotFoundException('Site engineer not found');
-    if (!user.salaryGrade) throw new BadRequestException('Site engineer has no salary grade assigned');
+    if (!user.salaryGrade)
+      throw new BadRequestException(
+        'Site engineer has no salary grade assigned',
+      );
 
     const avgCostPerHr = Number(user.salaryGrade.avgCostPerHr);
 
     let totalCost = 0;
     for (const row of ts.rows) {
       if (!row.projectId) continue;
-      const rowHours = Number(row.monHours) + Number(row.tueHours) + Number(row.wedHours)
-        + Number(row.thuHours) + Number(row.friHours) + Number(row.satHours) + Number(row.sunHours);
+      const rowHours =
+        Number(row.monHours) +
+        Number(row.tueHours) +
+        Number(row.wedHours) +
+        Number(row.thuHours) +
+        Number(row.friHours) +
+        Number(row.satHours) +
+        Number(row.sunHours);
       const rowAmount = rowHours * avgCostPerHr;
       row.amount = rowAmount;
       totalCost += rowAmount;
@@ -139,7 +165,8 @@ export class TimesheetAttendanceService {
 
   async reject(id: string, userId: string) {
     const ts = await this.findOne(id);
-    if (ts.status === 'approved') throw new BadRequestException('Already approved');
+    if (ts.status === 'approved')
+      throw new BadRequestException('Already approved');
     ts.status = 'rejected';
     ts.approvedById = userId;
     ts.approvedAt = new Date();
@@ -148,15 +175,24 @@ export class TimesheetAttendanceService {
 
   async remove(id: string, userId: string) {
     const ts = await this.findOne(id);
-    if (ts.siteEngineerId !== userId) throw new ForbiddenException('Not your timesheet');
+    if (ts.siteEngineerId !== userId)
+      throw new ForbiddenException('Not your timesheet');
     ts.isDeleted = true;
     return this.tsRepo.save(ts);
   }
 
   private calcTotal(rows: TimesheetRow[]) {
     return rows.reduce((sum, r) => {
-      return sum + Number(r.monHours) + Number(r.tueHours) + Number(r.wedHours)
-        + Number(r.thuHours) + Number(r.friHours) + Number(r.satHours) + Number(r.sunHours);
+      return (
+        sum +
+        Number(r.monHours) +
+        Number(r.tueHours) +
+        Number(r.wedHours) +
+        Number(r.thuHours) +
+        Number(r.friHours) +
+        Number(r.satHours) +
+        Number(r.sunHours)
+      );
     }, 0);
   }
 
@@ -167,7 +203,15 @@ export class TimesheetAttendanceService {
         relations: ['salaryGrade'],
       });
       (ts as any).siteEngineer = user
-        ? { id: user.id, name: user.name, email: user.email, employeeId: user.employeeId, phone: user.phone, role: user.role, salaryGrade: user.salaryGrade }
+        ? {
+            id: user.id,
+            name: user.name,
+            email: user.email,
+            employeeId: user.employeeId,
+            phone: user.phone,
+            role: user.role,
+            salaryGrade: user.salaryGrade,
+          }
         : null;
     }
     return ts;
@@ -176,12 +220,23 @@ export class TimesheetAttendanceService {
   private async attachSiteEngineerMany(list: WeeklyTimesheet[]) {
     const ids = [...new Set(list.map((t) => t.siteEngineerId).filter(Boolean))];
     if (ids.length === 0) return list;
-    const users = await this.userRepo.find({ where: { id: In(ids) }, relations: ['salaryGrade'] });
+    const users = await this.userRepo.find({
+      where: { id: In(ids) },
+      relations: ['salaryGrade'],
+    });
     const userMap = new Map(users.map((u) => [u.id, u]));
     for (const ts of list) {
       const user = userMap.get(ts.siteEngineerId);
       (ts as any).siteEngineer = user
-        ? { id: user.id, name: user.name, email: user.email, employeeId: user.employeeId, phone: user.phone, role: user.role, salaryGrade: user.salaryGrade }
+        ? {
+            id: user.id,
+            name: user.name,
+            email: user.email,
+            employeeId: user.employeeId,
+            phone: user.phone,
+            role: user.role,
+            salaryGrade: user.salaryGrade,
+          }
         : null;
     }
     return list;

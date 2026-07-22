@@ -35,7 +35,7 @@ let ExpensesService = class ExpensesService {
             const sitePhotoUrls = [];
             const sitePhotoKeys = [];
             if (files && files.length > 0) {
-                files.forEach(file => {
+                files.forEach((file) => {
                     if (file.fieldname === 'sitePhotos') {
                         sitePhotoUrls.push(`/uploads/expenses/${file.filename}`);
                         sitePhotoKeys.push(file.filename);
@@ -82,8 +82,9 @@ let ExpensesService = class ExpensesService {
         });
     }
     async findAll(query, user) {
-        const { category, projectId, dateFrom, dateTo, page = 1, limit = 20 } = query;
-        const qb = this.expensesRepo.createQueryBuilder('e')
+        const { category, projectId, dateFrom, dateTo, page = 1, limit = 20, } = query;
+        const qb = this.expensesRepo
+            .createQueryBuilder('e')
             .leftJoinAndSelect('e.project', 'project')
             .leftJoinAndSelect('e.trade', 'trade')
             .leftJoinAndSelect('e.creator', 'creator')
@@ -94,11 +95,16 @@ let ExpensesService = class ExpensesService {
         if (projectId)
             qb.andWhere('e.projectId = :projectId', { projectId });
         if (dateFrom && dateTo)
-            qb.andWhere('e.expenseDate BETWEEN :dateFrom AND :dateTo', { dateFrom, dateTo });
+            qb.andWhere('e.expenseDate BETWEEN :dateFrom AND :dateTo', {
+                dateFrom,
+                dateTo,
+            });
         if (user && user.role === enums_js_1.Role.SITE_ENGINEER) {
             qb.andWhere('e.createdBy = :userId', { userId: user.id });
         }
-        qb.orderBy('e.expenseDate', 'DESC').skip((page - 1) * limit).take(limit);
+        qb.orderBy('e.expenseDate', 'DESC')
+            .skip((page - 1) * limit)
+            .take(limit);
         const [data, total] = await qb.getManyAndCount();
         return { data, total, page, limit };
     }
@@ -118,7 +124,7 @@ let ExpensesService = class ExpensesService {
             const receiptKeys = expense.receiptKeys || [];
             const sitePhotoUrls = expense.sitePhotoUrls || [];
             const sitePhotoKeys = expense.sitePhotoKeys || [];
-            files.forEach(file => {
+            files.forEach((file) => {
                 if (file.fieldname === 'sitePhotos') {
                     sitePhotoUrls.push(`/uploads/expenses/${file.filename}`);
                     sitePhotoKeys.push(file.filename);
@@ -128,17 +134,23 @@ let ExpensesService = class ExpensesService {
                     receiptKeys.push(file.filename);
                 }
             });
-            expense.receiptUrls = receiptUrls.length > 0 ? receiptUrls : expense.receiptUrls;
-            expense.receiptKeys = receiptKeys.length > 0 ? receiptKeys : expense.receiptKeys;
-            expense.sitePhotoUrls = sitePhotoUrls.length > 0 ? sitePhotoUrls : expense.sitePhotoUrls;
-            expense.sitePhotoKeys = sitePhotoKeys.length > 0 ? sitePhotoKeys : expense.sitePhotoKeys;
+            expense.receiptUrls =
+                receiptUrls.length > 0 ? receiptUrls : expense.receiptUrls;
+            expense.receiptKeys =
+                receiptKeys.length > 0 ? receiptKeys : expense.receiptKeys;
+            expense.sitePhotoUrls =
+                sitePhotoUrls.length > 0 ? sitePhotoUrls : expense.sitePhotoUrls;
+            expense.sitePhotoKeys =
+                sitePhotoKeys.length > 0 ? sitePhotoKeys : expense.sitePhotoKeys;
             if (!expense.receiptUrl && receiptUrls.length > 0) {
                 expense.receiptUrl = receiptUrls[0];
                 expense.receiptKey = receiptKeys[0];
             }
         }
         if (dto.status === 'approved' && expense.status !== 'approved') {
-            const existing = await this.paymentsRepo.findOne({ where: { expenseId: id } });
+            const existing = await this.paymentsRepo.findOne({
+                where: { expenseId: id },
+            });
             if (existing) {
                 if (existing.isDeleted) {
                     await this.paymentsRepo.update({ expenseId: id }, { isDeleted: false });
@@ -160,13 +172,16 @@ let ExpensesService = class ExpensesService {
                     paymentMode: enums_js_1.PaymentMode.CASH,
                     payeeName: expense.paidBy || 'Staff',
                     projectId: expense.projectId,
-                    notes: expense.description + (expense.remarks ? ` - ${expense.remarks}` : ''),
+                    notes: expense.description +
+                        (expense.remarks ? ` - ${expense.remarks}` : ''),
                     createdBy: expense.createdBy,
                 });
                 await this.paymentsRepo.save(payment);
             }
         }
-        if (dto.status && dto.status !== 'approved' && expense.status === 'approved') {
+        if (dto.status &&
+            dto.status !== 'approved' &&
+            expense.status === 'approved') {
             await this.paymentsRepo.update({ expenseId: id }, { isDeleted: true });
         }
         Object.assign(expense, dto);

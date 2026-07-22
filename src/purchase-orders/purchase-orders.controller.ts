@@ -1,6 +1,24 @@
-import { Controller, Get, Post, Body, Param, UseGuards, Request, Patch, Put, Delete, UploadedFile, UseInterceptors } from '@nestjs/common';
+import {
+  Controller,
+  Get,
+  Post,
+  Body,
+  Param,
+  UseGuards,
+  Request,
+  Patch,
+  Put,
+  Delete,
+  UploadedFile,
+  UseInterceptors,
+} from '@nestjs/common';
 import { FileInterceptor } from '@nestjs/platform-express';
-import { ApiTags, ApiOperation, ApiBearerAuth, ApiConsumes } from '@nestjs/swagger';
+import {
+  ApiTags,
+  ApiOperation,
+  ApiBearerAuth,
+  ApiConsumes,
+} from '@nestjs/swagger';
 import { diskStorage } from 'multer';
 import { extname } from 'path';
 import * as fs from 'fs';
@@ -29,17 +47,24 @@ export class PurchaseOrdersController {
   @Get()
   @Roles(Role.ADMIN, Role.ACCOUNTS_MANAGER, Role.PURCHASE_TEAM)
   @ApiOperation({ summary: 'List purchase orders' })
-  findAll() { return this.poService.findAll(); }
+  findAll() {
+    return this.poService.findAll();
+  }
 
   @Get(':id')
   @Roles(Role.ADMIN, Role.ACCOUNTS_MANAGER, Role.PURCHASE_TEAM)
   @ApiOperation({ summary: 'Get single purchase order' })
-  findOne(@Param('id') id: string) { return this.poService.findOne(id); }
+  findOne(@Param('id') id: string) {
+    return this.poService.findOne(id);
+  }
 
   @Patch(':id/status')
   @Roles(Role.ADMIN, Role.ACCOUNTS_MANAGER, Role.PURCHASE_TEAM)
   @ApiOperation({ summary: 'Update purchase order status' })
-  updateStatus(@Param('id') id: string, @Body() dto: UpdatePurchaseOrderStatusDto) {
+  updateStatus(
+    @Param('id') id: string,
+    @Body() dto: UpdatePurchaseOrderStatusDto,
+  ) {
     return this.poService.updateStatus(id, dto.status);
   }
 
@@ -63,8 +88,12 @@ export class PurchaseOrdersController {
           cb(null, uploadPath);
         },
         filename: (req, file, cb) => {
-          const uniqueSuffix = Date.now() + '-' + Math.round(Math.random() * 1e9);
-          cb(null, `${file.fieldname}-${uniqueSuffix}${extname(file.originalname)}`);
+          const uniqueSuffix =
+            Date.now() + '-' + Math.round(Math.random() * 1e9);
+          cb(
+            null,
+            `${file.fieldname}-${uniqueSuffix}${extname(file.originalname)}`,
+          );
         },
       }),
     }),

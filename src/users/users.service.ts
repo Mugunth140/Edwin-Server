@@ -12,7 +12,9 @@ export class UsersService {
     private usersRepository: Repository<User>,
   ) {}
 
-  async create(createUserDto: CreateUserDto): Promise<Omit<User, 'passwordHash'>> {
+  async create(
+    createUserDto: CreateUserDto,
+  ): Promise<Omit<User, 'passwordHash'>> {
     const existing = await this.usersRepository.findOne({
       where: { email: createUserDto.email },
     });
@@ -31,7 +33,7 @@ export class UsersService {
 
     const saved = await this.usersRepository.save(user);
     const { passwordHash: _, ...result } = saved;
-    return result as Omit<User, 'passwordHash'>;
+    return result;
   }
 
   async findAll() {

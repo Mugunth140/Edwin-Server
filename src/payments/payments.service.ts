@@ -3,7 +3,14 @@ import { InjectRepository } from '@nestjs/typeorm';
 import { Repository, DataSource } from 'typeorm';
 import { Payment } from './entities/payment.entity.js';
 import { CreatePaymentDto } from './dto/create-payment.dto.js';
-import { PaymentType, BillStatus, ExpenseCategory, PaymentMode, InvoiceStatus, ExpenseStatus } from '../common/enums.js';
+import {
+  PaymentType,
+  BillStatus,
+  ExpenseCategory,
+  PaymentMode,
+  InvoiceStatus,
+  ExpenseStatus,
+} from '../common/enums.js';
 import { PurchaseBill } from '../accounts/entities/purchase-bill.entity.js';
 import { Expense } from '../expenses/entities/expense.entity.js';
 import { SalesInvoice } from '../accounts/entities/sales-invoice.entity.js';
@@ -51,10 +58,12 @@ export class PaymentsService {
         projectId = invoice.projectId;
 
         // Update invoice status and amount
-        const newPaidAmount = Number(invoice.paidAmount || 0) + Number(dto.amount);
+        const newPaidAmount =
+          Number(invoice.paidAmount || 0) + Number(dto.amount);
         invoice.paidAmount = newPaidAmount;
 
-        const totalExpected = Number(invoice.totalAmount) + Number(invoice.gstAmount);
+        const totalExpected =
+          Number(invoice.totalAmount) + Number(invoice.gstAmount);
 
         if (newPaidAmount >= totalExpected) {
           invoice.status = InvoiceStatus.PAID;
@@ -77,9 +86,17 @@ export class PaymentsService {
     });
   }
 
-  async findAll(query: { type?: PaymentType; projectId?: string; dateFrom?: string; dateTo?: string; page?: number; limit?: number }) {
+  async findAll(query: {
+    type?: PaymentType;
+    projectId?: string;
+    dateFrom?: string;
+    dateTo?: string;
+    page?: number;
+    limit?: number;
+  }) {
     const { type, projectId, dateFrom, dateTo, page = 1, limit = 20 } = query;
-    const qb = this.paymentsRepo.createQueryBuilder('p')
+    const qb = this.paymentsRepo
+      .createQueryBuilder('p')
       .leftJoinAndSelect('p.project', 'project')
       .leftJoinAndSelect('p.vendor', 'vendor')
       .leftJoinAndSelect('p.purchaseBill', 'purchaseBill')
@@ -88,11 +105,19 @@ export class PaymentsService {
       .leftJoinAndSelect('salesInvoice.project', 'invoiceProject')
       .where('p.isDeleted = false')
       .andWhere('(expense.isDeleted = false OR expense.isDeleted IS NULL)')
-      .andWhere('(expense.status = :approved OR expense.status IS NULL)', { approved: 'approved' });
+      .andWhere('(expense.status = :approved OR expense.status IS NULL)', {
+        approved: 'approved',
+      });
     if (type) qb.andWhere('p.paymentType = :type', { type });
     if (projectId) qb.andWhere('p.projectId = :projectId', { projectId });
-    if (dateFrom && dateTo) qb.andWhere('p.paymentDate BETWEEN :dateFrom AND :dateTo', { dateFrom, dateTo });
-    qb.orderBy('p.paymentDate', 'DESC').skip((page - 1) * limit).take(limit);
+    if (dateFrom && dateTo)
+      qb.andWhere('p.paymentDate BETWEEN :dateFrom AND :dateTo', {
+        dateFrom,
+        dateTo,
+      });
+    qb.orderBy('p.paymentDate', 'DESC')
+      .skip((page - 1) * limit)
+      .take(limit);
     const [data, total] = await qb.getManyAndCount();
     return { data, total, page, limit };
   }
@@ -105,21 +130,29 @@ export class PaymentsService {
       .addSelect('SUM(p.amount)', 'total')
       .where('p.isDeleted = false')
       .andWhere('(expense.isDeleted = false OR expense.isDeleted IS NULL)')
-      .andWhere('(expense.status = :approved OR expense.status IS NULL)', { approved: 'approved' })
+      .andWhere('(expense.status = :approved OR expense.status IS NULL)', {
+        approved: 'approved',
+      })
       .groupBy('p.paymentType')
       .getRawMany();
   }
 
   async syncExpenses() {
-    const expenses = await this.expenseRepo.find({ where: { isDeleted: false, status: ExpenseStatus.APPROVED } });
+    const expenses = await this.expenseRepo.find({
+      where: { isDeleted: false, status: ExpenseStatus.APPROVED },
+    });
     let count = 0;
 
     for (const exp of expenses) {
-      const exists = await this.paymentsRepo.findOne({ where: { expenseId: exp.id, isDeleted: false } });
+      const exists = await this.paymentsRepo.findOne({
+        where: { expenseId: exp.id, isDeleted: false },
+      });
       if (!exists) {
         let pType = PaymentType.STAFF_EXPENSE;
-        if (exp.category === ExpenseCategory.OFFICE) pType = PaymentType.OFFICE_MAINTENANCE;
-        if (exp.category === ExpenseCategory.TRANSPORT) pType = PaymentType.TRANSPORT;
+        if (exp.category === ExpenseCategory.OFFICE)
+          pType = PaymentType.OFFICE_MAINTENANCE;
+        if (exp.category === ExpenseCategory.TRANSPORT)
+          pType = PaymentType.TRANSPORT;
         if (exp.category === ExpenseCategory.TRAVEL) pType = PaymentType.TRAVEL;
 
         const payment = this.paymentsRepo.create({

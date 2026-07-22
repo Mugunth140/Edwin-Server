@@ -15,7 +15,11 @@ export class DailyLabourService {
     private readonly workerRepo: Repository<DailyWorker>,
   ) {}
 
-  async create(dto: CreateDailyLabourReportDto, userId: string, files?: Express.Multer.File[]) {
+  async create(
+    dto: CreateDailyLabourReportDto,
+    userId: string,
+    files?: Express.Multer.File[],
+  ) {
     const report = this.reportRepo.create({
       projectId: dto.projectId,
       reportDate: new Date(dto.reportDate),
@@ -31,14 +35,22 @@ export class DailyLabourService {
       const workers = dto.workers.map((w, index) => {
         const worker = this.workerRepo.create({
           ...w,
-          reportId: savedReport.id
+          reportId: savedReport.id,
         });
 
         if (files) {
-          const m1 = files.find(f => f.fieldname === `worker_${index}_morningPhoto1`);
-          const m2 = files.find(f => f.fieldname === `worker_${index}_morningPhoto2`);
-          const e1 = files.find(f => f.fieldname === `worker_${index}_eveningPhoto1`);
-          const e2 = files.find(f => f.fieldname === `worker_${index}_eveningPhoto2`);
+          const m1 = files.find(
+            (f) => f.fieldname === `worker_${index}_morningPhoto1`,
+          );
+          const m2 = files.find(
+            (f) => f.fieldname === `worker_${index}_morningPhoto2`,
+          );
+          const e1 = files.find(
+            (f) => f.fieldname === `worker_${index}_eveningPhoto1`,
+          );
+          const e2 = files.find(
+            (f) => f.fieldname === `worker_${index}_eveningPhoto2`,
+          );
 
           if (m1) worker.morningPhoto1Url = `/uploads/dpw/${m1.filename}`;
           if (m2) worker.morningPhoto2Url = `/uploads/dpw/${m2.filename}`;
@@ -55,7 +67,8 @@ export class DailyLabourService {
   }
 
   async findAll(user: any, projectId?: string) {
-    const query = this.reportRepo.createQueryBuilder('report')
+    const query = this.reportRepo
+      .createQueryBuilder('report')
       .leftJoinAndSelect('report.project', 'project')
       .leftJoinAndSelect('report.createdBy', 'createdBy')
       .leftJoinAndSelect('report.workers', 'workers')
@@ -72,7 +85,7 @@ export class DailyLabourService {
     }
 
     query.orderBy('report.reportDate', 'DESC');
-    
+
     return await query.getMany();
   }
 
@@ -106,7 +119,11 @@ export class DailyLabourService {
     return { success: true };
   }
 
-  async update(id: string, dto: CreateDailyLabourReportDto, files?: Express.Multer.File[]) {
+  async update(
+    id: string,
+    dto: CreateDailyLabourReportDto,
+    files?: Express.Multer.File[],
+  ) {
     const report = await this.findOne(id);
 
     report.projectId = dto.projectId;
@@ -122,15 +139,23 @@ export class DailyLabourService {
       const workers = dto.workers.map((w, index) => {
         const worker = this.workerRepo.create({
           ...w,
-          reportId: id
+          reportId: id,
         });
 
         // Map photos from files if provided
         if (files) {
-          const m1 = files.find(f => f.fieldname === `worker_${index}_morningPhoto1`);
-          const m2 = files.find(f => f.fieldname === `worker_${index}_morningPhoto2`);
-          const e1 = files.find(f => f.fieldname === `worker_${index}_eveningPhoto1`);
-          const e2 = files.find(f => f.fieldname === `worker_${index}_eveningPhoto2`);
+          const m1 = files.find(
+            (f) => f.fieldname === `worker_${index}_morningPhoto1`,
+          );
+          const m2 = files.find(
+            (f) => f.fieldname === `worker_${index}_morningPhoto2`,
+          );
+          const e1 = files.find(
+            (f) => f.fieldname === `worker_${index}_eveningPhoto1`,
+          );
+          const e2 = files.find(
+            (f) => f.fieldname === `worker_${index}_eveningPhoto2`,
+          );
 
           if (m1) worker.morningPhoto1Url = `/uploads/dpw/${m1.filename}`;
           if (m2) worker.morningPhoto2Url = `/uploads/dpw/${m2.filename}`;
@@ -139,10 +164,14 @@ export class DailyLabourService {
         }
 
         // If photo URLs were already in DTO (not replaced by new files), keep them
-        if (!worker.morningPhoto1Url && w.morningPhoto1Url) worker.morningPhoto1Url = w.morningPhoto1Url;
-        if (!worker.morningPhoto2Url && w.morningPhoto2Url) worker.morningPhoto2Url = w.morningPhoto2Url;
-        if (!worker.eveningPhoto1Url && w.eveningPhoto1Url) worker.eveningPhoto1Url = w.eveningPhoto1Url;
-        if (!worker.eveningPhoto2Url && w.eveningPhoto2Url) worker.eveningPhoto2Url = w.eveningPhoto2Url;
+        if (!worker.morningPhoto1Url && w.morningPhoto1Url)
+          worker.morningPhoto1Url = w.morningPhoto1Url;
+        if (!worker.morningPhoto2Url && w.morningPhoto2Url)
+          worker.morningPhoto2Url = w.morningPhoto2Url;
+        if (!worker.eveningPhoto1Url && w.eveningPhoto1Url)
+          worker.eveningPhoto1Url = w.eveningPhoto1Url;
+        if (!worker.eveningPhoto2Url && w.eveningPhoto2Url)
+          worker.eveningPhoto2Url = w.eveningPhoto2Url;
 
         return worker;
       });

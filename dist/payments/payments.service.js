@@ -81,7 +81,8 @@ let PaymentsService = class PaymentsService {
     }
     async findAll(query) {
         const { type, projectId, dateFrom, dateTo, page = 1, limit = 20 } = query;
-        const qb = this.paymentsRepo.createQueryBuilder('p')
+        const qb = this.paymentsRepo
+            .createQueryBuilder('p')
             .leftJoinAndSelect('p.project', 'project')
             .leftJoinAndSelect('p.vendor', 'vendor')
             .leftJoinAndSelect('p.purchaseBill', 'purchaseBill')
@@ -90,14 +91,21 @@ let PaymentsService = class PaymentsService {
             .leftJoinAndSelect('salesInvoice.project', 'invoiceProject')
             .where('p.isDeleted = false')
             .andWhere('(expense.isDeleted = false OR expense.isDeleted IS NULL)')
-            .andWhere('(expense.status = :approved OR expense.status IS NULL)', { approved: 'approved' });
+            .andWhere('(expense.status = :approved OR expense.status IS NULL)', {
+            approved: 'approved',
+        });
         if (type)
             qb.andWhere('p.paymentType = :type', { type });
         if (projectId)
             qb.andWhere('p.projectId = :projectId', { projectId });
         if (dateFrom && dateTo)
-            qb.andWhere('p.paymentDate BETWEEN :dateFrom AND :dateTo', { dateFrom, dateTo });
-        qb.orderBy('p.paymentDate', 'DESC').skip((page - 1) * limit).take(limit);
+            qb.andWhere('p.paymentDate BETWEEN :dateFrom AND :dateTo', {
+                dateFrom,
+                dateTo,
+            });
+        qb.orderBy('p.paymentDate', 'DESC')
+            .skip((page - 1) * limit)
+            .take(limit);
         const [data, total] = await qb.getManyAndCount();
         return { data, total, page, limit };
     }
@@ -109,15 +117,21 @@ let PaymentsService = class PaymentsService {
             .addSelect('SUM(p.amount)', 'total')
             .where('p.isDeleted = false')
             .andWhere('(expense.isDeleted = false OR expense.isDeleted IS NULL)')
-            .andWhere('(expense.status = :approved OR expense.status IS NULL)', { approved: 'approved' })
+            .andWhere('(expense.status = :approved OR expense.status IS NULL)', {
+            approved: 'approved',
+        })
             .groupBy('p.paymentType')
             .getRawMany();
     }
     async syncExpenses() {
-        const expenses = await this.expenseRepo.find({ where: { isDeleted: false, status: enums_js_1.ExpenseStatus.APPROVED } });
+        const expenses = await this.expenseRepo.find({
+            where: { isDeleted: false, status: enums_js_1.ExpenseStatus.APPROVED },
+        });
         let count = 0;
         for (const exp of expenses) {
-            const exists = await this.paymentsRepo.findOne({ where: { expenseId: exp.id, isDeleted: false } });
+            const exists = await this.paymentsRepo.findOne({
+                where: { expenseId: exp.id, isDeleted: false },
+            });
             if (!exists) {
                 let pType = enums_js_1.PaymentType.STAFF_EXPENSE;
                 if (exp.category === enums_js_1.ExpenseCategory.OFFICE)

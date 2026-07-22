@@ -8,7 +8,9 @@ import { Payment } from '../payments/entities/payment.entity.js';
 import { User } from '../users/entities/user.entity.js';
 
 @Module({
-  imports: [TypeOrmModule.forFeature([WeeklyTimesheet, TimesheetRow, Payment, User])],
+  imports: [
+    TypeOrmModule.forFeature([WeeklyTimesheet, TimesheetRow, Payment, User]),
+  ],
   controllers: [TimesheetAttendanceController],
   providers: [TimesheetAttendanceService],
   exports: [TimesheetAttendanceService],

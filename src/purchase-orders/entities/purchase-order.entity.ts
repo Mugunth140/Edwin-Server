@@ -50,7 +50,10 @@ export class PurchaseOrder {
   @Column({ nullable: true })
   billFileKey: string;
 
-  @OneToMany(() => PoItem, (item) => item.purchaseOrder, { cascade: true, eager: true })
+  @OneToMany(() => PoItem, (item) => item.purchaseOrder, {
+    cascade: true,
+    eager: true,
+  })
   items: PoItem[];
 
   @Column({ default: false })

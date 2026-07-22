@@ -106,14 +106,17 @@ function boolEnv(name: string, fallback: boolean) {
 }
 
 function getAdminPassword(isProduction: boolean) {
-  const password = process.env.SEED_ADMIN_PASSWORD || process.env.ADMIN_PASSWORD;
+  const password =
+    process.env.SEED_ADMIN_PASSWORD || process.env.ADMIN_PASSWORD;
 
   if (!password && isProduction) {
     throw new Error('SEED_ADMIN_PASSWORD is required when NODE_ENV=production');
   }
 
   if (password && isProduction && password.length < 12) {
-    throw new Error('SEED_ADMIN_PASSWORD must be at least 12 characters in production');
+    throw new Error(
+      'SEED_ADMIN_PASSWORD must be at least 12 characters in production',
+    );
   }
 
   if (!password) {
@@ -144,7 +147,9 @@ function createDataSource() {
     synchronize,
     logging: boolEnv('SEED_LOG_SQL', false),
     ssl: ssl
-      ? { rejectUnauthorized: boolEnv('DATABASE_SSL_REJECT_UNAUTHORIZED', true) }
+      ? {
+          rejectUnauthorized: boolEnv('DATABASE_SSL_REJECT_UNAUTHORIZED', true),
+        }
       : false,
   });
 }
@@ -161,7 +166,10 @@ async function upsertBy<T extends ObjectLiteral>(
 
 async function seedAdmin(userRepo: Repository<User>) {
   const isProduction = process.env.NODE_ENV === 'production';
-  const email = env('SEED_ADMIN_EMAIL', 'admin@edwinconstructions.com').toLowerCase();
+  const email = env(
+    'SEED_ADMIN_EMAIL',
+    'admin@edwinconstructions.com',
+  ).toLowerCase();
   const password = getAdminPassword(isProduction);
   const resetPassword = boolEnv('SEED_RESET_ADMIN_PASSWORD', false);
   let admin = await userRepo.findOne({ where: { email } });
@@ -216,63 +224,83 @@ async function seedReferenceData(manager: EntityManager, admin: User) {
 
   const vendors: Vendor[] = [];
   vendors.push(
-    await upsertBy(vendorRepo, { name: 'Tata Steel Limited' }, {
-      name: 'Tata Steel Limited',
-      address: 'Jamshedpur, Jharkhand',
-      gstNumber: '20AABCT1332Q1Z5',
-      state: 'Jharkhand',
-      contactEmail: 'supply@tatasteel.com',
-      contactPhone: '+91-9876543210',
-      isDeleted: false,
-    }),
+    await upsertBy(
+      vendorRepo,
+      { name: 'Tata Steel Limited' },
+      {
+        name: 'Tata Steel Limited',
+        address: 'Jamshedpur, Jharkhand',
+        gstNumber: '20AABCT1332Q1Z5',
+        state: 'Jharkhand',
+        contactEmail: 'supply@tatasteel.com',
+        contactPhone: '+91-9876543210',
+        isDeleted: false,
+      },
+    ),
   );
   vendors.push(
-    await upsertBy(vendorRepo, { name: 'Ambuja Cements Ltd' }, {
-      name: 'Ambuja Cements Ltd',
-      address: 'Mumbai, Maharashtra',
-      gstNumber: '27AADCA0170J1Z8',
-      state: 'Maharashtra',
-      contactEmail: 'orders@ambujacement.com',
-      contactPhone: '+91-9876543211',
-      isDeleted: false,
-    }),
+    await upsertBy(
+      vendorRepo,
+      { name: 'Ambuja Cements Ltd' },
+      {
+        name: 'Ambuja Cements Ltd',
+        address: 'Mumbai, Maharashtra',
+        gstNumber: '27AADCA0170J1Z8',
+        state: 'Maharashtra',
+        contactEmail: 'orders@ambujacement.com',
+        contactPhone: '+91-9876543211',
+        isDeleted: false,
+      },
+    ),
   );
 
   const projects: Project[] = [];
   projects.push(
-    await upsertBy(projectRepo, { name: 'NH-48 Highway Extension - Phase 2' }, {
-      name: 'NH-48 Highway Extension - Phase 2',
-      description: 'Extension of NH-48 highway by 12km with a four-lane bypass road',
-      location: 'Krishnagiri, Tamil Nadu',
-      clientName: 'NHAI',
-      status: ProjectStatus.IN_PROGRESS,
-      completionPct: 35,
-      estimatedBudget: 45_000_000,
-      startDate: new Date('2025-06-01'),
-      endDate: new Date('2027-03-31'),
-      isDeleted: false,
-      createdBy: admin.id,
-      updatedBy: admin.id,
-    }),
+    await upsertBy(
+      projectRepo,
+      { name: 'NH-48 Highway Extension - Phase 2' },
+      {
+        name: 'NH-48 Highway Extension - Phase 2',
+        description:
+          'Extension of NH-48 highway by 12km with a four-lane bypass road',
+        location: 'Krishnagiri, Tamil Nadu',
+        clientName: 'NHAI',
+        status: ProjectStatus.IN_PROGRESS,
+        completionPct: 35,
+        estimatedBudget: 45_000_000,
+        startDate: new Date('2025-06-01'),
+        endDate: new Date('2027-03-31'),
+        isDeleted: false,
+        createdBy: admin.id,
+        updatedBy: admin.id,
+      },
+    ),
   );
   projects.push(
-    await upsertBy(projectRepo, { name: 'Chennai Metro Phase 2 - Station Block C' }, {
-      name: 'Chennai Metro Phase 2 - Station Block C',
-      description: 'Construction of underground metro station block with ventilation system',
-      location: 'T. Nagar, Chennai',
-      clientName: 'Chennai Metro Rail',
-      status: ProjectStatus.PLANNING,
-      completionPct: 5,
-      estimatedBudget: 120_000_000,
-      startDate: new Date('2026-01-15'),
-      endDate: new Date('2028-12-31'),
-      isDeleted: false,
-      createdBy: admin.id,
-      updatedBy: admin.id,
-    }),
+    await upsertBy(
+      projectRepo,
+      { name: 'Chennai Metro Phase 2 - Station Block C' },
+      {
+        name: 'Chennai Metro Phase 2 - Station Block C',
+        description:
+          'Construction of underground metro station block with ventilation system',
+        location: 'T. Nagar, Chennai',
+        clientName: 'Chennai Metro Rail',
+        status: ProjectStatus.PLANNING,
+        completionPct: 5,
+        estimatedBudget: 120_000_000,
+        startDate: new Date('2026-01-15'),
+        endDate: new Date('2028-12-31'),
+        isDeleted: false,
+        createdBy: admin.id,
+        updatedBy: admin.id,
+      },
+    ),
   );
 
-  console.log(`✅ Reference data verified: ${vendors.length} vendors, ${projects.length} projects`);
+  console.log(
+    `✅ Reference data verified: ${vendors.length} vendors, ${projects.length} projects`,
+  );
   return { vendors, projects };
 }
 
@@ -291,98 +319,126 @@ async function seedOperationalSampleData(
   const attendanceRepo = manager.getRepository(AttendanceLog);
   const milestoneRepo = manager.getRepository(ProjectMilestone);
 
-  const workOrder = await upsertBy(workOrderRepo, { woNumber: 'WO-2026-0001' }, {
-    woNumber: 'WO-2026-0001',
-    vendorId: steelVendor.id,
-    projectId: highwayProject.id,
-    status: WorkOrderStatus.APPROVED,
-    terms: 'Payment within 30 days after material delivery and QC approval.',
-    totalAmount: 1_850_000,
-    cgstAmount: 166_500,
-    sgstAmount: 166_500,
-    igstAmount: 0,
-    gstAmount: 333_000,
-    isDeleted: false,
-    createdBy: admin.id,
-    updatedBy: admin.id,
-  });
+  const workOrder = await upsertBy(
+    workOrderRepo,
+    { woNumber: 'WO-2026-0001' },
+    {
+      woNumber: 'WO-2026-0001',
+      vendorId: steelVendor.id,
+      projectId: highwayProject.id,
+      status: WorkOrderStatus.APPROVED,
+      terms: 'Payment within 30 days after material delivery and QC approval.',
+      totalAmount: 1_850_000,
+      cgstAmount: 166_500,
+      sgstAmount: 166_500,
+      igstAmount: 0,
+      gstAmount: 333_000,
+      isDeleted: false,
+      createdBy: admin.id,
+      updatedBy: admin.id,
+    },
+  );
 
-  await upsertBy(invoiceRepo, { invoiceNumber: 'INV-2026-0001' }, {
-    invoiceNumber: 'INV-2026-0001',
-    projectId: highwayProject.id,
-    status: InvoiceStatus.PAID,
-    totalAmount: 5_200_000,
-    cgstAmount: 468_000,
-    sgstAmount: 468_000,
-    igstAmount: 0,
-    gstAmount: 936_000,
-    dueDate: new Date('2026-04-30'),
-    paidAt: new Date('2026-04-25T10:30:00.000Z'),
-    isDeleted: false,
-    createdBy: admin.id,
-    updatedBy: admin.id,
-  });
+  await upsertBy(
+    invoiceRepo,
+    { invoiceNumber: 'INV-2026-0001' },
+    {
+      invoiceNumber: 'INV-2026-0001',
+      projectId: highwayProject.id,
+      status: InvoiceStatus.PAID,
+      totalAmount: 5_200_000,
+      cgstAmount: 468_000,
+      sgstAmount: 468_000,
+      igstAmount: 0,
+      gstAmount: 936_000,
+      dueDate: new Date('2026-04-30'),
+      paidAt: new Date('2026-04-25T10:30:00.000Z'),
+      isDeleted: false,
+      createdBy: admin.id,
+      updatedBy: admin.id,
+    },
+  );
 
-  await upsertBy(billRepo, { billNumber: 'BILL-2026-0001' }, {
-    billNumber: 'BILL-2026-0001',
-    vendorId: steelVendor.id,
-    projectId: highwayProject.id,
-    amount: 1_325_000,
-    billDate: new Date('2026-05-10'),
-    dueDate: new Date('2026-05-15'),
-    isDeleted: false,
-    createdBy: admin.id,
-  });
+  await upsertBy(
+    billRepo,
+    { billNumber: 'BILL-2026-0001' },
+    {
+      billNumber: 'BILL-2026-0001',
+      vendorId: steelVendor.id,
+      projectId: highwayProject.id,
+      amount: 1_325_000,
+      billDate: new Date('2026-05-10'),
+      dueDate: new Date('2026-05-15'),
+      isDeleted: false,
+      createdBy: admin.id,
+    },
+  );
 
-  await upsertBy(expenseRepo, {
-    description: 'Site office setup and utilities',
-    projectId: highwayProject.id,
-    expenseDate: new Date('2026-04-18'),
-  }, {
-    category: ExpenseCategory.OFFICE,
-    description: 'Site office setup and utilities',
-    amount: 82_500,
-    expenseDate: new Date('2026-04-18'),
-    paidBy: 'Corporate Card',
-    projectId: highwayProject.id,
-    isDeleted: false,
-    createdBy: admin.id,
-  });
+  await upsertBy(
+    expenseRepo,
+    {
+      description: 'Site office setup and utilities',
+      projectId: highwayProject.id,
+      expenseDate: new Date('2026-04-18'),
+    },
+    {
+      category: ExpenseCategory.OFFICE,
+      description: 'Site office setup and utilities',
+      amount: 82_500,
+      expenseDate: new Date('2026-04-18'),
+      paidBy: 'Corporate Card',
+      projectId: highwayProject.id,
+      isDeleted: false,
+      createdBy: admin.id,
+    },
+  );
 
-  await upsertBy(paymentRepo, {
-    payeeName: 'Labour Contractor - Krishnagiri',
-    projectId: highwayProject.id,
-    paymentDate: new Date('2026-04-26'),
-  }, {
-    paymentType: PaymentType.LABOUR,
-    payeeName: 'Labour Contractor - Krishnagiri',
-    amount: 460_000,
-    paymentDate: new Date('2026-04-26'),
-    projectId: highwayProject.id,
-    notes: 'Weekly labour payout for NH-48 site.',
-    isDeleted: false,
-    createdBy: admin.id,
-  });
+  await upsertBy(
+    paymentRepo,
+    {
+      payeeName: 'Labour Contractor - Krishnagiri',
+      projectId: highwayProject.id,
+      paymentDate: new Date('2026-04-26'),
+    },
+    {
+      paymentType: PaymentType.LABOUR,
+      payeeName: 'Labour Contractor - Krishnagiri',
+      amount: 460_000,
+      paymentDate: new Date('2026-04-26'),
+      projectId: highwayProject.id,
+      notes: 'Weekly labour payout for NH-48 site.',
+      isDeleted: false,
+      createdBy: admin.id,
+    },
+  );
 
-  await upsertBy(attendanceRepo, {
-    projectId: highwayProject.id,
-    logDate: new Date('2026-04-27'),
-  }, {
-    projectId: highwayProject.id,
-    logDate: new Date('2026-04-27'),
-    headcount: 132,
-    notes: 'Civil, survey, safety, and equipment teams on site.',
-  });
+  await upsertBy(
+    attendanceRepo,
+    {
+      projectId: highwayProject.id,
+      logDate: new Date('2026-04-27'),
+    },
+    {
+      projectId: highwayProject.id,
+      logDate: new Date('2026-04-27'),
+      headcount: 132,
+      notes: 'Civil, survey, safety, and equipment teams on site.',
+    },
+  );
 
-  await upsertBy(milestoneRepo, {
-    projectId: highwayProject.id,
-    title: 'Complete service road embankment',
-  }, {
-    projectId: highwayProject.id,
-    title: 'Complete service road embankment',
-    plannedDate: new Date('2026-06-15'),
-    status: MilestoneStatus.IN_PROGRESS,
-  });
+  await upsertBy(
+    milestoneRepo,
+    {
+      projectId: highwayProject.id,
+      title: 'Complete service road embankment',
+    },
+    {
+      projectId: highwayProject.id,
+      title: 'Complete service road embankment',
+      plannedDate: new Date('2026-06-15'),
+      status: MilestoneStatus.IN_PROGRESS,
+    },
+  );
 
   console.log(`✅ Operational sample data verified: ${workOrder.woNumber}`);
 }
@@ -447,12 +503,48 @@ async function seedExpenseTypes(manager: EntityManager) {
 async function seedSalaries(manager: EntityManager) {
   const repo = manager.getRepository(Salary);
   const salaries = [
-    { grades: 'Grade A', expInYears: '0-1', monthlySalary: 15000, avgCostPerHr: 93.75, bookingCost: 7500 },
-    { grades: 'Grade B', expInYears: '2-4', monthlySalary: 25000, avgCostPerHr: 156.25, bookingCost: 12500 },
-    { grades: 'Grade C', expInYears: '5-7', monthlySalary: 40000, avgCostPerHr: 250, bookingCost: 20000 },
-    { grades: 'Grade D', expInYears: '8-10', monthlySalary: 55000, avgCostPerHr: 343.75, bookingCost: 27500 },
-    { grades: 'Grade E', expInYears: '11-15', monthlySalary: 75000, avgCostPerHr: 468.75, bookingCost: 37500 },
-    { grades: 'Grade F', expInYears: '15+', monthlySalary: 100000, avgCostPerHr: 625, bookingCost: 50000 },
+    {
+      grades: 'Grade A',
+      expInYears: '0-1',
+      monthlySalary: 15000,
+      avgCostPerHr: 93.75,
+      bookingCost: 7500,
+    },
+    {
+      grades: 'Grade B',
+      expInYears: '2-4',
+      monthlySalary: 25000,
+      avgCostPerHr: 156.25,
+      bookingCost: 12500,
+    },
+    {
+      grades: 'Grade C',
+      expInYears: '5-7',
+      monthlySalary: 40000,
+      avgCostPerHr: 250,
+      bookingCost: 20000,
+    },
+    {
+      grades: 'Grade D',
+      expInYears: '8-10',
+      monthlySalary: 55000,
+      avgCostPerHr: 343.75,
+      bookingCost: 27500,
+    },
+    {
+      grades: 'Grade E',
+      expInYears: '11-15',
+      monthlySalary: 75000,
+      avgCostPerHr: 468.75,
+      bookingCost: 37500,
+    },
+    {
+      grades: 'Grade F',
+      expInYears: '15+',
+      monthlySalary: 100000,
+      avgCostPerHr: 625,
+      bookingCost: 50000,
+    },
   ];
 
   for (const s of salaries) {
@@ -469,7 +561,9 @@ async function seed() {
   const dataSource = createDataSource();
 
   await dataSource.initialize();
-  console.log(`🔌 Connected to ${env('DATABASE_NAME', 'edwin_erp')} on ${env('DATABASE_HOST', 'localhost')}:${env('DATABASE_PORT', '5432')}`);
+  console.log(
+    `🔌 Connected to ${env('DATABASE_NAME', 'edwin_erp')} on ${env('DATABASE_HOST', 'localhost')}:${env('DATABASE_PORT', '5432')}`,
+  );
 
   try {
     await dataSource.transaction(async (manager) => {
@@ -483,7 +577,9 @@ async function seed() {
       if (includeSampleData) {
         await seedOperationalSampleData(manager, admin, referenceData);
       } else {
-        console.log('⏭️  Sample operational data disabled. Set SEED_SAMPLE_DATA=true to enable it.');
+        console.log(
+          '⏭️  Sample operational data disabled. Set SEED_SAMPLE_DATA=true to enable it.',
+        );
       }
     });
 

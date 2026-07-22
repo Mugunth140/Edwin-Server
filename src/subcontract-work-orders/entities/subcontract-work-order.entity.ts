@@ -71,7 +71,11 @@ export class SubcontractWorkOrder {
   @Column({ type: 'date', nullable: true })
   endDate: Date;
 
-  @Column({ type: 'enum', enum: SubcontractWorkOrderStatus, default: SubcontractWorkOrderStatus.PENDING })
+  @Column({
+    type: 'enum',
+    enum: SubcontractWorkOrderStatus,
+    default: SubcontractWorkOrderStatus.PENDING,
+  })
   status: SubcontractWorkOrderStatus;
 
   @Column({ type: 'text', nullable: true })

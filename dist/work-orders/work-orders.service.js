@@ -43,7 +43,9 @@ let WorkOrdersService = class WorkOrdersService {
         return `WO-${year}-${String(seq).padStart(3, '0')}`;
     }
     async create(dto, userId) {
-        const vendor = await this.vendorRepo.findOne({ where: { id: dto.vendorId } });
+        const vendor = await this.vendorRepo.findOne({
+            where: { id: dto.vendorId },
+        });
         if (!vendor)
             throw new common_1.NotFoundException('Vendor not found');
         const woNumber = await this.generateWoNumber();
@@ -64,7 +66,8 @@ let WorkOrdersService = class WorkOrdersService {
         let cgstAmount = 0;
         let sgstAmount = 0;
         let igstAmount = 0;
-        if (vendor.state && vendor.state.toLowerCase() === companyState.toLowerCase()) {
+        if (vendor.state &&
+            vendor.state.toLowerCase() === companyState.toLowerCase()) {
             cgstAmount = gstAmount / 2;
             sgstAmount = gstAmount / 2;
         }
@@ -122,7 +125,9 @@ let WorkOrdersService = class WorkOrdersService {
     }
     async update(id, dto, userId) {
         const wo = await this.findOne(id);
-        const vendor = await this.vendorRepo.findOne({ where: { id: dto.vendorId || wo.vendorId } });
+        const vendor = await this.vendorRepo.findOne({
+            where: { id: dto.vendorId || wo.vendorId },
+        });
         if (!vendor)
             throw new common_1.NotFoundException('Vendor not found');
         if (dto.items) {
@@ -149,7 +154,8 @@ let WorkOrdersService = class WorkOrdersService {
         const gstRate = 0.18;
         wo.gstAmount = wo.totalAmount * gstRate;
         const companyState = 'Tamil Nadu';
-        if (vendor.state && vendor.state.toLowerCase() === companyState.toLowerCase()) {
+        if (vendor.state &&
+            vendor.state.toLowerCase() === companyState.toLowerCase()) {
             wo.cgstAmount = wo.gstAmount / 2;
             wo.sgstAmount = wo.gstAmount / 2;
             wo.igstAmount = 0;

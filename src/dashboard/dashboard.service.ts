@@ -16,9 +16,12 @@ import { InvoiceStatus, PurchaseOrderStatus } from '../common/enums.js';
 export class DashboardService {
   constructor(
     @InjectRepository(Project) private projectsRepo: Repository<Project>,
-    @InjectRepository(ProjectMilestone) private milestonesRepo: Repository<ProjectMilestone>,
-    @InjectRepository(AttendanceLog) private attendanceRepo: Repository<AttendanceLog>,
-    @InjectRepository(SalesInvoice) private invoiceRepo: Repository<SalesInvoice>,
+    @InjectRepository(ProjectMilestone)
+    private milestonesRepo: Repository<ProjectMilestone>,
+    @InjectRepository(AttendanceLog)
+    private attendanceRepo: Repository<AttendanceLog>,
+    @InjectRepository(SalesInvoice)
+    private invoiceRepo: Repository<SalesInvoice>,
     @InjectRepository(PurchaseBill) private billRepo: Repository<PurchaseBill>,
     @InjectRepository(Expense) private expenseRepo: Repository<Expense>,
     @InjectRepository(Payment) private paymentRepo: Repository<Payment>,
@@ -29,9 +32,9 @@ export class DashboardService {
   async getPurchaseDashboard() {
     // 1. Pending POs (Approved but not fully billed)
     const pendingPOs = await this.poRepo.find({
-      where: { 
+      where: {
         status: PurchaseOrderStatus.APPROVED,
-        isDeleted: false 
+        isDeleted: false,
       },
       relations: ['vendor', 'items', 'project'],
       order: { createdAt: 'DESC' },
@@ -42,41 +45,46 @@ export class DashboardService {
       where: { isDeleted: false },
       relations: ['vendor', 'payments'],
     });
-    
+
     const totalPayable = bills.reduce((sum, bill) => {
       const balance = Number(bill.amount) - Number(bill.paidAmount || 0);
       return sum + balance;
     }, 0);
 
-    const unpaidBillCount = bills.filter(b => (Number(b.amount) - Number(b.paidAmount || 0)) > 0).length;
+    const unpaidBillCount = bills.filter(
+      (b) => Number(b.amount) - Number(b.paidAmount || 0) > 0,
+    ).length;
 
     // 3. Recent Activity (Latest POs and Bills)
     const recentPOs = await this.poRepo.find({
       where: { isDeleted: false },
       relations: ['vendor'],
       order: { createdAt: 'DESC' },
-      take: 5
+      take: 5,
     });
 
     const recentBills = await this.billRepo.find({
       where: { isDeleted: false },
       relations: ['vendor'],
       order: { createdAt: 'DESC' },
-      take: 5
+      take: 5,
     });
 
     return {
-      pendingPOs: pendingPOs.map(po => {
-        const totalQty = po.items?.reduce((s, i) => s + Number(i.quantity), 0) || 0;
-        const totalBilled = po.items?.reduce((s, i) => s + Number(i.billedQuantity || 0), 0) || 0;
+      pendingPOs: pendingPOs.map((po) => {
+        const totalQty =
+          po.items?.reduce((s, i) => s + Number(i.quantity), 0) || 0;
+        const totalBilled =
+          po.items?.reduce((s, i) => s + Number(i.billedQuantity || 0), 0) || 0;
         return {
           id: po.id,
           poNumber: po.poNumber,
           vendorName: po.vendor?.name,
           projectName: po.project?.name,
           totalAmount: po.totalAmount,
-          fulfillment: totalQty > 0 ? Math.round((totalBilled / totalQty) * 100) : 0,
-          createdAt: po.createdAt
+          fulfillment:
+            totalQty > 0 ? Math.round((totalBilled / totalQty) * 100) : 0,
+          createdAt: po.createdAt,
         };
       }),
       kpis: {
@@ -87,8 +95,8 @@ export class DashboardService {
       },
       recentActivity: {
         pos: recentPOs,
-        bills: recentBills
-      }
+        bills: recentBills,
+      },
     };
   }
 
@@ -100,13 +108,22 @@ export class DashboardService {
     });
 
     const totalReceivable = invoices.reduce((sum, inv) => {
-      if (inv.status === InvoiceStatus.PAID || inv.status === InvoiceStatus.CANCELLED) return sum;
-      const balance = Number(inv.totalAmount) + Number(inv.gstAmount) - Number(inv.paidAmount || 0);
+      if (
+        inv.status === InvoiceStatus.PAID ||
+        inv.status === InvoiceStatus.CANCELLED
+      )
+        return sum;
+      const balance =
+        Number(inv.totalAmount) +
+        Number(inv.gstAmount) -
+        Number(inv.paidAmount || 0);
       return sum + balance;
     }, 0);
 
-    const pendingInvoiceCount = invoices.filter(inv => 
-      inv.status !== InvoiceStatus.PAID && inv.status !== InvoiceStatus.CANCELLED
+    const pendingInvoiceCount = invoices.filter(
+      (inv) =>
+        inv.status !== InvoiceStatus.PAID &&
+        inv.status !== InvoiceStatus.CANCELLED,
     ).length;
 
     // 2. Payables Summary (Outstanding bills)
@@ -120,7 +137,9 @@ export class DashboardService {
       return sum + balance;
     }, 0);
 
-    const pendingBillCount = bills.filter(b => (Number(b.amount) - Number(b.paidAmount || 0)) > 0).length;
+    const pendingBillCount = bills.filter(
+      (b) => Number(b.amount) - Number(b.paidAmount || 0) > 0,
+    ).length;
 
     // 3. Recent Payments (Latest 10)
     const recentPayments = await this.paymentRepo.find({
@@ -138,19 +157,25 @@ export class DashboardService {
     const monthInflow = await this.paymentRepo
       .createQueryBuilder('p')
       .select('SUM(p.amount)', 'total')
-      .where('p.isDeleted = false AND p.paymentType = :type AND p.paymentDate >= :start', {
-        type: 'revenue',
-        start: startOfMonth,
-      })
+      .where(
+        'p.isDeleted = false AND p.paymentType = :type AND p.paymentDate >= :start',
+        {
+          type: 'revenue',
+          start: startOfMonth,
+        },
+      )
       .getRawOne();
 
     const monthOutflow = await this.paymentRepo
       .createQueryBuilder('p')
       .select('SUM(p.amount)', 'total')
-      .where('p.isDeleted = false AND p.paymentType != :type AND p.paymentDate >= :start', {
-        type: 'revenue',
-        start: startOfMonth,
-      })
+      .where(
+        'p.isDeleted = false AND p.paymentType != :type AND p.paymentDate >= :start',
+        {
+          type: 'revenue',
+          start: startOfMonth,
+        },
+      )
       .getRawOne();
 
     return {
@@ -162,7 +187,7 @@ export class DashboardService {
         monthInflow: Number(monthInflow?.total || 0),
         monthOutflow: Number(monthOutflow?.total || 0),
       },
-      recentPayments: recentPayments.map(p => ({
+      recentPayments: recentPayments.map((p) => ({
         id: p.id,
         amount: p.amount,
         date: p.paymentDate,
@@ -174,14 +199,18 @@ export class DashboardService {
   }
 
   async getMasterDashboard() {
-    const projects = await this.projectsRepo.find({ where: { isDeleted: false } });
+    const projects = await this.projectsRepo.find({
+      where: { isDeleted: false },
+    });
     const totalProjects = projects.length;
 
     // Revenue vs Cost
     const revenueResult = await this.invoiceRepo
       .createQueryBuilder('inv')
       .select('SUM(inv.totalAmount + inv.gstAmount)', 'total')
-      .where('inv.isDeleted = false AND inv.status = :status', { status: InvoiceStatus.PAID })
+      .where('inv.isDeleted = false AND inv.status = :status', {
+        status: InvoiceStatus.PAID,
+      })
       .getRawOne();
 
     const paymentCost = await this.paymentRepo
@@ -190,7 +219,9 @@ export class DashboardService {
       .select('SUM(p.amount)', 'total')
       .where('p.isDeleted = false')
       .andWhere("p.paymentType != 'revenue'")
-      .andWhere('(expense.status = :status OR expense.status IS NULL)', { status: 'approved' })
+      .andWhere('(expense.status = :status OR expense.status IS NULL)', {
+        status: 'approved',
+      })
       .getRawOne();
 
     const revenuePayment = await this.paymentRepo
@@ -241,7 +272,7 @@ export class DashboardService {
     }
 
     const assignedProjects = engineer.projects || [];
-    
+
     return {
       totalProjects: assignedProjects.length,
       projects: assignedProjects.map((p) => ({

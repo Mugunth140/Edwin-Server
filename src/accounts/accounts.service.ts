@@ -10,14 +10,21 @@ import { Project } from '../projects/entities/project.entity.js';
 import { PurchaseOrder } from '../purchase-orders/entities/purchase-order.entity.js';
 import { PoItem } from '../purchase-orders/entities/po-item.entity.js';
 import { BillItem } from './entities/bill-item.entity.js';
-import { CreateInvoiceDto, CreateBillDto, CreateAdvanceDto, CreateBoqDto } from './dto/accounts.dto.js';
+import {
+  CreateInvoiceDto,
+  CreateBillDto,
+  CreateAdvanceDto,
+  CreateBoqDto,
+} from './dto/accounts.dto.js';
 import { InvoiceStatus, BillStatus } from '../common/enums.js';
 
 @Injectable()
 export class AccountsService {
   constructor(
-    @InjectRepository(SalesInvoice) private invoiceRepo: Repository<SalesInvoice>,
-    @InjectRepository(InvoiceItem) private invoiceItemRepo: Repository<InvoiceItem>,
+    @InjectRepository(SalesInvoice)
+    private invoiceRepo: Repository<SalesInvoice>,
+    @InjectRepository(InvoiceItem)
+    private invoiceItemRepo: Repository<InvoiceItem>,
     @InjectRepository(PurchaseBill) private billRepo: Repository<PurchaseBill>,
     @InjectRepository(BoqItem) private boqRepo: Repository<BoqItem>,
     @InjectRepository(Advance) private advanceRepo: Repository<Advance>,
@@ -28,7 +35,10 @@ export class AccountsService {
   ) {}
 
   async convertPoToBill(poId: string, userId?: string): Promise<PurchaseBill> {
-    const po = await this.poRepo.findOne({ where: { id: poId }, relations: ['vendor'] });
+    const po = await this.poRepo.findOne({
+      where: { id: poId },
+      relations: ['vendor'],
+    });
     if (!po) throw new NotFoundException('Purchase Order not found');
 
     const billNumber = await this.generateBillNumber();
@@ -52,53 +62,82 @@ export class AccountsService {
       .orderBy('inv.invoiceNumber', 'DESC')
       .getOne();
     let seq = 1;
-    if (last) { seq = parseInt(last.invoiceNumber.split('-')[2], 10) + 1; }
+    if (last) {
+      seq = parseInt(last.invoiceNumber.split('-')[2], 10) + 1;
+    }
     return `INV-${year}-${String(seq).padStart(3, '0')}`;
   }
 
-  async createInvoice(dto: CreateInvoiceDto, userId?: string): Promise<SalesInvoice> {
-    const project = await this.projectRepo.findOne({ where: { id: dto.projectId } });
+  async createInvoice(
+    dto: CreateInvoiceDto,
+    userId?: string,
+  ): Promise<SalesInvoice> {
+    const project = await this.projectRepo.findOne({
+      where: { id: dto.projectId },
+    });
     if (!project) throw new NotFoundException('Project not found');
 
     const invoiceNumber = await this.generateInvoiceNumber();
     const items = dto.items.map((item) => {
       const amount = item.quantity * item.rate;
-      return this.invoiceItemRepo.create({ ...item, unit: item.unit || 'nos', amount });
+      return this.invoiceItemRepo.create({
+        ...item,
+        unit: item.unit || 'nos',
+        amount,
+      });
     });
-    const totalAmount = items.reduce((sum, item) => sum + Number(item.amount), 0);
+    const totalAmount = items.reduce(
+      (sum, item) => sum + Number(item.amount),
+      0,
+    );
     const gstRate = 0.18;
     const gstAmount = totalAmount * gstRate;
     const companyState = 'Tamil Nadu';
-    let cgstAmount = 0, sgstAmount = 0, igstAmount = 0;
-    
+    let cgstAmount = 0,
+      sgstAmount = 0,
+      igstAmount = 0;
+
     // Use project location as a proxy for state if needed
     const clientState = project.location || '';
     if (clientState.toLowerCase().includes(companyState.toLowerCase())) {
-      cgstAmount = gstAmount / 2; sgstAmount = gstAmount / 2;
-    } else { igstAmount = gstAmount; }
+      cgstAmount = gstAmount / 2;
+      sgstAmount = gstAmount / 2;
+    } else {
+      igstAmount = gstAmount;
+    }
 
     const invoice = this.invoiceRepo.create({
-      invoiceNumber, projectId: dto.projectId,
+      invoiceNumber,
+      projectId: dto.projectId,
       dueDate: dto.dueDate ? new Date(dto.dueDate) : undefined,
-      totalAmount, gstAmount, cgstAmount, sgstAmount, igstAmount,
-      items, createdBy: userId,
+      totalAmount,
+      gstAmount,
+      cgstAmount,
+      sgstAmount,
+      igstAmount,
+      items,
+      createdBy: userId,
     });
     return this.invoiceRepo.save(invoice);
   }
 
   async findInvoices(query: { status?: InvoiceStatus; projectId?: string }) {
-    const qb = this.invoiceRepo.createQueryBuilder('inv')
+    const qb = this.invoiceRepo
+      .createQueryBuilder('inv')
       .leftJoinAndSelect('inv.project', 'project')
       .leftJoinAndSelect('inv.items', 'items')
       .leftJoinAndSelect('inv.payments', 'payments')
       .where('inv.isDeleted = false');
-    if (query.status) qb.andWhere('inv.status = :status', { status: query.status });
-    if (query.projectId) qb.andWhere('inv.projectId = :projectId', { projectId: query.projectId });
+    if (query.status)
+      qb.andWhere('inv.status = :status', { status: query.status });
+    if (query.projectId)
+      qb.andWhere('inv.projectId = :projectId', { projectId: query.projectId });
     return qb.orderBy('inv.createdAt', 'DESC').getMany();
   }
 
   async findInvoice(id: string) {
-    const invoice = await this.invoiceRepo.createQueryBuilder('inv')
+    const invoice = await this.invoiceRepo
+      .createQueryBuilder('inv')
       .leftJoinAndSelect('inv.project', 'project')
       .leftJoinAndSelect('inv.items', 'items')
       .leftJoinAndSelect('inv.payments', 'payments')
@@ -133,34 +172,45 @@ export class AccountsService {
       .orderBy('bill.billNumber', 'DESC')
       .getOne();
     let seq = 1;
-    if (last) { seq = parseInt(last.billNumber.split('-')[2], 10) + 1; }
+    if (last) {
+      seq = parseInt(last.billNumber.split('-')[2], 10) + 1;
+    }
     return `BILL-${year}-${String(seq).padStart(3, '0')}`;
   }
 
   async createBill(dto: CreateBillDto, userId?: string): Promise<PurchaseBill> {
     const billNumber = await this.generateBillNumber();
     const { items, ...billData } = dto;
-    const bill = this.billRepo.create({ ...billData, billNumber, createdBy: userId });
+    const bill = this.billRepo.create({
+      ...billData,
+      billNumber,
+      createdBy: userId,
+    });
     const savedBill = await this.billRepo.save(bill);
 
     if (items && items.length > 0) {
       const billItems: BillItem[] = [];
       for (const item of items) {
-        const poItem = await this.poItemRepo.findOne({ where: { id: item.poItemId } });
+        const poItem = await this.poItemRepo.findOne({
+          where: { id: item.poItemId },
+        });
         if (poItem) {
-          poItem.billedQuantity = Number(poItem.billedQuantity || 0) + Number(item.quantity);
+          poItem.billedQuantity =
+            Number(poItem.billedQuantity || 0) + Number(item.quantity);
           await this.poItemRepo.save(poItem);
         }
-        billItems.push(this.billItemRepo.create({
-          billId: savedBill.id,
-          poItemId: item.poItemId,
-          description: item.description || '',
-          quantity: item.quantity,
-          unit: item.unit || 'nos',
-          rate: item.rate || 0,
-          orderedQty: item.orderedQty || 0,
-          billedQty: item.billedQty || 0,
-        }));
+        billItems.push(
+          this.billItemRepo.create({
+            billId: savedBill.id,
+            poItemId: item.poItemId,
+            description: item.description || '',
+            quantity: item.quantity,
+            unit: item.unit || 'nos',
+            rate: item.rate || 0,
+            orderedQty: item.orderedQty || 0,
+            billedQty: item.billedQty || 0,
+          }),
+        );
       }
       await this.billItemRepo.save(billItems);
     }
@@ -170,7 +220,14 @@ export class AccountsService {
   async findOneBill(id: string): Promise<PurchaseBill> {
     const bill = await this.billRepo.findOne({
       where: { id },
-      relations: ['vendor', 'project', 'payments', 'purchaseOrder', 'purchaseOrder.items', 'billItems'],
+      relations: [
+        'vendor',
+        'project',
+        'payments',
+        'purchaseOrder',
+        'purchaseOrder.items',
+        'billItems',
+      ],
     });
     if (!bill) throw new NotFoundException('Bill not found');
     return bill;
@@ -179,12 +236,23 @@ export class AccountsService {
   async findBills() {
     return this.billRepo.find({
       where: { isDeleted: false },
-      relations: ['vendor', 'project', 'payments', 'purchaseOrder', 'purchaseOrder.items', 'billItems'],
+      relations: [
+        'vendor',
+        'project',
+        'payments',
+        'purchaseOrder',
+        'purchaseOrder.items',
+        'billItems',
+      ],
       order: { createdAt: 'DESC' },
     });
   }
 
-  async updateBill(id: string, dto: CreateBillDto, userId?: string): Promise<PurchaseBill> {
+  async updateBill(
+    id: string,
+    dto: CreateBillDto,
+    userId?: string,
+  ): Promise<PurchaseBill> {
     const bill = await this.findOneBill(id);
     const { items, ...billData } = dto;
     Object.assign(bill, { ...billData, updatedBy: userId ?? '' });
@@ -234,7 +302,10 @@ export class AccountsService {
   }
 
   async findBoq(projectId: string) {
-    return this.boqRepo.find({ where: { projectId }, order: { createdAt: 'ASC' } });
+    return this.boqRepo.find({
+      where: { projectId },
+      order: { createdAt: 'ASC' },
+    });
   }
 
   // --- Advances ---
@@ -250,8 +321,14 @@ export class AccountsService {
   // --- Ledger / Summary ---
   async getLedger() {
     // Derived transaction log from invoices and bills
-    const invoices = await this.invoiceRepo.find({ where: { isDeleted: false }, relations: ['project'] });
-    const bills = await this.billRepo.find({ where: { isDeleted: false }, relations: ['vendor'] });
+    const invoices = await this.invoiceRepo.find({
+      where: { isDeleted: false },
+      relations: ['project'],
+    });
+    const bills = await this.billRepo.find({
+      where: { isDeleted: false },
+      relations: ['vendor'],
+    });
 
     const ledger = [
       ...invoices.map((inv) => ({
@@ -276,7 +353,10 @@ export class AccountsService {
   }
 
   async getPayables() {
-    return this.billRepo.find({ where: { isDeleted: false, paidAt: undefined }, relations: ['vendor'] });
+    return this.billRepo.find({
+      where: { isDeleted: false, paidAt: undefined },
+      relations: ['vendor'],
+    });
   }
 
   async getReceivables() {
@@ -295,7 +375,9 @@ export class AccountsService {
     const totalRevenue = await this.invoiceRepo
       .createQueryBuilder('inv')
       .select('SUM(inv.totalAmount + inv.gstAmount)', 'total')
-      .where('inv.isDeleted = false AND inv.status = :status', { status: InvoiceStatus.PAID })
+      .where('inv.isDeleted = false AND inv.status = :status', {
+        status: InvoiceStatus.PAID,
+      })
       .getRawOne();
 
     const totalCost = await this.billRepo

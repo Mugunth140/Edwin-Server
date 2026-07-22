@@ -15,6 +15,7 @@ const swagger_1 = require("@nestjs/swagger");
 const enums_js_1 = require("../../common/enums.js");
 class CreateProjectDto {
     name;
+    projectCode;
     description;
     location;
     email;
@@ -27,6 +28,13 @@ class CreateProjectDto {
     estimatedBudget;
     startDate;
     endDate;
+    projectCategoryId;
+    projectNature;
+    jobType;
+    jobStatus;
+    financialYear;
+    dateOfCreation;
+    resourceIds;
 }
 exports.CreateProjectDto = CreateProjectDto;
 __decorate([
@@ -34,6 +42,11 @@ __decorate([
     (0, class_validator_1.IsString)(),
     __metadata("design:type", String)
 ], CreateProjectDto.prototype, "name", void 0);
+__decorate([
+    (0, swagger_1.ApiProperty)({ example: 'PRJ-2026-001' }),
+    (0, class_validator_1.IsString)(),
+    __metadata("design:type", String)
+], CreateProjectDto.prototype, "projectCode", void 0);
 __decorate([
     (0, swagger_1.ApiPropertyOptional)(),
     (0, class_validator_1.IsString)(),
@@ -106,4 +119,47 @@ __decorate([
     (0, class_validator_1.IsOptional)(),
     __metadata("design:type", String)
 ], CreateProjectDto.prototype, "endDate", void 0);
+__decorate([
+    (0, swagger_1.ApiPropertyOptional)(),
+    (0, class_validator_1.IsString)(),
+    (0, class_validator_1.IsOptional)(),
+    __metadata("design:type", String)
+], CreateProjectDto.prototype, "projectCategoryId", void 0);
+__decorate([
+    (0, swagger_1.ApiPropertyOptional)({ enum: enums_js_1.ProjectNature }),
+    (0, class_validator_1.IsEnum)(enums_js_1.ProjectNature),
+    (0, class_validator_1.IsOptional)(),
+    __metadata("design:type", String)
+], CreateProjectDto.prototype, "projectNature", void 0);
+__decorate([
+    (0, swagger_1.ApiPropertyOptional)({ enum: enums_js_1.JobType }),
+    (0, class_validator_1.IsEnum)(enums_js_1.JobType),
+    (0, class_validator_1.IsOptional)(),
+    __metadata("design:type", String)
+], CreateProjectDto.prototype, "jobType", void 0);
+__decorate([
+    (0, swagger_1.ApiPropertyOptional)({ enum: enums_js_1.JobStatus }),
+    (0, class_validator_1.IsEnum)(enums_js_1.JobStatus),
+    (0, class_validator_1.IsOptional)(),
+    __metadata("design:type", String)
+], CreateProjectDto.prototype, "jobStatus", void 0);
+__decorate([
+    (0, swagger_1.ApiPropertyOptional)({ example: '2026-2027' }),
+    (0, class_validator_1.IsString)(),
+    (0, class_validator_1.IsOptional)(),
+    __metadata("design:type", String)
+], CreateProjectDto.prototype, "financialYear", void 0);
+__decorate([
+    (0, swagger_1.ApiPropertyOptional)(),
+    (0, class_validator_1.IsDateString)(),
+    (0, class_validator_1.IsOptional)(),
+    __metadata("design:type", String)
+], CreateProjectDto.prototype, "dateOfCreation", void 0);
+__decorate([
+    (0, swagger_1.ApiPropertyOptional)({ type: [String] }),
+    (0, class_validator_1.IsArray)(),
+    (0, class_validator_1.IsString)({ each: true }),
+    (0, class_validator_1.IsOptional)(),
+    __metadata("design:type", Array)
+], CreateProjectDto.prototype, "resourceIds", void 0);
 //# sourceMappingURL=create-project.dto.js.map

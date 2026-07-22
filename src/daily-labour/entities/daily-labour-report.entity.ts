@@ -30,7 +30,10 @@ export class DailyLabourReport {
   @Column({ type: 'text', nullable: true })
   remarks: string;
 
-  @OneToMany(() => DailyWorker, worker => worker.report, { cascade: true, eager: true })
+  @OneToMany(() => DailyWorker, (worker) => worker.report, {
+    cascade: true,
+    eager: true,
+  })
   workers: DailyWorker[];
 
   @ManyToOne(() => User)

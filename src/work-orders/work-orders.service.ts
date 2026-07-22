@@ -11,7 +11,8 @@ import { WorkOrderStatus } from '../common/enums.js';
 export class WorkOrdersService {
   constructor(
     @InjectRepository(WorkOrder) private woRepo: Repository<WorkOrder>,
-    @InjectRepository(WorkOrderItem) private woItemRepo: Repository<WorkOrderItem>,
+    @InjectRepository(WorkOrderItem)
+    private woItemRepo: Repository<WorkOrderItem>,
     @InjectRepository(Vendor) private vendorRepo: Repository<Vendor>,
   ) {}
 
@@ -32,7 +33,9 @@ export class WorkOrdersService {
   }
 
   async create(dto: CreateWorkOrderDto, userId?: string): Promise<WorkOrder> {
-    const vendor = await this.vendorRepo.findOne({ where: { id: dto.vendorId } });
+    const vendor = await this.vendorRepo.findOne({
+      where: { id: dto.vendorId },
+    });
     if (!vendor) throw new NotFoundException('Vendor not found');
 
     const woNumber = await this.generateWoNumber();
@@ -49,7 +52,10 @@ export class WorkOrdersService {
       });
     });
 
-    const totalAmount = items.reduce((sum, item) => sum + Number(item.amount), 0);
+    const totalAmount = items.reduce(
+      (sum, item) => sum + Number(item.amount),
+      0,
+    );
 
     // GST calculation (18% default, split based on state)
     const gstRate = 0.18;
@@ -60,7 +66,10 @@ export class WorkOrdersService {
     let sgstAmount = 0;
     let igstAmount = 0;
 
-    if (vendor.state && vendor.state.toLowerCase() === companyState.toLowerCase()) {
+    if (
+      vendor.state &&
+      vendor.state.toLowerCase() === companyState.toLowerCase()
+    ) {
       cgstAmount = gstAmount / 2;
       sgstAmount = gstAmount / 2;
     } else {
@@ -84,7 +93,13 @@ export class WorkOrdersService {
     return this.woRepo.save(workOrder);
   }
 
-  async findAll(query: { status?: WorkOrderStatus; projectId?: string; vendorId?: string; page?: number; limit?: number }) {
+  async findAll(query: {
+    status?: WorkOrderStatus;
+    projectId?: string;
+    vendorId?: string;
+    page?: number;
+    limit?: number;
+  }) {
     const { status, projectId, vendorId, page = 1, limit = 20 } = query;
     const qb = this.woRepo
       .createQueryBuilder('wo')
@@ -113,7 +128,11 @@ export class WorkOrdersService {
     return wo;
   }
 
-  async updateStatus(id: string, status: WorkOrderStatus, userId?: string): Promise<WorkOrder> {
+  async updateStatus(
+    id: string,
+    status: WorkOrderStatus,
+    userId?: string,
+  ): Promise<WorkOrder> {
     const wo = await this.findOne(id);
     wo.status = status;
     wo.updatedBy = userId ?? '';
@@ -122,7 +141,9 @@ export class WorkOrdersService {
 
   async update(id: string, dto: any, userId?: string): Promise<WorkOrder> {
     const wo = await this.findOne(id);
-    const vendor = await this.vendorRepo.findOne({ where: { id: dto.vendorId || wo.vendorId } });
+    const vendor = await this.vendorRepo.findOne({
+      where: { id: dto.vendorId || wo.vendorId },
+    });
     if (!vendor) throw new NotFoundException('Vendor not found');
 
     if (dto.items) {
@@ -151,12 +172,18 @@ export class WorkOrdersService {
     });
 
     // Recalculate totals
-    wo.totalAmount = wo.items.reduce((sum, item) => sum + Number(item.amount), 0);
+    wo.totalAmount = wo.items.reduce(
+      (sum, item) => sum + Number(item.amount),
+      0,
+    );
     const gstRate = 0.18;
     wo.gstAmount = wo.totalAmount * gstRate;
     const companyState = 'Tamil Nadu';
 
-    if (vendor.state && vendor.state.toLowerCase() === companyState.toLowerCase()) {
+    if (
+      vendor.state &&
+      vendor.state.toLowerCase() === companyState.toLowerCase()
+    ) {
       wo.cgstAmount = wo.gstAmount / 2;
       wo.sgstAmount = wo.gstAmount / 2;
       wo.igstAmount = 0;

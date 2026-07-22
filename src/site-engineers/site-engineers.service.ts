@@ -1,4 +1,8 @@
-import { Injectable, NotFoundException, ConflictException } from '@nestjs/common';
+import {
+  Injectable,
+  NotFoundException,
+  ConflictException,
+} from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
 import * as bcrypt from 'bcrypt';
@@ -19,12 +23,17 @@ export class SiteEngineersService {
 
   async create(dto: CreateSiteEngineerDto) {
     if (dto.email) {
-      const existingEmail = await this.userRepository.findOne({ where: { email: dto.email } });
+      const existingEmail = await this.userRepository.findOne({
+        where: { email: dto.email },
+      });
       if (existingEmail) throw new ConflictException('Email already in use');
     }
     if (dto.username) {
-      const existingUsername = await this.userRepository.findOne({ where: { username: dto.username } });
-      if (existingUsername) throw new ConflictException('Username already in use');
+      const existingUsername = await this.userRepository.findOne({
+        where: { username: dto.username },
+      });
+      if (existingUsername)
+        throw new ConflictException('Username already in use');
     }
 
     const engineer = this.userRepository.create({
@@ -46,7 +55,9 @@ export class SiteEngineersService {
     }
 
     if (dto.projectIds && dto.projectIds.length > 0) {
-      engineer.projects = await this.projectRepository.findByIds(dto.projectIds);
+      engineer.projects = await this.projectRepository.findByIds(
+        dto.projectIds,
+      );
     } else {
       engineer.projects = [];
     }
@@ -77,12 +88,17 @@ export class SiteEngineersService {
     const engineer = await this.findOne(id);
 
     if (dto.email && dto.email !== engineer.email) {
-      const existingEmail = await this.userRepository.findOne({ where: { email: dto.email } });
+      const existingEmail = await this.userRepository.findOne({
+        where: { email: dto.email },
+      });
       if (existingEmail) throw new ConflictException('Email already in use');
     }
     if (dto.username && dto.username !== engineer.username) {
-      const existingUsername = await this.userRepository.findOne({ where: { username: dto.username } });
-      if (existingUsername) throw new ConflictException('Username already in use');
+      const existingUsername = await this.userRepository.findOne({
+        where: { username: dto.username },
+      });
+      if (existingUsername)
+        throw new ConflictException('Username already in use');
     }
 
     if (dto.password) {
@@ -91,7 +107,9 @@ export class SiteEngineersService {
 
     if (dto.projectIds !== undefined) {
       if (dto.projectIds.length > 0) {
-        engineer.projects = await this.projectRepository.findByIds(dto.projectIds);
+        engineer.projects = await this.projectRepository.findByIds(
+          dto.projectIds,
+        );
       } else {
         engineer.projects = [];
       }
@@ -101,11 +119,15 @@ export class SiteEngineersService {
       name: dto.name !== undefined ? dto.name : engineer.name,
       email: dto.email !== undefined ? dto.email : engineer.email,
       username: dto.username !== undefined ? dto.username : engineer.username,
-      employeeId: dto.employeeId !== undefined ? dto.employeeId : engineer.employeeId,
+      employeeId:
+        dto.employeeId !== undefined ? dto.employeeId : engineer.employeeId,
       phone: dto.phone !== undefined ? dto.phone : engineer.phone,
       address: dto.address !== undefined ? dto.address : engineer.address,
       isActive: dto.isActive !== undefined ? dto.isActive : engineer.isActive,
-      salaryGradeId: dto.salaryGradeId !== undefined ? dto.salaryGradeId : engineer.salaryGradeId,
+      salaryGradeId:
+        dto.salaryGradeId !== undefined
+          ? dto.salaryGradeId
+          : engineer.salaryGradeId,
     });
 
     return await this.userRepository.save(engineer);

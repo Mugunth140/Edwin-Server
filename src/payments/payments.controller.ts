@@ -1,5 +1,18 @@
-import { Controller, Get, Post, Body, Query, UseGuards, Request } from '@nestjs/common';
-import { ApiTags, ApiOperation, ApiBearerAuth, ApiQuery } from '@nestjs/swagger';
+import {
+  Controller,
+  Get,
+  Post,
+  Body,
+  Query,
+  UseGuards,
+  Request,
+} from '@nestjs/common';
+import {
+  ApiTags,
+  ApiOperation,
+  ApiBearerAuth,
+  ApiQuery,
+} from '@nestjs/swagger';
 import { AuthGuard } from '@nestjs/passport';
 import { RolesGuard } from '../auth/roles.guard.js';
 import { Roles } from '../auth/roles.decorator.js';
@@ -35,15 +48,26 @@ export class PaymentsController {
     @Query('page') page?: number,
     @Query('limit') limit?: number,
   ) {
-    return this.paymentsService.findAll({ type, projectId, dateFrom, dateTo, page, limit });
+    return this.paymentsService.findAll({
+      type,
+      projectId,
+      dateFrom,
+      dateTo,
+      page,
+      limit,
+    });
   }
 
   @Get('summary')
   @ApiOperation({ summary: 'Payment-type-wise totals' })
-  getSummary() { return this.paymentsService.getSummary(); }
+  getSummary() {
+    return this.paymentsService.getSummary();
+  }
 
   @Post('sync-expenses')
   @Roles(Role.ADMIN, Role.ACCOUNTS_MANAGER)
   @ApiOperation({ summary: 'Sync missing expenses to ledger' })
-  syncExpenses() { return this.paymentsService.syncExpenses(); }
+  syncExpenses() {
+    return this.paymentsService.syncExpenses();
+  }
 }

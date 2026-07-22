@@ -12,7 +12,13 @@ import {
   Body,
 } from '@nestjs/common';
 import { FileInterceptor } from '@nestjs/platform-express';
-import { ApiTags, ApiOperation, ApiBearerAuth, ApiConsumes, ApiQuery } from '@nestjs/swagger';
+import {
+  ApiTags,
+  ApiOperation,
+  ApiBearerAuth,
+  ApiConsumes,
+  ApiQuery,
+} from '@nestjs/swagger';
 import { AuthGuard } from '@nestjs/passport';
 import { diskStorage } from 'multer';
 import { extname } from 'path';
@@ -42,8 +48,12 @@ export class DprController {
           cb(null, uploadPath);
         },
         filename: (req, file, cb) => {
-          const uniqueSuffix = Date.now() + '-' + Math.round(Math.random() * 1e9);
-          cb(null, `${file.fieldname}-${uniqueSuffix}${extname(file.originalname)}`);
+          const uniqueSuffix =
+            Date.now() + '-' + Math.round(Math.random() * 1e9);
+          cb(
+            null,
+            `${file.fieldname}-${uniqueSuffix}${extname(file.originalname)}`,
+          );
         },
       }),
       fileFilter: (req, file, cb) => {
@@ -104,7 +114,10 @@ export class DprController {
     @Query('limit') limit: number,
     @Request() req: any,
   ) {
-    return this.dprService.findAll({ projectId, dateFrom, dateTo, page, limit }, req.user);
+    return this.dprService.findAll(
+      { projectId, dateFrom, dateTo, page, limit },
+      req.user,
+    );
   }
 
   @Get(':id')

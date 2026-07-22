@@ -26,6 +26,7 @@ import { ItemDescriptionsModule } from './item-descriptions/item-descriptions.mo
 import { PurchaseEnquiriesModule } from './purchase-enquiries/purchase-enquiries.module.js';
 import { SalariesModule } from './salaries/salaries.module.js';
 import { TimesheetAttendanceModule } from './timesheet-attendance/timesheet-attendance.module.js';
+import { ProjectCategoriesModule } from './project-categories/project-categories.module.js';
 
 // Entity imports
 import { User } from './users/entities/user.entity.js';
@@ -66,6 +67,7 @@ import { PurchaseEnquiry } from './purchase-enquiries/entities/purchase-enquiry.
 import { Salary } from './salaries/entities/salary.entity.js';
 import { WeeklyTimesheet } from './timesheet-attendance/entities/weekly-timesheet.entity.js';
 import { TimesheetRow } from './timesheet-attendance/entities/timesheet-row.entity.js';
+import { ProjectCategory } from './project-categories/entities/project-category.entity.js';
 
 function getBooleanConfig(
   configService: ConfigService,
@@ -133,8 +135,13 @@ function getBooleanConfig(
           Salary,
           WeeklyTimesheet,
           TimesheetRow,
+          ProjectCategory,
         ],
-        synchronize: getBooleanConfig(configService, 'TYPEORM_SYNCHRONIZE', false),
+        synchronize: getBooleanConfig(
+          configService,
+          'TYPEORM_SYNCHRONIZE',
+          false,
+        ),
         logging: getBooleanConfig(configService, 'TYPEORM_LOGGING', false),
       }),
     }),
@@ -163,6 +170,7 @@ function getBooleanConfig(
     PurchaseEnquiriesModule,
     SalariesModule,
     TimesheetAttendanceModule,
+    ProjectCategoriesModule,
   ],
 })
 export class AppModule {}

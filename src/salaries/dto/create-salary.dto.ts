@@ -6,7 +6,10 @@ export class CreateSalaryDto {
   @IsString()
   grades: string;
 
-  @ApiProperty({ example: '2-4', description: 'Experience range in years (e.g. 0-1, 2-4, 5-7)' })
+  @ApiProperty({
+    example: '2-4',
+    description: 'Experience range in years (e.g. 0-1, 2-4, 5-7)',
+  })
   @IsString()
   expInYears: string;
 

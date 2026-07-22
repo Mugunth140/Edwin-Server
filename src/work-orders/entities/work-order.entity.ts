@@ -35,7 +35,11 @@ export class WorkOrder {
   @Column()
   projectId: string;
 
-  @Column({ type: 'enum', enum: WorkOrderStatus, default: WorkOrderStatus.DRAFT })
+  @Column({
+    type: 'enum',
+    enum: WorkOrderStatus,
+    default: WorkOrderStatus.DRAFT,
+  })
   status: WorkOrderStatus;
 
   @Column({ type: 'text', nullable: true })
@@ -56,7 +60,10 @@ export class WorkOrder {
   @Column({ type: 'decimal', precision: 12, scale: 2, default: 0 })
   gstAmount: number;
 
-  @OneToMany(() => WorkOrderItem, (item) => item.workOrder, { cascade: true, eager: true })
+  @OneToMany(() => WorkOrderItem, (item) => item.workOrder, {
+    cascade: true,
+    eager: true,
+  })
   items: WorkOrderItem[];
 
   @Column({ default: false })

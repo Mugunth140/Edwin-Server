@@ -1,9 +1,25 @@
 import {
-  Controller, Get, Post, Patch, Delete, Param, Query, UseGuards, Request,
-  UploadedFile, UseInterceptors, Body,
+  Controller,
+  Get,
+  Post,
+  Patch,
+  Delete,
+  Param,
+  Query,
+  UseGuards,
+  Request,
+  UploadedFile,
+  UseInterceptors,
+  Body,
 } from '@nestjs/common';
 import { FileInterceptor } from '@nestjs/platform-express';
-import { ApiTags, ApiOperation, ApiBearerAuth, ApiConsumes, ApiQuery } from '@nestjs/swagger';
+import {
+  ApiTags,
+  ApiOperation,
+  ApiBearerAuth,
+  ApiConsumes,
+  ApiQuery,
+} from '@nestjs/swagger';
 import { AuthGuard } from '@nestjs/passport';
 import { diskStorage } from 'multer';
 import { extname } from 'path';
@@ -33,8 +49,12 @@ export class DrawingsController {
           cb(null, uploadPath);
         },
         filename: (req, file, cb) => {
-          const uniqueSuffix = Date.now() + '-' + Math.round(Math.random() * 1e9);
-          cb(null, `${file.fieldname}-${uniqueSuffix}${extname(file.originalname)}`);
+          const uniqueSuffix =
+            Date.now() + '-' + Math.round(Math.random() * 1e9);
+          cb(
+            null,
+            `${file.fieldname}-${uniqueSuffix}${extname(file.originalname)}`,
+          );
         },
       }),
     }),
@@ -43,7 +63,13 @@ export class DrawingsController {
   @ApiOperation({ summary: 'Upload a drawing' })
   async create(
     @UploadedFile() file: Express.Multer.File,
-    @Body() body: { projectId: string; title: string; category: DrawingCategory; revision?: string },
+    @Body()
+    body: {
+      projectId: string;
+      title: string;
+      category: DrawingCategory;
+      revision?: string;
+    },
     @Request() req: any,
   ) {
     if (!file) {
@@ -75,7 +101,10 @@ export class DrawingsController {
     @Query('revision') revision: string,
     @Request() req: any,
   ) {
-    return this.drawingsService.findAll({ projectId, category, revision }, req.user);
+    return this.drawingsService.findAll(
+      { projectId, category, revision },
+      req.user,
+    );
   }
 
   @Get(':id')
@@ -97,8 +126,12 @@ export class DrawingsController {
           cb(null, uploadPath);
         },
         filename: (req, file, cb) => {
-          const uniqueSuffix = Date.now() + '-' + Math.round(Math.random() * 1e9);
-          cb(null, `${file.fieldname}-${uniqueSuffix}${extname(file.originalname)}`);
+          const uniqueSuffix =
+            Date.now() + '-' + Math.round(Math.random() * 1e9);
+          cb(
+            null,
+            `${file.fieldname}-${uniqueSuffix}${extname(file.originalname)}`,
+          );
         },
       }),
     }),
@@ -108,7 +141,8 @@ export class DrawingsController {
   update(
     @Param('id') id: string,
     @UploadedFile() file: Express.Multer.File,
-    @Body() body: { title?: string; category?: DrawingCategory; revision?: string },
+    @Body()
+    body: { title?: string; category?: DrawingCategory; revision?: string },
   ) {
     const updateData: any = { ...body };
     if (file) {

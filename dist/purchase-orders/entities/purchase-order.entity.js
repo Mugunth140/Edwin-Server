@@ -82,7 +82,10 @@ __decorate([
     __metadata("design:type", String)
 ], PurchaseOrder.prototype, "billFileKey", void 0);
 __decorate([
-    (0, typeorm_1.OneToMany)(() => po_item_entity_js_1.PoItem, (item) => item.purchaseOrder, { cascade: true, eager: true }),
+    (0, typeorm_1.OneToMany)(() => po_item_entity_js_1.PoItem, (item) => item.purchaseOrder, {
+        cascade: true,
+        eager: true,
+    }),
     __metadata("design:type", Array)
 ], PurchaseOrder.prototype, "items", void 0);
 __decorate([

@@ -1,4 +1,8 @@
-import { Injectable, NotFoundException, ConflictException } from '@nestjs/common';
+import {
+  Injectable,
+  NotFoundException,
+  ConflictException,
+} from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
 import { SubcontractWorkOrder } from './entities/subcontract-work-order.entity.js';
@@ -12,10 +16,17 @@ export class SubcontractWorkOrdersService {
     private readonly repository: Repository<SubcontractWorkOrder>,
   ) {}
 
-  private calculateTotals(dto: CreateSubcontractWorkOrderDto | UpdateSubcontractWorkOrderDto, entity: SubcontractWorkOrder) {
-    const quantity = dto.quantity !== undefined ? dto.quantity : entity.quantity;
+  private calculateTotals(
+    dto: CreateSubcontractWorkOrderDto | UpdateSubcontractWorkOrderDto,
+    entity: SubcontractWorkOrder,
+  ) {
+    const quantity =
+      dto.quantity !== undefined ? dto.quantity : entity.quantity;
     const rate = dto.rate !== undefined ? dto.rate : entity.rate;
-    const gstPercentage = dto.gstPercentage !== undefined ? dto.gstPercentage : entity.gstPercentage;
+    const gstPercentage =
+      dto.gstPercentage !== undefined
+        ? dto.gstPercentage
+        : entity.gstPercentage;
 
     entity.amount = Number(quantity) * Number(rate);
     entity.gstAmount = (entity.amount * Number(gstPercentage)) / 100;
@@ -23,9 +34,13 @@ export class SubcontractWorkOrdersService {
   }
 
   async create(dto: CreateSubcontractWorkOrderDto) {
-    const existing = await this.repository.findOne({ where: { woNumber: dto.woNumber } });
+    const existing = await this.repository.findOne({
+      where: { woNumber: dto.woNumber },
+    });
     if (existing) {
-      throw new ConflictException(`Work Order with number ${dto.woNumber} already exists`);
+      throw new ConflictException(
+        `Work Order with number ${dto.woNumber} already exists`,
+      );
     }
 
     const swo = this.repository.create(dto);
@@ -49,7 +64,9 @@ export class SubcontractWorkOrdersService {
       where: { id, isDeleted: false },
     });
     if (!swo) {
-      throw new NotFoundException(`Subcontract Work Order with ID ${id} not found`);
+      throw new NotFoundException(
+        `Subcontract Work Order with ID ${id} not found`,
+      );
     }
     return swo;
   }
