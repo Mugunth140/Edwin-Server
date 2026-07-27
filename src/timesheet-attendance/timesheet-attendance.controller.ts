@@ -31,7 +31,7 @@ export class TimesheetAttendanceController {
   constructor(private readonly service: TimesheetAttendanceService) {}
 
   @Post()
-  @Roles(Role.SITE_ENGINEER, Role.PURCHASE_TEAM)
+  @Roles(Role.SITE_ENGINEER, Role.PURCHASE_TEAM, Role.ADMIN)
   @ApiOperation({ summary: 'Save weekly timesheet' })
   create(@Body() dto: CreateTimesheetDto, @Request() req: any) {
     return this.service.create(dto, req.user.id);
@@ -52,7 +52,7 @@ export class TimesheetAttendanceController {
   }
 
   @Get('current')
-  @Roles(Role.SITE_ENGINEER, Role.PURCHASE_TEAM)
+  @Roles(Role.SITE_ENGINEER, Role.PURCHASE_TEAM, Role.ADMIN)
   @ApiOperation({ summary: 'Get timesheet for a week' })
   getCurrent(@Query('weekStart') weekStart: string, @Request() req: any) {
     return this.service.findByWeek(req.user.id, weekStart);
@@ -71,7 +71,7 @@ export class TimesheetAttendanceController {
   }
 
   @Patch(':id')
-  @Roles(Role.SITE_ENGINEER, Role.PURCHASE_TEAM)
+  @Roles(Role.SITE_ENGINEER, Role.PURCHASE_TEAM, Role.ADMIN)
   @ApiOperation({ summary: 'Update timesheet' })
   update(
     @Param('id') id: string,
@@ -103,7 +103,7 @@ export class TimesheetAttendanceController {
   }
 
   @Delete(':id')
-  @Roles(Role.SITE_ENGINEER, Role.PURCHASE_TEAM)
+  @Roles(Role.SITE_ENGINEER, Role.PURCHASE_TEAM, Role.ADMIN)
   @ApiOperation({ summary: 'Delete timesheet' })
   remove(@Param('id') id: string, @Request() req: any) {
     return this.service.remove(id, req.user.id);
