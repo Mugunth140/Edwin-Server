@@ -58,4 +58,7 @@ export class DailyWorker {
 
   @Column({ nullable: true })
   eveningPhoto2Url: string;
+
+  @Column({ type: 'varchar', default: 'pending' })
+  status: string;
 }

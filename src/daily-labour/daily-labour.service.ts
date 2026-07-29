@@ -1,4 +1,4 @@
-import { Injectable, NotFoundException } from '@nestjs/common';
+import { Injectable, NotFoundException, BadRequestException } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
 import { DailyLabourReport } from './entities/daily-labour-report.entity.js';
@@ -106,6 +106,21 @@ export class DailyLabourService {
     const report = await this.findOne(id);
     report.status = status;
     return this.reportRepo.save(report);
+  }
+
+  async updateWorkerStatus(reportId: string, workerId: string, status: string) {
+    const validStatuses = ['pending', 'approved', 'rejected'];
+    if (!validStatuses.includes(status)) {
+      throw new BadRequestException(`Invalid status. Must be one of: ${validStatuses.join(', ')}`);
+    }
+    const worker = await this.workerRepo.findOne({
+      where: { id: workerId, reportId },
+    });
+    if (!worker) {
+      throw new NotFoundException(`Worker with ID ${workerId} not found in report ${reportId}`);
+    }
+    worker.status = status;
+    return this.workerRepo.save(worker);
   }
 
   async remove(id: string) {

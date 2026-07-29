@@ -145,6 +145,17 @@ export class DailyLabourController {
     return this.dailyLabourService.updateStatus(id, status);
   }
 
+  @Patch(':reportId/workers/:workerId/status')
+  @Roles(Role.ADMIN, Role.SITE_ENGINEER, Role.ACCOUNTS_MANAGER)
+  @ApiOperation({ summary: 'Update individual worker status' })
+  updateWorkerStatus(
+    @Param('reportId') reportId: string,
+    @Param('workerId') workerId: string,
+    @Body('status') status: string,
+  ) {
+    return this.dailyLabourService.updateWorkerStatus(reportId, workerId, status);
+  }
+
   @Delete(':id')
   @Roles(Role.ADMIN, Role.SITE_ENGINEER, Role.ACCOUNTS_MANAGER)
   @ApiOperation({ summary: 'Delete DPW report' })
