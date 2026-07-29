@@ -10,5 +10,6 @@ export declare class CreatePurchaseOrderDto {
     paymentTerms?: string;
     billFileUrl?: string;
     billFileKey?: string;
+    gstPercent?: number;
     items: PoItemDto[];
 }

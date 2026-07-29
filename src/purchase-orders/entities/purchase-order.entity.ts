@@ -44,6 +44,15 @@ export class PurchaseOrder {
   @Column({ type: 'decimal', precision: 12, scale: 2, default: 0 })
   totalAmount: number;
 
+  @Column({ type: 'decimal', precision: 5, scale: 2, nullable: true })
+  gstPercent: number;
+
+  @Column({ type: 'decimal', precision: 12, scale: 2, nullable: true })
+  gstAmount: number;
+
+  @Column({ type: 'decimal', precision: 12, scale: 2, nullable: true })
+  totalWithGst: number;
+
   @Column({ nullable: true })
   billFileUrl: string;
 

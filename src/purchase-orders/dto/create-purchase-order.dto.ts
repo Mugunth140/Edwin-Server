@@ -5,6 +5,7 @@ import {
   IsArray,
   ValidateNested,
   IsNumber,
+  Min,
 } from 'class-validator';
 import { Type } from 'class-transformer';
 import { ApiProperty, ApiPropertyOptional } from '@nestjs/swagger';
@@ -25,6 +26,7 @@ export class CreatePurchaseOrderDto {
   @ApiPropertyOptional() @IsString() @IsOptional() paymentTerms?: string;
   @ApiPropertyOptional() @IsString() @IsOptional() billFileUrl?: string;
   @ApiPropertyOptional() @IsString() @IsOptional() billFileKey?: string;
+  @ApiPropertyOptional() @IsNumber() @Min(0) @IsOptional() gstPercent?: number;
   @ApiProperty({ type: [PoItemDto] })
   @IsArray()
   @ValidateNested({ each: true })

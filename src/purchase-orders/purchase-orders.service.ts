@@ -41,10 +41,13 @@ export class PurchaseOrdersService {
         amount,
       });
     });
-    const totalAmount = items.reduce(
+    const basicAmount = items.reduce(
       (sum, item) => sum + Number(item.amount),
       0,
     );
+    const gstPercent = dto.gstPercent || 0;
+    const gstAmount = Number((basicAmount * gstPercent / 100).toFixed(2));
+    const totalWithGst = Number((basicAmount + gstAmount).toFixed(2));
     const po = this.poRepo.create({
       poNumber,
       vendorId: dto.vendorId,
@@ -52,7 +55,10 @@ export class PurchaseOrdersService {
       paymentTerms: dto.paymentTerms,
       billFileUrl: dto.billFileUrl,
       billFileKey: dto.billFileKey,
-      totalAmount,
+      totalAmount: basicAmount,
+      gstPercent,
+      gstAmount,
+      totalWithGst,
       items,
       createdBy: userId,
     });
@@ -125,10 +131,15 @@ export class PurchaseOrdersService {
     });
 
     // Recalculate total
-    po.totalAmount = po.items.reduce(
+    const basicAmount = po.items.reduce(
       (sum, item) => sum + Number(item.amount),
       0,
     );
+    const gstPercent = Number(po.gstPercent) || 0;
+    const gstAmount = Number((basicAmount * gstPercent / 100).toFixed(2));
+    po.totalAmount = basicAmount;
+    po.gstAmount = gstAmount;
+    po.totalWithGst = Number((basicAmount + gstAmount).toFixed(2));
 
     return this.poRepo.save(po);
   }

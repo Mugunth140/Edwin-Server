@@ -49,7 +49,10 @@ let PurchaseOrdersService = class PurchaseOrdersService {
                 amount,
             });
         });
-        const totalAmount = items.reduce((sum, item) => sum + Number(item.amount), 0);
+        const basicAmount = items.reduce((sum, item) => sum + Number(item.amount), 0);
+        const gstPercent = dto.gstPercent || 0;
+        const gstAmount = Number((basicAmount * gstPercent / 100).toFixed(2));
+        const totalWithGst = Number((basicAmount + gstAmount).toFixed(2));
         const po = this.poRepo.create({
             poNumber,
             vendorId: dto.vendorId,
@@ -57,7 +60,10 @@ let PurchaseOrdersService = class PurchaseOrdersService {
             paymentTerms: dto.paymentTerms,
             billFileUrl: dto.billFileUrl,
             billFileKey: dto.billFileKey,
-            totalAmount,
+            totalAmount: basicAmount,
+            gstPercent,
+            gstAmount,
+            totalWithGst,
             items,
             createdBy: userId,
         });
@@ -115,7 +121,12 @@ let PurchaseOrdersService = class PurchaseOrdersService {
             items: po.items,
             updatedBy: userId ?? '',
         });
-        po.totalAmount = po.items.reduce((sum, item) => sum + Number(item.amount), 0);
+        const basicAmount = po.items.reduce((sum, item) => sum + Number(item.amount), 0);
+        const gstPercent = Number(po.gstPercent) || 0;
+        const gstAmount = Number((basicAmount * gstPercent / 100).toFixed(2));
+        po.totalAmount = basicAmount;
+        po.gstAmount = gstAmount;
+        po.totalWithGst = Number((basicAmount + gstAmount).toFixed(2));
         return this.poRepo.save(po);
     }
     async remove(id) {

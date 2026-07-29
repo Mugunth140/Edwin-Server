@@ -69,7 +69,7 @@ export class PurchaseEnquiriesController {
   }
 
   @Delete(':id')
-  @Roles(Role.ADMIN, Role.ACCOUNTS_MANAGER, Role.PURCHASE_TEAM)
+  @Roles(Role.ADMIN, Role.ACCOUNTS_MANAGER, Role.PURCHASE_TEAM, Role.SITE_ENGINEER)
   @ApiOperation({ summary: 'Delete purchase enquiry' })
   remove(@Param('id') id: string) {
     return this.service.remove(id);

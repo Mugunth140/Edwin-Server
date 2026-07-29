@@ -47,6 +47,7 @@ class CreatePurchaseOrderDto {
     paymentTerms;
     billFileUrl;
     billFileKey;
+    gstPercent;
     items;
 }
 exports.CreatePurchaseOrderDto = CreatePurchaseOrderDto;
@@ -78,6 +79,13 @@ __decorate([
     (0, class_validator_1.IsOptional)(),
     __metadata("design:type", String)
 ], CreatePurchaseOrderDto.prototype, "billFileKey", void 0);
+__decorate([
+    (0, swagger_1.ApiPropertyOptional)(),
+    (0, class_validator_1.IsNumber)(),
+    (0, class_validator_1.Min)(0),
+    (0, class_validator_1.IsOptional)(),
+    __metadata("design:type", Number)
+], CreatePurchaseOrderDto.prototype, "gstPercent", void 0);
 __decorate([
     (0, swagger_1.ApiProperty)({ type: [PoItemDto] }),
     (0, class_validator_1.IsArray)(),

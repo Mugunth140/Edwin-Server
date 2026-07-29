@@ -25,6 +25,9 @@ let PurchaseOrder = class PurchaseOrder {
     paymentTerms;
     status;
     totalAmount;
+    gstPercent;
+    gstAmount;
+    totalWithGst;
     billFileUrl;
     billFileKey;
     items;
@@ -73,6 +76,18 @@ __decorate([
     (0, typeorm_1.Column)({ type: 'decimal', precision: 12, scale: 2, default: 0 }),
     __metadata("design:type", Number)
 ], PurchaseOrder.prototype, "totalAmount", void 0);
+__decorate([
+    (0, typeorm_1.Column)({ type: 'decimal', precision: 5, scale: 2, nullable: true }),
+    __metadata("design:type", Number)
+], PurchaseOrder.prototype, "gstPercent", void 0);
+__decorate([
+    (0, typeorm_1.Column)({ type: 'decimal', precision: 12, scale: 2, nullable: true }),
+    __metadata("design:type", Number)
+], PurchaseOrder.prototype, "gstAmount", void 0);
+__decorate([
+    (0, typeorm_1.Column)({ type: 'decimal', precision: 12, scale: 2, nullable: true }),
+    __metadata("design:type", Number)
+], PurchaseOrder.prototype, "totalWithGst", void 0);
 __decorate([
     (0, typeorm_1.Column)({ nullable: true }),
     __metadata("design:type", String)

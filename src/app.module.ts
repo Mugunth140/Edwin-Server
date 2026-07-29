@@ -24,9 +24,11 @@ import { AccountsManagersModule } from './accounts-managers/accounts-managers.mo
 import { PurchaseTeamModule } from './purchase-team/purchase-team.module.js';
 import { ItemDescriptionsModule } from './item-descriptions/item-descriptions.module.js';
 import { PurchaseEnquiriesModule } from './purchase-enquiries/purchase-enquiries.module.js';
+import { VendorQuotation } from './vendor-quotations/entities/vendor-quotation.entity.js';
 import { SalariesModule } from './salaries/salaries.module.js';
 import { TimesheetAttendanceModule } from './timesheet-attendance/timesheet-attendance.module.js';
 import { ProjectCategoriesModule } from './project-categories/project-categories.module.js';
+import { VendorQuotationsModule } from './vendor-quotations/vendor-quotations.module.js';
 
 // Entity imports
 import { User } from './users/entities/user.entity.js';
@@ -132,6 +134,7 @@ function getBooleanConfig(
           ExpenseType,
           ItemDescription,
           PurchaseEnquiry,
+          VendorQuotation,
           Salary,
           WeeklyTimesheet,
           TimesheetRow,
@@ -171,6 +174,7 @@ function getBooleanConfig(
     SalariesModule,
     TimesheetAttendanceModule,
     ProjectCategoriesModule,
+    VendorQuotationsModule,
   ],
 })
 export class AppModule {}

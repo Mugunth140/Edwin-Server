@@ -12,6 +12,9 @@ export declare class PurchaseOrder {
     paymentTerms: string;
     status: PurchaseOrderStatus;
     totalAmount: number;
+    gstPercent: number;
+    gstAmount: number;
+    totalWithGst: number;
     billFileUrl: string;
     billFileKey: string;
     items: PoItem[];

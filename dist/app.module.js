@@ -33,9 +33,11 @@ const accounts_managers_module_js_1 = require("./accounts-managers/accounts-mana
 const purchase_team_module_js_1 = require("./purchase-team/purchase-team.module.js");
 const item_descriptions_module_js_1 = require("./item-descriptions/item-descriptions.module.js");
 const purchase_enquiries_module_js_1 = require("./purchase-enquiries/purchase-enquiries.module.js");
+const vendor_quotation_entity_js_1 = require("./vendor-quotations/entities/vendor-quotation.entity.js");
 const salaries_module_js_1 = require("./salaries/salaries.module.js");
 const timesheet_attendance_module_js_1 = require("./timesheet-attendance/timesheet-attendance.module.js");
 const project_categories_module_js_1 = require("./project-categories/project-categories.module.js");
+const vendor_quotations_module_js_1 = require("./vendor-quotations/vendor-quotations.module.js");
 const user_entity_js_1 = require("./users/entities/user.entity.js");
 const vendor_entity_js_1 = require("./vendors/entities/vendor.entity.js");
 const project_entity_js_1 = require("./projects/entities/project.entity.js");
@@ -137,6 +139,7 @@ exports.AppModule = AppModule = __decorate([
                         expense_type_entity_js_1.ExpenseType,
                         item_description_entity_js_1.ItemDescription,
                         purchase_enquiry_entity_js_1.PurchaseEnquiry,
+                        vendor_quotation_entity_js_1.VendorQuotation,
                         salary_entity_js_1.Salary,
                         weekly_timesheet_entity_js_1.WeeklyTimesheet,
                         timesheet_row_entity_js_1.TimesheetRow,
@@ -172,6 +175,7 @@ exports.AppModule = AppModule = __decorate([
             salaries_module_js_1.SalariesModule,
             timesheet_attendance_module_js_1.TimesheetAttendanceModule,
             project_categories_module_js_1.ProjectCategoriesModule,
+            vendor_quotations_module_js_1.VendorQuotationsModule,
         ],
     })
 ], AppModule);
