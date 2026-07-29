@@ -37,6 +37,9 @@ let DashboardController = class DashboardController {
     getEngineer(req) {
         return this.dashboardService.getEngineerDashboard(req.user.id);
     }
+    getEngineerReport(req) {
+        return this.dashboardService.getEngineerReport(req.user);
+    }
 };
 exports.DashboardController = DashboardController;
 __decorate([
@@ -72,6 +75,15 @@ __decorate([
     __metadata("design:paramtypes", [Object]),
     __metadata("design:returntype", void 0)
 ], DashboardController.prototype, "getEngineer", null);
+__decorate([
+    (0, common_1.Get)('engineer/report'),
+    (0, roles_decorator_js_1.Roles)(enums_js_1.Role.SITE_ENGINEER),
+    (0, swagger_1.ApiOperation)({ summary: 'Get comprehensive engineer report' }),
+    __param(0, (0, common_1.Request)()),
+    __metadata("design:type", Function),
+    __metadata("design:paramtypes", [Object]),
+    __metadata("design:returntype", void 0)
+], DashboardController.prototype, "getEngineerReport", null);
 exports.DashboardController = DashboardController = __decorate([
     (0, swagger_1.ApiTags)('Dashboard'),
     (0, common_1.Controller)({ path: 'dashboard', version: '1' }),

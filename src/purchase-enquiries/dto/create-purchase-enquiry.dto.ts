@@ -16,7 +16,7 @@ export class EnquiryItemDto {
 }
 
 export class CreatePurchaseEnquiryDto {
-  @ApiProperty() @IsUUID() vendorId: string;
+  @ApiPropertyOptional() @IsUUID() @IsOptional() vendorId?: string;
   @ApiProperty() @IsUUID() projectId: string;
   @ApiPropertyOptional() @IsString() @IsOptional() notes?: string;
   @ApiProperty({ type: [EnquiryItemDto] })

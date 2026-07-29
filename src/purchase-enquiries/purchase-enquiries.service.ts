@@ -3,6 +3,7 @@ import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
 import { PurchaseEnquiry } from './entities/purchase-enquiry.entity.js';
 import { CreatePurchaseEnquiryDto } from './dto/create-purchase-enquiry.dto.js';
+import { Role } from '../common/enums.js';
 
 @Injectable()
 export class PurchaseEnquiriesService {
@@ -15,7 +16,7 @@ export class PurchaseEnquiriesService {
     const year = new Date().getFullYear();
     const last = await this.repo
       .createQueryBuilder('pe')
-      .where('pe.enquiryNo LIKE :prefix', { prefix: `PE-${year}-%` })
+      .where('pe.enquiryNo LIKE :prefix', { prefix: `MR-${year}-%` })
       .orderBy('pe.enquiryNo', 'DESC')
       .getOne();
     let seq = 1;
@@ -23,13 +24,10 @@ export class PurchaseEnquiriesService {
       const parts = last.enquiryNo.split('-');
       seq = parseInt(parts[2], 10) + 1;
     }
-    return `PE-${year}-${String(seq).padStart(3, '0')}`;
+    return `MR-${year}-${String(seq).padStart(3, '0')}`;
   }
 
-  async create(
-    dto: CreatePurchaseEnquiryDto,
-    userId?: string,
-  ): Promise<PurchaseEnquiry> {
+  async create(dto: CreatePurchaseEnquiryDto, userId?: string): Promise<PurchaseEnquiry> {
     const enquiryNo = await this.generateEnquiryNo();
     const enquiry = this.repo.create({
       enquiryNo,
@@ -37,15 +35,22 @@ export class PurchaseEnquiriesService {
       projectId: dto.projectId,
       notes: dto.notes,
       items: dto.items,
+      status: 'pending',
       createdBy: userId,
     });
     return this.repo.save(enquiry);
   }
 
-  async findAll() {
+  async findAll(user?: any) {
+    const where: any = { isDeleted: false };
+
+    if (user?.role === Role.SITE_ENGINEER) {
+      where.createdBy = user.id;
+    }
+
     return this.repo.find({
-      where: { isDeleted: false },
-      relations: ['vendor', 'project'],
+      where,
+      relations: ['vendor', 'project', 'creator'],
       order: { createdAt: 'DESC' },
     });
   }
@@ -53,17 +58,13 @@ export class PurchaseEnquiriesService {
   async findOne(id: string) {
     const enquiry = await this.repo.findOne({
       where: { id, isDeleted: false },
-      relations: ['vendor', 'project'],
+      relations: ['vendor', 'project', 'creator'],
     });
-    if (!enquiry) throw new NotFoundException('Purchase Enquiry not found');
+    if (!enquiry) throw new NotFoundException('Material Requirement not found');
     return enquiry;
   }
 
-  async update(
-    id: string,
-    dto: CreatePurchaseEnquiryDto,
-    userId?: string,
-  ): Promise<PurchaseEnquiry> {
+  async update(id: string, dto: CreatePurchaseEnquiryDto, userId?: string): Promise<PurchaseEnquiry> {
     const enquiry = await this.findOne(id);
     Object.assign(enquiry, {
       vendorId: dto.vendorId,
@@ -72,6 +73,12 @@ export class PurchaseEnquiriesService {
       items: dto.items,
       updatedBy: userId ?? '',
     });
+    return this.repo.save(enquiry);
+  }
+
+  async updateStatus(id: string, status: string): Promise<PurchaseEnquiry> {
+    const enquiry = await this.findOne(id);
+    enquiry.status = status;
     return this.repo.save(enquiry);
   }
 

@@ -10,6 +10,8 @@ import { PurchaseBill } from '../accounts/entities/purchase-bill.entity.js';
 import { Expense } from '../expenses/entities/expense.entity.js';
 import { Payment } from '../payments/entities/payment.entity.js';
 import { PurchaseOrder } from '../purchase-orders/entities/purchase-order.entity.js';
+import { PurchaseEnquiry } from '../purchase-enquiries/entities/purchase-enquiry.entity.js';
+import { WeeklyTimesheet } from '../timesheet-attendance/entities/weekly-timesheet.entity.js';
 import { User } from '../users/entities/user.entity.js';
 
 @Module({
@@ -24,6 +26,8 @@ import { User } from '../users/entities/user.entity.js';
       Payment,
       User,
       PurchaseOrder,
+      PurchaseEnquiry,
+      WeeklyTimesheet,
     ]),
   ],
   controllers: [DashboardController],

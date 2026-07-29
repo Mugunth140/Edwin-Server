@@ -45,15 +45,6 @@ export class SubcontractWorkOrder {
   description: string;
 
   @Column({ type: 'decimal', precision: 12, scale: 2, default: 0 })
-  quantity: number;
-
-  @Column({ default: 'sqft' })
-  unit: string;
-
-  @Column({ type: 'decimal', precision: 12, scale: 2, default: 0 })
-  rate: number;
-
-  @Column({ type: 'decimal', precision: 12, scale: 2, default: 0 })
   amount: number;
 
   @Column({ type: 'decimal', precision: 5, scale: 2, default: 18 })
@@ -64,6 +55,12 @@ export class SubcontractWorkOrder {
 
   @Column({ type: 'decimal', precision: 12, scale: 2, default: 0 })
   totalAmount: number;
+
+  @Column({ nullable: true })
+  workorderUrl: string;
+
+  @Column({ nullable: true })
+  workorderKey: string;
 
   @Column({ type: 'date', nullable: true })
   startDate: Date;

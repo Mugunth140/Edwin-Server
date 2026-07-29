@@ -8,12 +8,19 @@ import {
   Delete,
   UseGuards,
   Query,
+  UseInterceptors,
+  UploadedFile,
 } from '@nestjs/common';
+import { FileInterceptor } from '@nestjs/platform-express';
+import { diskStorage } from 'multer';
+import { extname } from 'path';
+import * as fs from 'fs';
 import {
   ApiTags,
   ApiOperation,
   ApiBearerAuth,
   ApiQuery,
+  ApiConsumes,
 } from '@nestjs/swagger';
 import { AuthGuard } from '@nestjs/passport';
 import { RolesGuard } from '../auth/roles.guard.js';
@@ -34,6 +41,55 @@ export class SubcontractWorkOrdersController {
   constructor(
     private readonly subcontractWorkOrdersService: SubcontractWorkOrdersService,
   ) {}
+
+  @Post('upload')
+  @Roles(Role.ADMIN, Role.ACCOUNTS_MANAGER, Role.PURCHASE_TEAM)
+  @UseInterceptors(
+    FileInterceptor('workorder', {
+      storage: diskStorage({
+        destination: (req, file, cb) => {
+          const uploadPath = './uploads/subcontract-work-orders';
+          if (!fs.existsSync(uploadPath)) {
+            fs.mkdirSync(uploadPath, { recursive: true });
+          }
+          cb(null, uploadPath);
+        },
+        filename: (req, file, cb) => {
+          const uniqueSuffix =
+            Date.now() + '-' + Math.round(Math.random() * 1e9);
+          cb(
+            null,
+            `workorder-${uniqueSuffix}${extname(file.originalname)}`,
+          );
+        },
+      }),
+      fileFilter: (req, file, cb) => {
+        const allowedMimeTypes = [
+          'application/pdf',
+          'application/msword',
+          'application/vnd.openxmlformats-officedocument.wordprocessingml.document',
+          'application/vnd.ms-excel',
+          'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet',
+        ];
+        if (allowedMimeTypes.includes(file.mimetype)) {
+          cb(null, true);
+        } else {
+          cb(new Error('Invalid file type. Only PDF and Excel files are allowed.'), false);
+        }
+      },
+    }),
+  )
+  @ApiConsumes('multipart/form-data')
+  @ApiOperation({ summary: 'Upload a work order file' })
+  uploadWorkOrder(@UploadedFile() file: Express.Multer.File) {
+    if (!file) {
+      throw new Error('File is required');
+    }
+    return {
+      workorderUrl: `/uploads/subcontract-work-orders/${file.filename}`,
+      workorderKey: file.filename,
+    };
+  }
 
   @Post()
   @Roles(Role.ADMIN, Role.ACCOUNTS_MANAGER, Role.PURCHASE_TEAM)

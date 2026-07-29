@@ -25,6 +25,8 @@ const expense_entity_js_1 = require("../expenses/entities/expense.entity.js");
 const payment_entity_js_1 = require("../payments/entities/payment.entity.js");
 const user_entity_js_1 = require("../users/entities/user.entity.js");
 const purchase_order_entity_js_1 = require("../purchase-orders/entities/purchase-order.entity.js");
+const purchase_enquiry_entity_js_1 = require("../purchase-enquiries/entities/purchase-enquiry.entity.js");
+const weekly_timesheet_entity_js_1 = require("../timesheet-attendance/entities/weekly-timesheet.entity.js");
 const enums_js_1 = require("../common/enums.js");
 let DashboardService = class DashboardService {
     projectsRepo;
@@ -36,7 +38,9 @@ let DashboardService = class DashboardService {
     paymentRepo;
     usersRepo;
     poRepo;
-    constructor(projectsRepo, milestonesRepo, attendanceRepo, invoiceRepo, billRepo, expenseRepo, paymentRepo, usersRepo, poRepo) {
+    enquiryRepo;
+    tsRepo;
+    constructor(projectsRepo, milestonesRepo, attendanceRepo, invoiceRepo, billRepo, expenseRepo, paymentRepo, usersRepo, poRepo, enquiryRepo, tsRepo) {
         this.projectsRepo = projectsRepo;
         this.milestonesRepo = milestonesRepo;
         this.attendanceRepo = attendanceRepo;
@@ -46,6 +50,8 @@ let DashboardService = class DashboardService {
         this.paymentRepo = paymentRepo;
         this.usersRepo = usersRepo;
         this.poRepo = poRepo;
+        this.enquiryRepo = enquiryRepo;
+        this.tsRepo = tsRepo;
     }
     async getPurchaseDashboard() {
         const pendingPOs = await this.poRepo.find({
@@ -235,6 +241,34 @@ let DashboardService = class DashboardService {
             throw new common_1.NotFoundException('Engineer not found');
         }
         const assignedProjects = engineer.projects || [];
+        const materialRequirements = await this.enquiryRepo.find({
+            where: { createdBy: userId, isDeleted: false },
+            relations: ['project'],
+            order: { createdAt: 'DESC' },
+        });
+        const mrTotal = materialRequirements.length;
+        const mrPending = materialRequirements.filter((m) => m.status === 'pending').length;
+        const mrApproved = materialRequirements.filter((m) => m.status === 'approved').length;
+        const mrRejected = materialRequirements.filter((m) => m.status === 'rejected').length;
+        const recentMRs = materialRequirements.slice(0, 5).map((m) => ({
+            id: m.id,
+            enquiryNo: m.enquiryNo,
+            projectName: m.project?.name || '-',
+            status: m.status,
+            createdAt: m.createdAt,
+        }));
+        const today = new Date();
+        const startOfMonth = new Date(today.getFullYear(), today.getMonth(), 1);
+        const monthTimesheets = await this.tsRepo.find({
+            where: {
+                siteEngineerId: userId,
+                isDeleted: false,
+                weekStart: (0, typeorm_2.MoreThanOrEqual)(startOfMonth),
+            },
+        });
+        const tsApproved = monthTimesheets.filter((t) => t.status === 'approved').length;
+        const tsSubmitted = monthTimesheets.filter((t) => t.status === 'submitted').length;
+        const tsDraft = monthTimesheets.filter((t) => t.status === 'draft' || t.status === 'pending').length;
         return {
             totalProjects: assignedProjects.length,
             projects: assignedProjects.map((p) => ({
@@ -245,6 +279,67 @@ let DashboardService = class DashboardService {
             revenueVsCost: { totalRevenue: 0, totalCost: 0 },
             weeklyLabour: [],
             criticalActions: [],
+            materialRequirementCounts: { total: mrTotal, pending: mrPending, approved: mrApproved, rejected: mrRejected },
+            recentMaterialRequirements: recentMRs,
+            timesheetCounts: { approved: tsApproved, submitted: tsSubmitted, draft: tsDraft, total: monthTimesheets.length },
+        };
+    }
+    async getEngineerReport(user) {
+        const engineer = await this.usersRepo.findOne({
+            where: { id: user.id, isActive: true },
+            relations: ['projects', 'salaryGrade'],
+        });
+        if (!engineer)
+            throw new common_1.NotFoundException('Engineer not found');
+        const hourlyRate = engineer.salaryGrade?.avgCostPerHr ?? 0;
+        const assignedProjects = (engineer.projects || []).map((p) => ({
+            id: p.id,
+            name: p.name,
+            completionPct: Number(p.completionPct),
+        }));
+        const mrs = await this.enquiryRepo.find({
+            where: { createdBy: user.id, isDeleted: false },
+            relations: ['project'],
+            order: { createdAt: 'DESC' },
+        });
+        const timesheets = await this.tsRepo.find({
+            where: { siteEngineerId: user.id, isDeleted: false },
+            order: { weekStart: 'DESC' },
+        });
+        const today = new Date();
+        const thirtyDaysAgo = new Date(today);
+        thirtyDaysAgo.setDate(thirtyDaysAgo.getDate() - 30);
+        const attendanceLogs = await this.attendanceRepo.find({
+            where: { logDate: (0, typeorm_2.MoreThanOrEqual)(thirtyDaysAgo) },
+            relations: ['project'],
+            order: { logDate: 'DESC' },
+        });
+        return {
+            engineer: { id: engineer.id, name: engineer.name, email: engineer.email, employeeId: engineer.employeeId, phone: engineer.phone },
+            assignedProjects,
+            materialRequirements: mrs.map((m) => ({
+                id: m.id,
+                enquiryNo: m.enquiryNo,
+                projectName: m.project?.name || '-',
+                status: m.status,
+                items: m.items,
+                notes: m.notes,
+                createdAt: m.createdAt,
+            })),
+            hourlyRate,
+            timesheets: timesheets.map((t) => ({
+                id: t.id,
+                weekStart: t.weekStart,
+                weekEnd: t.weekEnd,
+                totalHours: Number(t.totalHours),
+                earnedAmount: Number((Number(t.totalHours) * hourlyRate).toFixed(2)),
+                status: t.status,
+            })),
+            attendanceLogs: attendanceLogs.map((a) => ({
+                date: a.logDate,
+                projectName: a.project?.name || '-',
+                headcount: a.headcount,
+            })),
         };
     }
 };
@@ -260,7 +355,11 @@ exports.DashboardService = DashboardService = __decorate([
     __param(6, (0, typeorm_1.InjectRepository)(payment_entity_js_1.Payment)),
     __param(7, (0, typeorm_1.InjectRepository)(user_entity_js_1.User)),
     __param(8, (0, typeorm_1.InjectRepository)(purchase_order_entity_js_1.PurchaseOrder)),
+    __param(9, (0, typeorm_1.InjectRepository)(purchase_enquiry_entity_js_1.PurchaseEnquiry)),
+    __param(10, (0, typeorm_1.InjectRepository)(weekly_timesheet_entity_js_1.WeeklyTimesheet)),
     __metadata("design:paramtypes", [typeorm_2.Repository,
+        typeorm_2.Repository,
+        typeorm_2.Repository,
         typeorm_2.Repository,
         typeorm_2.Repository,
         typeorm_2.Repository,

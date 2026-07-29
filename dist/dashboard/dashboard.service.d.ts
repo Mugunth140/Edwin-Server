@@ -8,6 +8,8 @@ import { Expense } from '../expenses/entities/expense.entity.js';
 import { Payment } from '../payments/entities/payment.entity.js';
 import { User } from '../users/entities/user.entity.js';
 import { PurchaseOrder } from '../purchase-orders/entities/purchase-order.entity.js';
+import { PurchaseEnquiry } from '../purchase-enquiries/entities/purchase-enquiry.entity.js';
+import { WeeklyTimesheet } from '../timesheet-attendance/entities/weekly-timesheet.entity.js';
 export declare class DashboardService {
     private projectsRepo;
     private milestonesRepo;
@@ -18,7 +20,9 @@ export declare class DashboardService {
     private paymentRepo;
     private usersRepo;
     private poRepo;
-    constructor(projectsRepo: Repository<Project>, milestonesRepo: Repository<ProjectMilestone>, attendanceRepo: Repository<AttendanceLog>, invoiceRepo: Repository<SalesInvoice>, billRepo: Repository<PurchaseBill>, expenseRepo: Repository<Expense>, paymentRepo: Repository<Payment>, usersRepo: Repository<User>, poRepo: Repository<PurchaseOrder>);
+    private enquiryRepo;
+    private tsRepo;
+    constructor(projectsRepo: Repository<Project>, milestonesRepo: Repository<ProjectMilestone>, attendanceRepo: Repository<AttendanceLog>, invoiceRepo: Repository<SalesInvoice>, billRepo: Repository<PurchaseBill>, expenseRepo: Repository<Expense>, paymentRepo: Repository<Payment>, usersRepo: Repository<User>, poRepo: Repository<PurchaseOrder>, enquiryRepo: Repository<PurchaseEnquiry>, tsRepo: Repository<WeeklyTimesheet>);
     getPurchaseDashboard(): Promise<{
         pendingPOs: {
             id: string;
@@ -89,5 +93,64 @@ export declare class DashboardService {
         };
         weeklyLabour: never[];
         criticalActions: never[];
+        materialRequirementCounts: {
+            total: number;
+            pending: number;
+            approved: number;
+            rejected: number;
+        };
+        recentMaterialRequirements: {
+            id: string;
+            enquiryNo: string;
+            projectName: string;
+            status: string;
+            createdAt: Date;
+        }[];
+        timesheetCounts: {
+            approved: number;
+            submitted: number;
+            draft: number;
+            total: number;
+        };
+    }>;
+    getEngineerReport(user: any): Promise<{
+        engineer: {
+            id: string;
+            name: string;
+            email: string;
+            employeeId: string;
+            phone: string;
+        };
+        assignedProjects: {
+            id: string;
+            name: string;
+            completionPct: number;
+        }[];
+        materialRequirements: {
+            id: string;
+            enquiryNo: string;
+            projectName: string;
+            status: string;
+            items: {
+                description: string;
+                quantity: number;
+            }[];
+            notes: string;
+            createdAt: Date;
+        }[];
+        hourlyRate: number;
+        timesheets: {
+            id: string;
+            weekStart: Date;
+            weekEnd: Date;
+            totalHours: number;
+            earnedAmount: number;
+            status: string;
+        }[];
+        attendanceLogs: {
+            date: Date;
+            projectName: string;
+            headcount: number;
+        }[];
     }>;
 }

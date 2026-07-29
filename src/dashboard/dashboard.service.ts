@@ -1,6 +1,6 @@
 import { Injectable, NotFoundException } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
-import { Repository } from 'typeorm';
+import { Repository, MoreThanOrEqual } from 'typeorm';
 import { Project } from '../projects/entities/project.entity.js';
 import { ProjectMilestone } from '../projects/entities/project-milestone.entity.js';
 import { AttendanceLog } from '../projects/entities/attendance-log.entity.js';
@@ -10,6 +10,8 @@ import { Expense } from '../expenses/entities/expense.entity.js';
 import { Payment } from '../payments/entities/payment.entity.js';
 import { User } from '../users/entities/user.entity.js';
 import { PurchaseOrder } from '../purchase-orders/entities/purchase-order.entity.js';
+import { PurchaseEnquiry } from '../purchase-enquiries/entities/purchase-enquiry.entity.js';
+import { WeeklyTimesheet } from '../timesheet-attendance/entities/weekly-timesheet.entity.js';
 import { InvoiceStatus, PurchaseOrderStatus } from '../common/enums.js';
 
 @Injectable()
@@ -27,6 +29,10 @@ export class DashboardService {
     @InjectRepository(Payment) private paymentRepo: Repository<Payment>,
     @InjectRepository(User) private usersRepo: Repository<User>,
     @InjectRepository(PurchaseOrder) private poRepo: Repository<PurchaseOrder>,
+    @InjectRepository(PurchaseEnquiry)
+    private enquiryRepo: Repository<PurchaseEnquiry>,
+    @InjectRepository(WeeklyTimesheet)
+    private tsRepo: Repository<WeeklyTimesheet>,
   ) {}
 
   async getPurchaseDashboard() {
@@ -273,6 +279,38 @@ export class DashboardService {
 
     const assignedProjects = engineer.projects || [];
 
+    // Material Requirements
+    const materialRequirements = await this.enquiryRepo.find({
+      where: { createdBy: userId, isDeleted: false },
+      relations: ['project'],
+      order: { createdAt: 'DESC' },
+    });
+    const mrTotal = materialRequirements.length;
+    const mrPending = materialRequirements.filter((m) => m.status === 'pending').length;
+    const mrApproved = materialRequirements.filter((m) => m.status === 'approved').length;
+    const mrRejected = materialRequirements.filter((m) => m.status === 'rejected').length;
+    const recentMRs = materialRequirements.slice(0, 5).map((m) => ({
+      id: m.id,
+      enquiryNo: m.enquiryNo,
+      projectName: m.project?.name || '-',
+      status: m.status,
+      createdAt: m.createdAt,
+    }));
+
+    // Timesheet statuses for current month
+    const today = new Date();
+    const startOfMonth = new Date(today.getFullYear(), today.getMonth(), 1);
+    const monthTimesheets = await this.tsRepo.find({
+      where: {
+        siteEngineerId: userId,
+        isDeleted: false,
+        weekStart: MoreThanOrEqual(startOfMonth),
+      },
+    });
+    const tsApproved = monthTimesheets.filter((t) => t.status === 'approved').length;
+    const tsSubmitted = monthTimesheets.filter((t) => t.status === 'submitted').length;
+    const tsDraft = monthTimesheets.filter((t) => t.status === 'draft' || t.status === 'pending').length;
+
     return {
       totalProjects: assignedProjects.length,
       projects: assignedProjects.map((p) => ({
@@ -280,9 +318,76 @@ export class DashboardService {
         name: p.name,
         completionPct: Number(p.completionPct),
       })),
-      revenueVsCost: { totalRevenue: 0, totalCost: 0 }, // Engineers don't see financial totals
+      revenueVsCost: { totalRevenue: 0, totalCost: 0 },
       weeklyLabour: [],
       criticalActions: [],
+      materialRequirementCounts: { total: mrTotal, pending: mrPending, approved: mrApproved, rejected: mrRejected },
+      recentMaterialRequirements: recentMRs,
+      timesheetCounts: { approved: tsApproved, submitted: tsSubmitted, draft: tsDraft, total: monthTimesheets.length },
+    };
+  }
+
+  async getEngineerReport(user: any) {
+    const engineer = await this.usersRepo.findOne({
+      where: { id: user.id, isActive: true },
+      relations: ['projects', 'salaryGrade'],
+    });
+    if (!engineer) throw new NotFoundException('Engineer not found');
+
+    const hourlyRate = engineer.salaryGrade?.avgCostPerHr ?? 0;
+
+    const assignedProjects = (engineer.projects || []).map((p) => ({
+      id: p.id,
+      name: p.name,
+      completionPct: Number(p.completionPct),
+    }));
+
+    const mrs = await this.enquiryRepo.find({
+      where: { createdBy: user.id, isDeleted: false },
+      relations: ['project'],
+      order: { createdAt: 'DESC' },
+    });
+
+    const timesheets = await this.tsRepo.find({
+      where: { siteEngineerId: user.id, isDeleted: false },
+      order: { weekStart: 'DESC' },
+    });
+
+    const today = new Date();
+    const thirtyDaysAgo = new Date(today);
+    thirtyDaysAgo.setDate(thirtyDaysAgo.getDate() - 30);
+    const attendanceLogs = await this.attendanceRepo.find({
+      where: { logDate: MoreThanOrEqual(thirtyDaysAgo) as any },
+      relations: ['project'],
+      order: { logDate: 'DESC' },
+    });
+
+    return {
+      engineer: { id: engineer.id, name: engineer.name, email: engineer.email, employeeId: engineer.employeeId, phone: engineer.phone },
+      assignedProjects,
+      materialRequirements: mrs.map((m) => ({
+        id: m.id,
+        enquiryNo: m.enquiryNo,
+        projectName: m.project?.name || '-',
+        status: m.status,
+        items: m.items,
+        notes: m.notes,
+        createdAt: m.createdAt,
+      })),
+      hourlyRate,
+      timesheets: timesheets.map((t) => ({
+        id: t.id,
+        weekStart: t.weekStart,
+        weekEnd: t.weekEnd,
+        totalHours: Number(t.totalHours),
+        earnedAmount: Number((Number(t.totalHours) * hourlyRate).toFixed(2)),
+        status: t.status,
+      })),
+      attendanceLogs: attendanceLogs.map((a) => ({
+        date: a.logDate,
+        projectName: a.project?.name || '-',
+        headcount: a.headcount,
+      })),
     };
   }
 }

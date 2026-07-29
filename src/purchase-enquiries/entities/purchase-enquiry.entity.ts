@@ -9,8 +9,9 @@ import {
 } from 'typeorm';
 import { Vendor } from '../../vendors/entities/vendor.entity.js';
 import { Project } from '../../projects/entities/project.entity.js';
+import { User } from '../../users/entities/user.entity.js';
 
-@Entity('purchase_enquiries')
+@Entity('material_requirements')
 export class PurchaseEnquiry {
   @PrimaryGeneratedColumn('uuid')
   id: string;
@@ -18,11 +19,11 @@ export class PurchaseEnquiry {
   @Column({ unique: true })
   enquiryNo: string;
 
-  @ManyToOne(() => Vendor, { eager: true })
+  @ManyToOne(() => Vendor)
   @JoinColumn({ name: 'vendorId' })
   vendor: Vendor;
 
-  @Column()
+  @Column({ nullable: true })
   vendorId: string;
 
   @ManyToOne(() => Project)
@@ -43,6 +44,10 @@ export class PurchaseEnquiry {
 
   @Column({ default: false })
   isDeleted: boolean;
+
+  @ManyToOne(() => User)
+  @JoinColumn({ name: 'createdBy' })
+  creator: User;
 
   @Column({ nullable: true })
   createdBy: string;

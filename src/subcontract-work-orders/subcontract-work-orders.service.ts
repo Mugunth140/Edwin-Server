@@ -16,23 +16,6 @@ export class SubcontractWorkOrdersService {
     private readonly repository: Repository<SubcontractWorkOrder>,
   ) {}
 
-  private calculateTotals(
-    dto: CreateSubcontractWorkOrderDto | UpdateSubcontractWorkOrderDto,
-    entity: SubcontractWorkOrder,
-  ) {
-    const quantity =
-      dto.quantity !== undefined ? dto.quantity : entity.quantity;
-    const rate = dto.rate !== undefined ? dto.rate : entity.rate;
-    const gstPercentage =
-      dto.gstPercentage !== undefined
-        ? dto.gstPercentage
-        : entity.gstPercentage;
-
-    entity.amount = Number(quantity) * Number(rate);
-    entity.gstAmount = (entity.amount * Number(gstPercentage)) / 100;
-    entity.totalAmount = entity.amount + entity.gstAmount;
-  }
-
   async create(dto: CreateSubcontractWorkOrderDto) {
     const existing = await this.repository.findOne({
       where: { woNumber: dto.woNumber },
@@ -44,7 +27,9 @@ export class SubcontractWorkOrdersService {
     }
 
     const swo = this.repository.create(dto);
-    this.calculateTotals(dto, swo);
+    swo.amount = 0;
+    swo.gstAmount = (0 * Number(dto.gstPercentage || 0)) / 100;
+    swo.totalAmount = swo.gstAmount;
     return await this.repository.save(swo);
   }
 
@@ -74,7 +59,9 @@ export class SubcontractWorkOrdersService {
   async update(id: string, dto: UpdateSubcontractWorkOrderDto) {
     const swo = await this.findOne(id);
     Object.assign(swo, dto);
-    this.calculateTotals(dto, swo);
+    swo.amount = 0;
+    swo.gstAmount = (0 * Number(dto.gstPercentage ?? swo.gstPercentage)) / 100;
+    swo.totalAmount = swo.gstAmount;
     return await this.repository.save(swo);
   }
 

@@ -31,20 +31,17 @@ export class CreateSubcontractWorkOrderDto {
 
   @ApiProperty()
   @IsNumber()
-  quantity: number;
+  gstPercentage: number;
 
   @ApiProperty({ required: false })
   @IsString()
   @IsOptional()
-  unit?: string;
+  workorderUrl?: string;
 
-  @ApiProperty()
-  @IsNumber()
-  rate: number;
-
-  @ApiProperty()
-  @IsNumber()
-  gstPercentage: number;
+  @ApiProperty({ required: false })
+  @IsString()
+  @IsOptional()
+  workorderKey?: string;
 
   @ApiProperty({ required: false })
   @IsDateString()

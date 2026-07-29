@@ -40,4 +40,11 @@ export class DashboardController {
   getEngineer(@Request() req: any) {
     return this.dashboardService.getEngineerDashboard(req.user.id);
   }
+
+  @Get('engineer/report')
+  @Roles(Role.SITE_ENGINEER)
+  @ApiOperation({ summary: 'Get comprehensive engineer report' })
+  getEngineerReport(@Request() req: any) {
+    return this.dashboardService.getEngineerReport(req.user);
+  }
 }

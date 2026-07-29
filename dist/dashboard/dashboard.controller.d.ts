@@ -72,5 +72,64 @@ export declare class DashboardController {
         };
         weeklyLabour: never[];
         criticalActions: never[];
+        materialRequirementCounts: {
+            total: number;
+            pending: number;
+            approved: number;
+            rejected: number;
+        };
+        recentMaterialRequirements: {
+            id: string;
+            enquiryNo: string;
+            projectName: string;
+            status: string;
+            createdAt: Date;
+        }[];
+        timesheetCounts: {
+            approved: number;
+            submitted: number;
+            draft: number;
+            total: number;
+        };
+    }>;
+    getEngineerReport(req: any): Promise<{
+        engineer: {
+            id: string;
+            name: string;
+            email: string;
+            employeeId: string;
+            phone: string;
+        };
+        assignedProjects: {
+            id: string;
+            name: string;
+            completionPct: number;
+        }[];
+        materialRequirements: {
+            id: string;
+            enquiryNo: string;
+            projectName: string;
+            status: string;
+            items: {
+                description: string;
+                quantity: number;
+            }[];
+            notes: string;
+            createdAt: Date;
+        }[];
+        hourlyRate: number;
+        timesheets: {
+            id: string;
+            weekStart: Date;
+            weekEnd: Date;
+            totalHours: number;
+            earnedAmount: number;
+            status: string;
+        }[];
+        attendanceLogs: {
+            date: Date;
+            projectName: string;
+            headcount: number;
+        }[];
     }>;
 }
