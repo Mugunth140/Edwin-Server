@@ -27,6 +27,9 @@ export class TimesheetRow {
   @Column({ type: 'varchar', default: 'project' })
   entryType: string;
 
+  @Column({ type: 'text', nullable: true })
+  remark: string | null;
+
   @Column({ type: 'decimal', precision: 12, scale: 2, default: 0 })
   amount: number;
 

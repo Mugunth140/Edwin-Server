@@ -1,4 +1,4 @@
-import { IsString, IsOptional, IsNumber, Min, IsUUID } from 'class-validator';
+import { IsString, IsOptional, IsNumber, Min, IsUUID, MaxLength } from 'class-validator';
 import { ApiProperty, ApiPropertyOptional } from '@nestjs/swagger';
 
 export class TimesheetRowDto {
@@ -15,6 +15,12 @@ export class TimesheetRowDto {
   @ApiProperty({ default: 'project' })
   @IsString()
   entryType: string;
+
+  @ApiPropertyOptional()
+  @IsString()
+  @IsOptional()
+  @MaxLength(1000)
+  remark?: string;
 
   @ApiProperty({ default: 0 })
   @IsNumber()
