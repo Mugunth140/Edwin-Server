@@ -38,6 +38,7 @@ const salaries_module_js_1 = require("./salaries/salaries.module.js");
 const timesheet_attendance_module_js_1 = require("./timesheet-attendance/timesheet-attendance.module.js");
 const project_categories_module_js_1 = require("./project-categories/project-categories.module.js");
 const vendor_quotations_module_js_1 = require("./vendor-quotations/vendor-quotations.module.js");
+const schemas_module_js_1 = require("./schemas/schemas.module.js");
 const user_entity_js_1 = require("./users/entities/user.entity.js");
 const vendor_entity_js_1 = require("./vendors/entities/vendor.entity.js");
 const project_entity_js_1 = require("./projects/entities/project.entity.js");
@@ -176,6 +177,7 @@ exports.AppModule = AppModule = __decorate([
             timesheet_attendance_module_js_1.TimesheetAttendanceModule,
             project_categories_module_js_1.ProjectCategoriesModule,
             vendor_quotations_module_js_1.VendorQuotationsModule,
+            schemas_module_js_1.SchemasModule,
         ],
     })
 ], AppModule);

@@ -29,6 +29,7 @@ import { SalariesModule } from './salaries/salaries.module.js';
 import { TimesheetAttendanceModule } from './timesheet-attendance/timesheet-attendance.module.js';
 import { ProjectCategoriesModule } from './project-categories/project-categories.module.js';
 import { VendorQuotationsModule } from './vendor-quotations/vendor-quotations.module.js';
+import { SchemasModule } from './schemas/schemas.module.js';
 
 // Entity imports
 import { User } from './users/entities/user.entity.js';
@@ -175,6 +176,7 @@ function getBooleanConfig(
     TimesheetAttendanceModule,
     ProjectCategoriesModule,
     VendorQuotationsModule,
+    SchemasModule,
   ],
 })
 export class AppModule {}
