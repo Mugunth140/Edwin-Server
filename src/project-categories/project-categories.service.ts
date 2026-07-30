@@ -2,6 +2,7 @@ import {
   Injectable,
   NotFoundException,
   ConflictException,
+  OnApplicationBootstrap,
 } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
@@ -9,11 +10,22 @@ import { ProjectCategory } from './entities/project-category.entity.js';
 import { CreateProjectCategoryDto } from './dto/create-project-category.dto.js';
 
 @Injectable()
-export class ProjectCategoriesService {
+export class ProjectCategoriesService implements OnApplicationBootstrap {
   constructor(
     @InjectRepository(ProjectCategory)
     private readonly repository: Repository<ProjectCategory>,
   ) {}
+
+  async onApplicationBootstrap() {
+    const count = await this.repository.count();
+    if (count === 0) {
+      const defaults = ['Residential', 'Commercial'];
+      for (const name of defaults) {
+        await this.repository.save(this.repository.create({ name }));
+      }
+      console.log('Seeded default project categories');
+    }
+  }
 
   async create(dto: CreateProjectCategoryDto) {
     const existing = await this.repository.findOne({
