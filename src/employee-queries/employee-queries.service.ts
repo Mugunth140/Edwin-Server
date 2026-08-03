@@ -96,9 +96,16 @@ export class EmployeeQueriesService {
       await this.tsRepo.save(ts);
     }
 
-    query.status = dto.action;
-    query.respondedById = adminUserId;
-    query.respondedAt = new Date();
-    return this.queryRepo.save(query);
+    // Use a partial update rather than saving the loaded entity: `query`
+    // carries an eager `siteEngineer` relation that can resolve to null
+    // (e.g. if that lookup fails for any reason), and TypeORM's save()
+    // would then null out the siteEngineerId FK column from that stale
+    // relation object, violating the NOT NULL constraint.
+    await this.queryRepo.update(id, {
+      status: dto.action,
+      respondedById: adminUserId,
+      respondedAt: new Date(),
+    });
+    return this.queryRepo.findOne({ where: { id }, relations: ['timesheet'] });
   }
 }
