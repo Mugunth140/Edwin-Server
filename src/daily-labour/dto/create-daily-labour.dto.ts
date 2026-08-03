@@ -55,12 +55,42 @@ export class DailyWorkerDto {
   @ApiProperty({ required: false })
   @IsString()
   @IsOptional()
+  morningPhoto3Url?: string;
+
+  @ApiProperty({ required: false })
+  @IsString()
+  @IsOptional()
+  morningPhoto4Url?: string;
+
+  @ApiProperty({ required: false })
+  @IsString()
+  @IsOptional()
+  morningPhoto5Url?: string;
+
+  @ApiProperty({ required: false })
+  @IsString()
+  @IsOptional()
   eveningPhoto1Url?: string;
 
   @ApiProperty({ required: false })
   @IsString()
   @IsOptional()
   eveningPhoto2Url?: string;
+
+  @ApiProperty({ required: false })
+  @IsString()
+  @IsOptional()
+  eveningPhoto3Url?: string;
+
+  @ApiProperty({ required: false })
+  @IsString()
+  @IsOptional()
+  eveningPhoto4Url?: string;
+
+  @ApiProperty({ required: false })
+  @IsString()
+  @IsOptional()
+  eveningPhoto5Url?: string;
 }
 
 export class CreateDailyLabourReportDto {

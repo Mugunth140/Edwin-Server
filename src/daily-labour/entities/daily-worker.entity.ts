@@ -54,10 +54,28 @@ export class DailyWorker {
   morningPhoto2Url: string;
 
   @Column({ nullable: true })
+  morningPhoto3Url: string;
+
+  @Column({ nullable: true })
+  morningPhoto4Url: string;
+
+  @Column({ nullable: true })
+  morningPhoto5Url: string;
+
+  @Column({ nullable: true })
   eveningPhoto1Url: string;
 
   @Column({ nullable: true })
   eveningPhoto2Url: string;
+
+  @Column({ nullable: true })
+  eveningPhoto3Url: string;
+
+  @Column({ nullable: true })
+  eveningPhoto4Url: string;
+
+  @Column({ nullable: true })
+  eveningPhoto5Url: string;
 
   @Column({ type: 'varchar', default: 'pending' })
   status: string;

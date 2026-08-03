@@ -1,10 +1,38 @@
-import { Injectable, NotFoundException, BadRequestException } from '@nestjs/common';
+import {
+  Injectable,
+  NotFoundException,
+  BadRequestException,
+} from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
 import { DailyLabourReport } from './entities/daily-labour-report.entity.js';
 import { DailyWorker } from './entities/daily-worker.entity.js';
 import { CreateDailyLabourReportDto } from './dto/create-daily-labour.dto.js';
 import { Role } from '../common/enums.js';
+
+const PHOTO_SLOTS = [1, 2, 3, 4, 5] as const;
+
+/**
+ * Maps uploaded worker_{index}_{morning|evening}Photo{1..5} files onto the
+ * worker's discrete morningPhotoNUrl/eveningPhotoNUrl columns.
+ */
+function applyPhotoFiles(
+  worker: DailyWorker,
+  files: Express.Multer.File[] | undefined,
+  workerIndex: number,
+) {
+  if (!files) return;
+  const target = worker as unknown as Record<string, string>;
+  for (const session of ['morning', 'evening'] as const) {
+    for (const slot of PHOTO_SLOTS) {
+      const field = `worker_${workerIndex}_${session}Photo${slot}`;
+      const file = files.find((f) => f.fieldname === field);
+      if (file) {
+        target[`${session}Photo${slot}Url`] = `/uploads/dpw/${file.filename}`;
+      }
+    }
+  }
+}
 
 @Injectable()
 export class DailyLabourService {
@@ -38,25 +66,7 @@ export class DailyLabourService {
           reportId: savedReport.id,
         });
 
-        if (files) {
-          const m1 = files.find(
-            (f) => f.fieldname === `worker_${index}_morningPhoto1`,
-          );
-          const m2 = files.find(
-            (f) => f.fieldname === `worker_${index}_morningPhoto2`,
-          );
-          const e1 = files.find(
-            (f) => f.fieldname === `worker_${index}_eveningPhoto1`,
-          );
-          const e2 = files.find(
-            (f) => f.fieldname === `worker_${index}_eveningPhoto2`,
-          );
-
-          if (m1) worker.morningPhoto1Url = `/uploads/dpw/${m1.filename}`;
-          if (m2) worker.morningPhoto2Url = `/uploads/dpw/${m2.filename}`;
-          if (e1) worker.eveningPhoto1Url = `/uploads/dpw/${e1.filename}`;
-          if (e2) worker.eveningPhoto2Url = `/uploads/dpw/${e2.filename}`;
-        }
+        applyPhotoFiles(worker, files, index);
 
         return worker;
       });
@@ -111,13 +121,17 @@ export class DailyLabourService {
   async updateWorkerStatus(reportId: string, workerId: string, status: string) {
     const validStatuses = ['pending', 'approved', 'rejected'];
     if (!validStatuses.includes(status)) {
-      throw new BadRequestException(`Invalid status. Must be one of: ${validStatuses.join(', ')}`);
+      throw new BadRequestException(
+        `Invalid status. Must be one of: ${validStatuses.join(', ')}`,
+      );
     }
     const worker = await this.workerRepo.findOne({
       where: { id: workerId, reportId },
     });
     if (!worker) {
-      throw new NotFoundException(`Worker with ID ${workerId} not found in report ${reportId}`);
+      throw new NotFoundException(
+        `Worker with ID ${workerId} not found in report ${reportId}`,
+      );
     }
     worker.status = status;
     return this.workerRepo.save(worker);
@@ -157,36 +171,10 @@ export class DailyLabourService {
           reportId: id,
         });
 
-        // Map photos from files if provided
-        if (files) {
-          const m1 = files.find(
-            (f) => f.fieldname === `worker_${index}_morningPhoto1`,
-          );
-          const m2 = files.find(
-            (f) => f.fieldname === `worker_${index}_morningPhoto2`,
-          );
-          const e1 = files.find(
-            (f) => f.fieldname === `worker_${index}_eveningPhoto1`,
-          );
-          const e2 = files.find(
-            (f) => f.fieldname === `worker_${index}_eveningPhoto2`,
-          );
-
-          if (m1) worker.morningPhoto1Url = `/uploads/dpw/${m1.filename}`;
-          if (m2) worker.morningPhoto2Url = `/uploads/dpw/${m2.filename}`;
-          if (e1) worker.eveningPhoto1Url = `/uploads/dpw/${e1.filename}`;
-          if (e2) worker.eveningPhoto2Url = `/uploads/dpw/${e2.filename}`;
-        }
-
-        // If photo URLs were already in DTO (not replaced by new files), keep them
-        if (!worker.morningPhoto1Url && w.morningPhoto1Url)
-          worker.morningPhoto1Url = w.morningPhoto1Url;
-        if (!worker.morningPhoto2Url && w.morningPhoto2Url)
-          worker.morningPhoto2Url = w.morningPhoto2Url;
-        if (!worker.eveningPhoto1Url && w.eveningPhoto1Url)
-          worker.eveningPhoto1Url = w.eveningPhoto1Url;
-        if (!worker.eveningPhoto2Url && w.eveningPhoto2Url)
-          worker.eveningPhoto2Url = w.eveningPhoto2Url;
+        // worker already carries w.morningPhotoNUrl/eveningPhotoNUrl from the
+        // `...w` spread above (existing URLs kept as-is); this only
+        // overwrites the slots that got a new file in this request.
+        applyPhotoFiles(worker, files, index);
 
         return worker;
       });
