@@ -54,6 +54,9 @@ export class TimesheetRow {
   @Column({ type: 'decimal', precision: 5, scale: 2, default: 0 })
   sunHours: number;
 
+  @Column({ type: 'int', default: 0 })
+  submittedMask: number;
+
   @Column({ default: false })
   isDeleted: boolean;
 

@@ -84,19 +84,61 @@ export class TimesheetAttendanceService {
     return { data: enriched, total, page, limit };
   }
 
+  private readonly ROW_DAY_KEYS = [
+    'monHours',
+    'tueHours',
+    'wedHours',
+    'thuHours',
+    'friHours',
+    'satHours',
+    'sunHours',
+  ] as const;
+
   async update(id: string, dto: CreateTimesheetDto, userId: string) {
     const ts = await this.findOne(id);
     if (ts.siteEngineerId !== userId)
       throw new ForbiddenException('Not your timesheet');
-    if (ts.status !== 'pending')
+    if (
+      ts.status === 'verified' ||
+      ts.status === 'admin_approved' ||
+      ts.status === 'approved'
+    )
       throw new BadRequestException(
-        'Cannot edit submitted/verified/approved timesheet',
+        'Cannot edit verified/approved timesheet',
       );
 
+    const existingRows = await this.rowRepo.find({
+      where: { timesheetId: id },
+    });
+    const existingMap = new Map(existingRows.map((r) => [r.id, r]));
+
+    for (const payloadRow of dto.rows) {
+      const existing = payloadRow.id ? existingMap.get(payloadRow.id) : undefined;
+      if (!existing) continue;
+      const mask = Number(existing.submittedMask || 0);
+      for (let d = 0; d < this.ROW_DAY_KEYS.length; d++) {
+        const cellLocked = (mask & (1 << d)) !== 0;
+        if (
+          cellLocked &&
+          Number(existing[this.ROW_DAY_KEYS[d]]) !==
+            Number((payloadRow as any)[this.ROW_DAY_KEYS[d]])
+        ) {
+          throw new BadRequestException(
+            'Cannot edit submitted hours',
+          );
+        }
+      }
+    }
+
     await this.rowRepo.delete({ timesheetId: id });
-    const rows = dto.rows.map((r) =>
-      this.rowRepo.create({ ...r, timesheetId: id }),
-    );
+    const rows = dto.rows.map((r) => {
+      const existing = r.id ? existingMap.get(r.id) : undefined;
+      return this.rowRepo.create({
+        ...r,
+        timesheetId: id,
+        submittedMask: existing ? existing.submittedMask : 0,
+      });
+    });
     ts.rows = await this.rowRepo.save(rows);
     ts.totalHours = this.calcTotal(ts.rows);
     return this.tsRepo.save(ts);
@@ -106,21 +148,25 @@ export class TimesheetAttendanceService {
     const ts = await this.findOne(id);
     if (ts.siteEngineerId !== userId)
       throw new ForbiddenException('Not your timesheet');
-    if (ts.status !== 'pending')
-      throw new BadRequestException('Timesheet already submitted or processed');
-    ts.status = 'submitted';
-    return this.tsRepo.save(ts);
-  }
+    if (
+      ts.status === 'verified' ||
+      ts.status === 'admin_approved' ||
+      ts.status === 'approved'
+    )
+      throw new BadRequestException('Timesheet already processed');
 
-  async unsubmit(id: string, userId: string) {
-    const ts = await this.findOne(id);
-    if (ts.siteEngineerId !== userId)
-      throw new ForbiddenException('Not your timesheet');
-    if (ts.status !== 'submitted')
-      throw new BadRequestException(
-        'Only submitted timesheets can be reopened',
-      );
-    ts.status = 'pending';
+    for (const row of ts.rows) {
+      let mask = Number(row.submittedMask || 0);
+      for (let d = 0; d < this.ROW_DAY_KEYS.length; d++) {
+        if (Number(row[this.ROW_DAY_KEYS[d]]) > 0) {
+          mask |= 1 << d;
+        }
+      }
+      if (row.remark) mask |= 1 << 7;
+      row.submittedMask = mask;
+    }
+    await this.rowRepo.save(ts.rows);
+    ts.status = 'submitted';
     return this.tsRepo.save(ts);
   }
 
