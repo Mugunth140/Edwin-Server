@@ -14,6 +14,12 @@ export class Salary {
   @Column()
   grades: string;
 
+  @Column({ default: '' })
+  category: string;
+
+  @Column({ default: '' })
+  role: string;
+
   @Column()
   expInYears: string;
 

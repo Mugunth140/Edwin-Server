@@ -1,10 +1,24 @@
-import { IsString, IsNumber, Min } from 'class-validator';
+import { IsString, IsNumber, IsIn, Min } from 'class-validator';
 import { ApiProperty } from '@nestjs/swagger';
 
 export class CreateSalaryDto {
   @ApiProperty({ example: 'Grade A', description: 'Employee grade/level' })
   @IsString()
   grades: string;
+
+  @ApiProperty({
+    example: 'White Collar',
+    description: 'Employee category (White Collar or Blue Collar)',
+  })
+  @IsIn(['White Collar', 'Blue Collar'])
+  category: string;
+
+  @ApiProperty({
+    example: 'Site Engineer',
+    description: 'Employee role/designation',
+  })
+  @IsString()
+  role: string;
 
   @ApiProperty({
     example: '2-4',

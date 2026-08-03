@@ -15,6 +15,10 @@ export const TABLES_META: Record<string, TableMeta> = {
     columns: {
       id: { description: 'Primary key' },
       grades: { description: 'Employee grade (e.g. Grade A)' },
+      category: {
+        description: 'Employee category (White Collar or Blue Collar)',
+      },
+      role: { description: 'Employee role/designation (e.g. Site Engineer)' },
       expInYears: { description: 'Experience range (e.g. 2-4, 5-7, 15+)' },
       monthlySalary: { description: 'Monthly salary amount' },
       avgCostPerHr: { description: 'Average cost per hour' },
@@ -26,6 +30,8 @@ export const TABLES_META: Record<string, TableMeta> = {
     createSql: `CREATE TABLE salaries (
   id              UUID PRIMARY KEY DEFAULT gen_random_uuid(),
   grades          VARCHAR NOT NULL,
+  category        VARCHAR NOT NULL DEFAULT '',
+  role            VARCHAR NOT NULL DEFAULT '',
   "expInYears"    VARCHAR NOT NULL,
   "monthlySalary" DECIMAL(12,2) NOT NULL,
   "avgCostPerHr"  DECIMAL(10,2) NOT NULL,
