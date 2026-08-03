@@ -33,6 +33,7 @@ import { EmployeeQueriesModule } from './employee-queries/employee-queries.modul
 import { SchemasModule } from './schemas/schemas.module.js';
 import { OfficeStaffModule } from './office-staff/office-staff.module.js';
 import { OfficeReportsModule } from './office-reports/office-reports.module.js';
+import { NotificationsModule } from './notifications/notifications.module.js';
 
 // Entity imports
 import { User } from './users/entities/user.entity.js';
@@ -76,6 +77,7 @@ import { TimesheetRow } from './timesheet-attendance/entities/timesheet-row.enti
 import { ProjectCategory } from './project-categories/entities/project-category.entity.js';
 import { EmployeeQuery } from './employee-queries/entities/employee-query.entity.js';
 import { OfficeReport } from './office-reports/entities/office-report.entity.js';
+import { Notification } from './notifications/entities/notification.entity.js';
 
 function getBooleanConfig(
   configService: ConfigService,
@@ -147,6 +149,7 @@ function getBooleanConfig(
           ProjectCategory,
           EmployeeQuery,
           OfficeReport,
+          Notification,
         ],
         synchronize: getBooleanConfig(
           configService,
@@ -187,6 +190,7 @@ function getBooleanConfig(
     SchemasModule,
     OfficeStaffModule,
     OfficeReportsModule,
+    NotificationsModule,
   ],
 })
 export class AppModule {}

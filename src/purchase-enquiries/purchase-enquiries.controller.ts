@@ -30,7 +30,7 @@ export class PurchaseEnquiriesController {
   @Roles(Role.ADMIN, Role.ACCOUNTS_MANAGER, Role.PURCHASE_TEAM, Role.SITE_ENGINEER)
   @ApiOperation({ summary: 'Create a purchase enquiry' })
   create(@Body() dto: CreatePurchaseEnquiryDto, @Request() req: any) {
-    return this.service.create(dto, req.user.id);
+    return this.service.create(dto, req.user);
   }
 
   @Get()
@@ -64,8 +64,9 @@ export class PurchaseEnquiriesController {
   updateStatus(
     @Param('id') id: string,
     @Body() dto: UpdatePurchaseEnquiryStatusDto,
+    @Request() req: any,
   ) {
-    return this.service.updateStatus(id, dto.status);
+    return this.service.updateStatus(id, dto.status, req.user);
   }
 
   @Delete(':id')

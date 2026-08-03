@@ -4,12 +4,16 @@ import { Repository } from 'typeorm';
 import { PurchaseEnquiry } from './entities/purchase-enquiry.entity.js';
 import { CreatePurchaseEnquiryDto } from './dto/create-purchase-enquiry.dto.js';
 import { Role } from '../common/enums.js';
+import { NotificationsService } from '../notifications/notifications.service.js';
+
+type RequestUser = { id: string; role: string; name?: string };
 
 @Injectable()
 export class PurchaseEnquiriesService {
   constructor(
     @InjectRepository(PurchaseEnquiry)
     private repo: Repository<PurchaseEnquiry>,
+    private readonly notifications: NotificationsService,
   ) {}
 
   private async generateEnquiryNo(): Promise<string> {
@@ -27,7 +31,10 @@ export class PurchaseEnquiriesService {
     return `MR-${year}-${String(seq).padStart(3, '0')}`;
   }
 
-  async create(dto: CreatePurchaseEnquiryDto, userId?: string): Promise<PurchaseEnquiry> {
+  async create(
+    dto: CreatePurchaseEnquiryDto,
+    user?: RequestUser,
+  ): Promise<PurchaseEnquiry> {
     const enquiryNo = await this.generateEnquiryNo();
     const enquiry = this.repo.create({
       enquiryNo,
@@ -36,9 +43,22 @@ export class PurchaseEnquiriesService {
       notes: dto.notes,
       items: dto.items,
       status: 'pending',
-      createdBy: userId,
+      createdBy: user?.id,
     });
-    return this.repo.save(enquiry);
+    const saved = await this.repo.save(enquiry);
+
+    if (user?.role === Role.SITE_ENGINEER) {
+      await this.notifications.createForRole(Role.PURCHASE_TEAM, {
+        userId: user.id,
+        type: 'material_requirement_created',
+        title: 'New Material Requirement',
+        message: `${user.name || 'A site engineer'} created ${saved.enquiryNo}`,
+        link: '/dashboard/material-requirement',
+        entityId: saved.id,
+      });
+    }
+
+    return saved;
   }
 
   async findAll(user?: any) {
@@ -64,7 +84,11 @@ export class PurchaseEnquiriesService {
     return enquiry;
   }
 
-  async update(id: string, dto: CreatePurchaseEnquiryDto, userId?: string): Promise<PurchaseEnquiry> {
+  async update(
+    id: string,
+    dto: CreatePurchaseEnquiryDto,
+    userId?: string,
+  ): Promise<PurchaseEnquiry> {
     const enquiry = await this.findOne(id);
     Object.assign(enquiry, {
       vendorId: dto.vendorId,
@@ -76,10 +100,28 @@ export class PurchaseEnquiriesService {
     return this.repo.save(enquiry);
   }
 
-  async updateStatus(id: string, status: string): Promise<PurchaseEnquiry> {
+  async updateStatus(
+    id: string,
+    status: string,
+    user?: RequestUser,
+  ): Promise<PurchaseEnquiry> {
     const enquiry = await this.findOne(id);
     enquiry.status = status;
-    return this.repo.save(enquiry);
+    const saved = await this.repo.save(enquiry);
+
+    if (saved.createdBy) {
+      const label = status === 'approved' ? 'approved' : status === 'rejected' ? 'rejected' : 'updated';
+      await this.notifications.createForUser(saved.createdBy, {
+        userId: user?.id,
+        type: 'material_requirement_status',
+        title: 'Material Requirement Update',
+        message: `${saved.enquiryNo} was ${label}${user?.name ? ` by ${user.name}` : ''}`,
+        link: '/dashboard/material-requirement',
+        entityId: saved.id,
+      });
+    }
+
+    return saved;
   }
 
   async remove(id: string): Promise<void> {
