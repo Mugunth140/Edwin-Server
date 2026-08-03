@@ -38,6 +38,7 @@ const salaries_module_js_1 = require("./salaries/salaries.module.js");
 const timesheet_attendance_module_js_1 = require("./timesheet-attendance/timesheet-attendance.module.js");
 const project_categories_module_js_1 = require("./project-categories/project-categories.module.js");
 const vendor_quotations_module_js_1 = require("./vendor-quotations/vendor-quotations.module.js");
+const employee_queries_module_js_1 = require("./employee-queries/employee-queries.module.js");
 const schemas_module_js_1 = require("./schemas/schemas.module.js");
 const user_entity_js_1 = require("./users/entities/user.entity.js");
 const vendor_entity_js_1 = require("./vendors/entities/vendor.entity.js");
@@ -78,6 +79,7 @@ const salary_entity_js_1 = require("./salaries/entities/salary.entity.js");
 const weekly_timesheet_entity_js_1 = require("./timesheet-attendance/entities/weekly-timesheet.entity.js");
 const timesheet_row_entity_js_1 = require("./timesheet-attendance/entities/timesheet-row.entity.js");
 const project_category_entity_js_1 = require("./project-categories/entities/project-category.entity.js");
+const employee_query_entity_js_1 = require("./employee-queries/entities/employee-query.entity.js");
 function getBooleanConfig(configService, key, fallback) {
     const value = configService.get(key);
     if (typeof value === 'boolean')
@@ -145,6 +147,7 @@ exports.AppModule = AppModule = __decorate([
                         weekly_timesheet_entity_js_1.WeeklyTimesheet,
                         timesheet_row_entity_js_1.TimesheetRow,
                         project_category_entity_js_1.ProjectCategory,
+                        employee_query_entity_js_1.EmployeeQuery,
                     ],
                     synchronize: getBooleanConfig(configService, 'TYPEORM_SYNCHRONIZE', false),
                     logging: getBooleanConfig(configService, 'TYPEORM_LOGGING', false),
@@ -177,6 +180,7 @@ exports.AppModule = AppModule = __decorate([
             timesheet_attendance_module_js_1.TimesheetAttendanceModule,
             project_categories_module_js_1.ProjectCategoriesModule,
             vendor_quotations_module_js_1.VendorQuotationsModule,
+            employee_queries_module_js_1.EmployeeQueriesModule,
             schemas_module_js_1.SchemasModule,
         ],
     })

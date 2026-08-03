@@ -29,6 +29,7 @@ import { SalariesModule } from './salaries/salaries.module.js';
 import { TimesheetAttendanceModule } from './timesheet-attendance/timesheet-attendance.module.js';
 import { ProjectCategoriesModule } from './project-categories/project-categories.module.js';
 import { VendorQuotationsModule } from './vendor-quotations/vendor-quotations.module.js';
+import { EmployeeQueriesModule } from './employee-queries/employee-queries.module.js';
 import { SchemasModule } from './schemas/schemas.module.js';
 
 // Entity imports
@@ -71,6 +72,7 @@ import { Salary } from './salaries/entities/salary.entity.js';
 import { WeeklyTimesheet } from './timesheet-attendance/entities/weekly-timesheet.entity.js';
 import { TimesheetRow } from './timesheet-attendance/entities/timesheet-row.entity.js';
 import { ProjectCategory } from './project-categories/entities/project-category.entity.js';
+import { EmployeeQuery } from './employee-queries/entities/employee-query.entity.js';
 
 function getBooleanConfig(
   configService: ConfigService,
@@ -140,6 +142,7 @@ function getBooleanConfig(
           WeeklyTimesheet,
           TimesheetRow,
           ProjectCategory,
+          EmployeeQuery,
         ],
         synchronize: getBooleanConfig(
           configService,
@@ -176,6 +179,7 @@ function getBooleanConfig(
     TimesheetAttendanceModule,
     ProjectCategoriesModule,
     VendorQuotationsModule,
+    EmployeeQueriesModule,
     SchemasModule,
   ],
 })
