@@ -52,6 +52,7 @@ export class PurchaseOrdersService {
       poNumber,
       vendorId: dto.vendorId,
       projectId: dto.projectId,
+      enquiryNo: dto.enquiryNo,
       paymentTerms: dto.paymentTerms,
       billFileUrl: dto.billFileUrl,
       billFileKey: dto.billFileKey,

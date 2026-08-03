@@ -7,6 +7,7 @@ export declare class PoItemDto {
 export declare class CreatePurchaseOrderDto {
     vendorId: string;
     projectId: string;
+    enquiryNo?: string;
     paymentTerms?: string;
     billFileUrl?: string;
     billFileKey?: string;
