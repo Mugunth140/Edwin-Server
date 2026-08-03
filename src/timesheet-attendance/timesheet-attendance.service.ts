@@ -121,9 +121,7 @@ export class TimesheetAttendanceService {
       ts.status === 'admin_approved' ||
       ts.status === 'approved'
     )
-      throw new BadRequestException(
-        'Cannot edit verified/approved timesheet',
-      );
+      throw new BadRequestException('Cannot edit verified/approved timesheet');
 
     if (dto.rows.length === 0)
       throw new BadRequestException(
@@ -136,7 +134,9 @@ export class TimesheetAttendanceService {
     const existingMap = new Map(existingRows.map((r) => [r.id, r]));
 
     for (const payloadRow of dto.rows) {
-      const existing = payloadRow.id ? existingMap.get(payloadRow.id) : undefined;
+      const existing = payloadRow.id
+        ? existingMap.get(payloadRow.id)
+        : undefined;
       if (!existing) continue;
       const mask = Number(existing.submittedMask || 0);
       for (let d = 0; d < this.ROW_DAY_KEYS.length; d++) {
@@ -146,9 +146,7 @@ export class TimesheetAttendanceService {
           Number(existing[this.ROW_DAY_KEYS[d]]) !==
             Number((payloadRow as any)[this.ROW_DAY_KEYS[d]])
         ) {
-          throw new BadRequestException(
-            'Cannot edit submitted hours',
-          );
+          throw new BadRequestException('Cannot edit submitted hours');
         }
       }
     }
@@ -207,7 +205,11 @@ export class TimesheetAttendanceService {
 
   async approve(id: string, userId: string) {
     const ts = await this.findOne(id);
-    if (ts.status !== 'verified')
+    // Admins approving their own timesheet can skip the accounts-manager
+    // verify step (there's no separate approver above them to verify it).
+    const isSelfApprove =
+      ts.siteEngineerId === userId && ts.status === 'submitted';
+    if (ts.status !== 'verified' && !isSelfApprove)
       throw new BadRequestException('Only verified timesheets can be approved');
 
     const user = await this.userRepo.findOne({
