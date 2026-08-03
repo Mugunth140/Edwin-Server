@@ -87,6 +87,29 @@ let UsersService = class UsersService {
             select: ['id', 'name', 'email', 'role', 'isActive', 'createdAt'],
         });
     }
+    async updateProfile(userId, dto) {
+        const user = await this.usersRepository.findOne({ where: { id: userId } });
+        if (!user)
+            throw new common_1.NotFoundException('User not found');
+        if (dto.email && dto.email !== user.email) {
+            const existing = await this.usersRepository.findOne({
+                where: { email: dto.email },
+            });
+            if (existing) {
+                throw new common_1.ConflictException('Email is already in use');
+            }
+        }
+        if (dto.name !== undefined)
+            user.name = dto.name;
+        if (dto.email !== undefined)
+            user.email = dto.email;
+        if (dto.password) {
+            user.passwordHash = await bcrypt.hash(dto.password, 10);
+        }
+        const saved = await this.usersRepository.save(user);
+        const { passwordHash: _, ...result } = saved;
+        return result;
+    }
 };
 exports.UsersService = UsersService;
 exports.UsersService = UsersService = __decorate([

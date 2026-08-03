@@ -21,6 +21,7 @@ const roles_decorator_js_1 = require("../auth/roles.decorator.js");
 const enums_js_1 = require("../common/enums.js");
 const users_service_js_1 = require("./users.service.js");
 const create_user_dto_js_1 = require("./dto/create-user.dto.js");
+const update_profile_dto_js_1 = require("./dto/update-profile.dto.js");
 let UsersController = class UsersController {
     usersService;
     constructor(usersService) {
@@ -31,6 +32,9 @@ let UsersController = class UsersController {
     }
     findAll() {
         return this.usersService.findAll();
+    }
+    updateProfile(req, dto) {
+        return this.usersService.updateProfile(req.user.id, dto);
     }
 };
 exports.UsersController = UsersController;
@@ -51,6 +55,15 @@ __decorate([
     __metadata("design:paramtypes", []),
     __metadata("design:returntype", void 0)
 ], UsersController.prototype, "findAll", null);
+__decorate([
+    (0, common_1.Patch)('me'),
+    (0, swagger_1.ApiOperation)({ summary: 'Update current user profile' }),
+    __param(0, (0, common_1.Request)()),
+    __param(1, (0, common_1.Body)()),
+    __metadata("design:type", Function),
+    __metadata("design:paramtypes", [Object, update_profile_dto_js_1.UpdateProfileDto]),
+    __metadata("design:returntype", void 0)
+], UsersController.prototype, "updateProfile", null);
 exports.UsersController = UsersController = __decorate([
     (0, swagger_1.ApiTags)('Users'),
     (0, common_1.Controller)({ path: 'users', version: '1' }),

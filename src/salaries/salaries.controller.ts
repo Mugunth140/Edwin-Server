@@ -6,6 +6,8 @@ import {
   Patch,
   Param,
   Delete,
+  Put,
+  Request,
   UseGuards,
 } from '@nestjs/common';
 import { ApiTags, ApiOperation, ApiBearerAuth } from '@nestjs/swagger';
@@ -35,6 +37,20 @@ export class SalariesController {
   @ApiOperation({ summary: 'List all salary records' })
   findAll() {
     return this.salariesService.findAll();
+  }
+
+  @Get('me')
+  @Roles(Role.ADMIN)
+  @ApiOperation({ summary: 'Get current user salary record' })
+  findMy(@Request() req: any) {
+    return this.salariesService.findMySalary(req.user.id);
+  }
+
+  @Put('me')
+  @Roles(Role.ADMIN)
+  @ApiOperation({ summary: 'Create or update current user salary record' })
+  upsertMy(@Request() req: any, @Body() dto: CreateSalaryDto) {
+    return this.salariesService.upsertMySalary(req.user.id, dto);
   }
 
   @Patch(':id')
