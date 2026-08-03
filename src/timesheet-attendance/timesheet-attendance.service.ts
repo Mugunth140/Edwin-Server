@@ -34,20 +34,37 @@ export class TimesheetAttendanceService {
   }
 
   async create(dto: CreateTimesheetDto, siteEngineerId: string) {
-    const weekEnd = this.calcWeekEnd(dto.weekStart);
-    const ts = this.tsRepo.create({
-      siteEngineerId,
-      weekStart: new Date(dto.weekStart),
-      weekEnd: new Date(weekEnd),
-    });
-    const saved = await this.tsRepo.save(ts);
+    if (dto.rows.length === 0)
+      throw new BadRequestException(
+        'Nothing to save — add hours or a project first',
+      );
 
+    let ts = await this.tsRepo.findOne({
+      where: {
+        siteEngineerId,
+        weekStart: new Date(dto.weekStart),
+        isDeleted: false,
+      },
+      order: { updatedAt: 'DESC' },
+    });
+
+    if (!ts) {
+      const weekEnd = this.calcWeekEnd(dto.weekStart);
+      ts = this.tsRepo.create({
+        siteEngineerId,
+        weekStart: new Date(dto.weekStart),
+        weekEnd: new Date(weekEnd),
+      });
+      await this.tsRepo.save(ts);
+    }
+
+    await this.rowRepo.delete({ timesheetId: ts.id });
     const rows = dto.rows.map((r) =>
-      this.rowRepo.create({ ...r, timesheetId: saved.id }),
+      this.rowRepo.create({ ...r, timesheetId: ts.id }),
     );
-    saved.rows = await this.rowRepo.save(rows);
-    saved.totalHours = this.calcTotal(saved.rows);
-    return this.tsRepo.save(saved);
+    ts.rows = await this.rowRepo.save(rows);
+    ts.totalHours = this.calcTotal(ts.rows);
+    return this.tsRepo.save(ts);
   }
 
   async findByWeek(siteEngineerId: string, weekStart: string) {
@@ -58,6 +75,7 @@ export class TimesheetAttendanceService {
         isDeleted: false,
       },
       relations: ['rows'],
+      order: { updatedAt: 'DESC' },
     });
   }
 
@@ -105,6 +123,11 @@ export class TimesheetAttendanceService {
     )
       throw new BadRequestException(
         'Cannot edit verified/approved timesheet',
+      );
+
+    if (dto.rows.length === 0)
+      throw new BadRequestException(
+        'Nothing to save — add hours or a project first',
       );
 
     const existingRows = await this.rowRepo.find({
