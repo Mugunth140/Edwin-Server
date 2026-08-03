@@ -81,6 +81,20 @@ export class TimesheetAttendanceController {
     return this.service.update(id, dto, req.user.id);
   }
 
+  @Patch(':id/submit')
+  @Roles(Role.SITE_ENGINEER, Role.PURCHASE_TEAM, Role.ADMIN)
+  @ApiOperation({ summary: 'Submit timesheet & lock it for editing' })
+  submit(@Param('id') id: string, @Request() req: any) {
+    return this.service.submit(id, req.user.id);
+  }
+
+  @Patch(':id/unsubmit')
+  @Roles(Role.SITE_ENGINEER, Role.PURCHASE_TEAM, Role.ADMIN)
+  @ApiOperation({ summary: 'Reopen a submitted timesheet for editing' })
+  unsubmit(@Param('id') id: string, @Request() req: any) {
+    return this.service.unsubmit(id, req.user.id);
+  }
+
   @Patch(':id/verify')
   @Roles(Role.ACCOUNTS_MANAGER)
   @ApiOperation({ summary: 'Verify timesheet (accounts team)' })

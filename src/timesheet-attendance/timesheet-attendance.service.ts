@@ -89,7 +89,9 @@ export class TimesheetAttendanceService {
     if (ts.siteEngineerId !== userId)
       throw new ForbiddenException('Not your timesheet');
     if (ts.status !== 'pending')
-      throw new BadRequestException('Cannot edit verified/approved timesheet');
+      throw new BadRequestException(
+        'Cannot edit submitted/verified/approved timesheet',
+      );
 
     await this.rowRepo.delete({ timesheetId: id });
     const rows = dto.rows.map((r) =>
@@ -100,10 +102,34 @@ export class TimesheetAttendanceService {
     return this.tsRepo.save(ts);
   }
 
+  async submit(id: string, userId: string) {
+    const ts = await this.findOne(id);
+    if (ts.siteEngineerId !== userId)
+      throw new ForbiddenException('Not your timesheet');
+    if (ts.status !== 'pending')
+      throw new BadRequestException('Timesheet already submitted or processed');
+    ts.status = 'submitted';
+    return this.tsRepo.save(ts);
+  }
+
+  async unsubmit(id: string, userId: string) {
+    const ts = await this.findOne(id);
+    if (ts.siteEngineerId !== userId)
+      throw new ForbiddenException('Not your timesheet');
+    if (ts.status !== 'submitted')
+      throw new BadRequestException(
+        'Only submitted timesheets can be reopened',
+      );
+    ts.status = 'pending';
+    return this.tsRepo.save(ts);
+  }
+
   async verify(id: string, userId: string) {
     const ts = await this.findOne(id);
-    if (ts.status !== 'pending')
-      throw new BadRequestException('Only pending timesheets can be verified');
+    if (ts.status !== 'pending' && ts.status !== 'submitted')
+      throw new BadRequestException(
+        'Only pending/submitted timesheets can be verified',
+      );
     ts.status = 'verified';
     ts.approvedById = userId;
     ts.approvedAt = new Date();
