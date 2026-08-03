@@ -85,7 +85,7 @@ let ExpensesController = class ExpensesController {
 exports.ExpensesController = ExpensesController;
 __decorate([
     (0, common_1.Post)(),
-    (0, roles_decorator_js_1.Roles)(enums_js_1.Role.ADMIN, enums_js_1.Role.ACCOUNTS_MANAGER, enums_js_1.Role.SITE_ENGINEER),
+    (0, roles_decorator_js_1.Roles)(enums_js_1.Role.ADMIN, enums_js_1.Role.ACCOUNTS_MANAGER, enums_js_1.Role.SITE_ENGINEER, enums_js_1.Role.OFFICE_STAFF),
     (0, common_1.UseInterceptors)((0, platform_express_1.AnyFilesInterceptor)({
         storage: (0, multer_1.diskStorage)({
             destination: (req, file, cb) => {
@@ -146,7 +146,7 @@ __decorate([
 ], ExpensesController.prototype, "findOne", null);
 __decorate([
     (0, common_1.Patch)(':id'),
-    (0, roles_decorator_js_1.Roles)(enums_js_1.Role.ADMIN, enums_js_1.Role.ACCOUNTS_MANAGER, enums_js_1.Role.SITE_ENGINEER),
+    (0, roles_decorator_js_1.Roles)(enums_js_1.Role.ADMIN, enums_js_1.Role.ACCOUNTS_MANAGER, enums_js_1.Role.SITE_ENGINEER, enums_js_1.Role.OFFICE_STAFF),
     (0, common_1.UseInterceptors)((0, platform_express_1.AnyFilesInterceptor)({
         storage: (0, multer_1.diskStorage)({
             destination: (req, file, cb) => {
@@ -173,7 +173,7 @@ __decorate([
 ], ExpensesController.prototype, "update", null);
 __decorate([
     (0, common_1.Delete)(':id'),
-    (0, roles_decorator_js_1.Roles)(enums_js_1.Role.ADMIN, enums_js_1.Role.ACCOUNTS_MANAGER, enums_js_1.Role.SITE_ENGINEER),
+    (0, roles_decorator_js_1.Roles)(enums_js_1.Role.ADMIN, enums_js_1.Role.ACCOUNTS_MANAGER, enums_js_1.Role.SITE_ENGINEER, enums_js_1.Role.OFFICE_STAFF),
     (0, swagger_1.ApiOperation)({ summary: 'Delete expense' }),
     __param(0, (0, common_1.Param)('id')),
     __metadata("design:type", Function),

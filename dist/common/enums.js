@@ -1,14 +1,22 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.WorkCategory = exports.JobStatus = exports.JobType = exports.ProjectNature = exports.ProjectStatus = exports.AdvanceEntityType = exports.PaymentType = exports.ExpenseStatus = exports.ExpenseCategory = exports.DrawingCategory = exports.SeverityLevel = exports.RfiStatus = exports.SnagStatus = exports.MilestoneStatus = exports.InvoiceStatus = exports.PaymentMode = exports.BillStatus = exports.PurchaseOrderStatus = exports.SubcontractWorkOrderStatus = exports.WorkOrderStatus = exports.Role = void 0;
+exports.WorkCategory = exports.JobStatus = exports.JobType = exports.ProjectNature = exports.ProjectStatus = exports.AdvanceEntityType = exports.PaymentType = exports.ExpenseStatus = exports.ExpenseCategory = exports.DrawingCategory = exports.SeverityLevel = exports.RfiStatus = exports.SnagStatus = exports.MilestoneStatus = exports.InvoiceStatus = exports.PaymentMode = exports.BillStatus = exports.PurchaseOrderStatus = exports.SubcontractWorkOrderStatus = exports.WorkOrderStatus = exports.OfficeStaffType = exports.Role = void 0;
 var Role;
 (function (Role) {
     Role["ADMIN"] = "admin";
     Role["ACCOUNTS_MANAGER"] = "accounts_manager";
     Role["PURCHASE_TEAM"] = "purchase_team";
     Role["SITE_ENGINEER"] = "site_engineer";
+    Role["OFFICE_STAFF"] = "office_staff";
     Role["VIEWER"] = "viewer";
 })(Role || (exports.Role = Role = {}));
+var OfficeStaffType;
+(function (OfficeStaffType) {
+    OfficeStaffType["ARCHITECT"] = "Architect";
+    OfficeStaffType["PROJECT_COORDINATOR"] = "Project Coordinator";
+    OfficeStaffType["ENGINEER"] = "Engineer";
+    OfficeStaffType["RESEARCH_ASSOCIATE"] = "Research Associate";
+})(OfficeStaffType || (exports.OfficeStaffType = OfficeStaffType = {}));
 var WorkOrderStatus;
 (function (WorkOrderStatus) {
     WorkOrderStatus["DRAFT"] = "draft";

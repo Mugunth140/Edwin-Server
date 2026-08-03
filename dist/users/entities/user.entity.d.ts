@@ -8,6 +8,7 @@ export declare class User {
     username: string;
     employeeId: string;
     phone: string;
+    staffType: string;
     address: string;
     passwordHash: string;
     role: Role;

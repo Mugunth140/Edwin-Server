@@ -33,6 +33,9 @@ export class User {
   @Column({ nullable: true })
   phone: string;
 
+  @Column({ nullable: true })
+  staffType: string;
+
   @Column({ type: 'text', nullable: true })
   address: string;
 

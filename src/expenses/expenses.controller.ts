@@ -38,7 +38,7 @@ export class ExpensesController {
   constructor(private readonly expensesService: ExpensesService) {}
 
   @Post()
-  @Roles(Role.ADMIN, Role.ACCOUNTS_MANAGER, Role.SITE_ENGINEER)
+  @Roles(Role.ADMIN, Role.ACCOUNTS_MANAGER, Role.SITE_ENGINEER, Role.OFFICE_STAFF)
   @UseInterceptors(
     AnyFilesInterceptor({
       storage: diskStorage({
@@ -102,7 +102,7 @@ export class ExpensesController {
   }
 
   @Patch(':id')
-  @Roles(Role.ADMIN, Role.ACCOUNTS_MANAGER, Role.SITE_ENGINEER)
+  @Roles(Role.ADMIN, Role.ACCOUNTS_MANAGER, Role.SITE_ENGINEER, Role.OFFICE_STAFF)
   @UseInterceptors(
     AnyFilesInterceptor({
       storage: diskStorage({
@@ -132,7 +132,7 @@ export class ExpensesController {
   }
 
   @Delete(':id')
-  @Roles(Role.ADMIN, Role.ACCOUNTS_MANAGER, Role.SITE_ENGINEER)
+  @Roles(Role.ADMIN, Role.ACCOUNTS_MANAGER, Role.SITE_ENGINEER, Role.OFFICE_STAFF)
   @ApiOperation({ summary: 'Delete expense' })
   remove(@Param('id') id: string) {
     return this.expensesService.softDelete(id);

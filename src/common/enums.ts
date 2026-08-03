@@ -3,7 +3,15 @@ export enum Role {
   ACCOUNTS_MANAGER = 'accounts_manager',
   PURCHASE_TEAM = 'purchase_team',
   SITE_ENGINEER = 'site_engineer',
+  OFFICE_STAFF = 'office_staff',
   VIEWER = 'viewer',
+}
+
+export enum OfficeStaffType {
+  ARCHITECT = 'Architect',
+  PROJECT_COORDINATOR = 'Project Coordinator',
+  ENGINEER = 'Engineer',
+  RESEARCH_ASSOCIATE = 'Research Associate',
 }
 
 export enum WorkOrderStatus {

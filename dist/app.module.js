@@ -40,6 +40,8 @@ const project_categories_module_js_1 = require("./project-categories/project-cat
 const vendor_quotations_module_js_1 = require("./vendor-quotations/vendor-quotations.module.js");
 const employee_queries_module_js_1 = require("./employee-queries/employee-queries.module.js");
 const schemas_module_js_1 = require("./schemas/schemas.module.js");
+const office_staff_module_js_1 = require("./office-staff/office-staff.module.js");
+const office_reports_module_js_1 = require("./office-reports/office-reports.module.js");
 const user_entity_js_1 = require("./users/entities/user.entity.js");
 const vendor_entity_js_1 = require("./vendors/entities/vendor.entity.js");
 const project_entity_js_1 = require("./projects/entities/project.entity.js");
@@ -80,6 +82,7 @@ const weekly_timesheet_entity_js_1 = require("./timesheet-attendance/entities/we
 const timesheet_row_entity_js_1 = require("./timesheet-attendance/entities/timesheet-row.entity.js");
 const project_category_entity_js_1 = require("./project-categories/entities/project-category.entity.js");
 const employee_query_entity_js_1 = require("./employee-queries/entities/employee-query.entity.js");
+const office_report_entity_js_1 = require("./office-reports/entities/office-report.entity.js");
 function getBooleanConfig(configService, key, fallback) {
     const value = configService.get(key);
     if (typeof value === 'boolean')
@@ -148,6 +151,7 @@ exports.AppModule = AppModule = __decorate([
                         timesheet_row_entity_js_1.TimesheetRow,
                         project_category_entity_js_1.ProjectCategory,
                         employee_query_entity_js_1.EmployeeQuery,
+                        office_report_entity_js_1.OfficeReport,
                     ],
                     synchronize: getBooleanConfig(configService, 'TYPEORM_SYNCHRONIZE', false),
                     logging: getBooleanConfig(configService, 'TYPEORM_LOGGING', false),
@@ -182,6 +186,8 @@ exports.AppModule = AppModule = __decorate([
             vendor_quotations_module_js_1.VendorQuotationsModule,
             employee_queries_module_js_1.EmployeeQueriesModule,
             schemas_module_js_1.SchemasModule,
+            office_staff_module_js_1.OfficeStaffModule,
+            office_reports_module_js_1.OfficeReportsModule,
         ],
     })
 ], AppModule);

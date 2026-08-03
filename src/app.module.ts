@@ -31,6 +31,8 @@ import { ProjectCategoriesModule } from './project-categories/project-categories
 import { VendorQuotationsModule } from './vendor-quotations/vendor-quotations.module.js';
 import { EmployeeQueriesModule } from './employee-queries/employee-queries.module.js';
 import { SchemasModule } from './schemas/schemas.module.js';
+import { OfficeStaffModule } from './office-staff/office-staff.module.js';
+import { OfficeReportsModule } from './office-reports/office-reports.module.js';
 
 // Entity imports
 import { User } from './users/entities/user.entity.js';
@@ -73,6 +75,7 @@ import { WeeklyTimesheet } from './timesheet-attendance/entities/weekly-timeshee
 import { TimesheetRow } from './timesheet-attendance/entities/timesheet-row.entity.js';
 import { ProjectCategory } from './project-categories/entities/project-category.entity.js';
 import { EmployeeQuery } from './employee-queries/entities/employee-query.entity.js';
+import { OfficeReport } from './office-reports/entities/office-report.entity.js';
 
 function getBooleanConfig(
   configService: ConfigService,
@@ -143,6 +146,7 @@ function getBooleanConfig(
           TimesheetRow,
           ProjectCategory,
           EmployeeQuery,
+          OfficeReport,
         ],
         synchronize: getBooleanConfig(
           configService,
@@ -181,6 +185,8 @@ function getBooleanConfig(
     VendorQuotationsModule,
     EmployeeQueriesModule,
     SchemasModule,
+    OfficeStaffModule,
+    OfficeReportsModule,
   ],
 })
 export class AppModule {}

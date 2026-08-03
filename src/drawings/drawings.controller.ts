@@ -37,7 +37,7 @@ export class DrawingsController {
   constructor(private readonly drawingsService: DrawingsService) {}
 
   @Post()
-  @Roles(Role.ADMIN, Role.SITE_ENGINEER)
+  @Roles(Role.ADMIN, Role.SITE_ENGINEER, Role.OFFICE_STAFF)
   @UseInterceptors(
     FileInterceptor('file', {
       storage: diskStorage({
@@ -114,7 +114,7 @@ export class DrawingsController {
   }
 
   @Patch(':id')
-  @Roles(Role.ADMIN, Role.SITE_ENGINEER)
+  @Roles(Role.ADMIN, Role.SITE_ENGINEER, Role.OFFICE_STAFF)
   @UseInterceptors(
     FileInterceptor('file', {
       storage: diskStorage({
