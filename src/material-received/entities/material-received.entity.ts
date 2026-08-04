@@ -8,6 +8,7 @@ import {
   JoinColumn,
 } from 'typeorm';
 import { Project } from '../../projects/entities/project.entity.js';
+import { PurchaseOrder } from '../../purchase-orders/entities/purchase-order.entity.js';
 import { User } from '../../users/entities/user.entity.js';
 
 @Entity('material_received')
@@ -24,6 +25,13 @@ export class MaterialReceived {
 
   @Column()
   projectId: string;
+
+  @ManyToOne(() => PurchaseOrder)
+  @JoinColumn({ name: 'purchaseOrderId' })
+  purchaseOrder: PurchaseOrder;
+
+  @Column({ nullable: true })
+  purchaseOrderId: string;
 
   @Column({ type: 'date', nullable: true })
   receivedDate: string;

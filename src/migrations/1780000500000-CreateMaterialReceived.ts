@@ -11,6 +11,7 @@ export class CreateMaterialReceived1780000500000
         "id" uuid NOT NULL DEFAULT uuid_generate_v4(),
         "mrNumber" character varying NOT NULL,
         "projectId" uuid NOT NULL,
+        "purchaseOrderId" uuid,
         "receivedDate" date,
         "notes" text,
         "items" jsonb NOT NULL DEFAULT '[]',
@@ -29,6 +30,9 @@ export class CreateMaterialReceived1780000500000
     );
     await queryRunner.query(
       `ALTER TABLE "material_received" ADD CONSTRAINT "FK_material_received_project" FOREIGN KEY ("projectId") REFERENCES "projects"("id") ON DELETE SET NULL`,
+    );
+    await queryRunner.query(
+      `ALTER TABLE "material_received" ADD CONSTRAINT "FK_material_received_po" FOREIGN KEY ("purchaseOrderId") REFERENCES "purchase_orders"("id") ON DELETE SET NULL`,
     );
     await queryRunner.query(
       `ALTER TABLE "material_received" ADD CONSTRAINT "FK_material_received_creator" FOREIGN KEY ("createdBy") REFERENCES "users"("id") ON DELETE SET NULL`,

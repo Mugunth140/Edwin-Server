@@ -37,6 +37,7 @@ export class MaterialReceivedService {
     const entry = this.repo.create({
       mrNumber,
       projectId: dto.projectId,
+      purchaseOrderId: dto.purchaseOrderId,
       receivedDate: dto.receivedDate,
       notes: dto.notes,
       items: dto.items || [],
@@ -59,7 +60,7 @@ export class MaterialReceivedService {
 
     return this.repo.find({
       where,
-      relations: ['project', 'creator'],
+      relations: ['project', 'creator', 'purchaseOrder'],
       order: { createdAt: 'DESC' },
     });
   }
@@ -67,7 +68,7 @@ export class MaterialReceivedService {
   async findOne(id: string) {
     const entry = await this.repo.findOne({
       where: { id, isDeleted: false },
-      relations: ['project', 'creator'],
+      relations: ['project', 'creator', 'purchaseOrder'],
     });
     if (!entry)
       throw new NotFoundException('Material Received record not found');
@@ -82,6 +83,7 @@ export class MaterialReceivedService {
     const entry = await this.findOne(id);
     Object.assign(entry, {
       projectId: dto.projectId ?? entry.projectId,
+      purchaseOrderId: dto.purchaseOrderId ?? entry.purchaseOrderId,
       receivedDate: dto.receivedDate ?? entry.receivedDate,
       notes: dto.notes ?? entry.notes,
       items: dto.items ?? entry.items,

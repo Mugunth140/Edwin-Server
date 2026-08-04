@@ -45,7 +45,7 @@ export class PurchaseOrdersController {
   }
 
   @Get()
-  @Roles(Role.ADMIN, Role.ACCOUNTS_MANAGER, Role.PURCHASE_TEAM)
+  @Roles(Role.ADMIN, Role.ACCOUNTS_MANAGER, Role.PURCHASE_TEAM, Role.SITE_ENGINEER)
   @ApiOperation({ summary: 'List purchase orders' })
   findAll() {
     return this.poService.findAll();

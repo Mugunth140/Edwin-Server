@@ -104,7 +104,7 @@ __decorate([
 ], PurchaseOrdersController.prototype, "create", null);
 __decorate([
     (0, common_1.Get)(),
-    (0, roles_decorator_js_1.Roles)(enums_js_1.Role.ADMIN, enums_js_1.Role.ACCOUNTS_MANAGER, enums_js_1.Role.PURCHASE_TEAM),
+    (0, roles_decorator_js_1.Roles)(enums_js_1.Role.ADMIN, enums_js_1.Role.ACCOUNTS_MANAGER, enums_js_1.Role.PURCHASE_TEAM, enums_js_1.Role.SITE_ENGINEER),
     (0, swagger_1.ApiOperation)({ summary: 'List purchase orders' }),
     __metadata("design:type", Function),
     __metadata("design:paramtypes", []),

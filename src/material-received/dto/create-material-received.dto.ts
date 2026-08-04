@@ -18,6 +18,7 @@ export class MaterialReceivedItemDto {
 
 export class CreateMaterialReceivedDto {
   @ApiProperty() @IsUUID() projectId: string;
+  @ApiPropertyOptional() @IsUUID() @IsOptional() purchaseOrderId?: string;
   @ApiPropertyOptional() @IsDateString() @IsOptional() receivedDate?: string;
   @ApiPropertyOptional() @IsString() @IsOptional() notes?: string;
   @ApiProperty({ type: [MaterialReceivedItemDto] })
