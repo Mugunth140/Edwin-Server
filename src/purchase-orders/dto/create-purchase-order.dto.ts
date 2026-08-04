@@ -24,6 +24,7 @@ export class CreatePurchaseOrderDto {
   @ApiProperty() @IsUUID() vendorId: string;
   @ApiProperty() @IsUUID() projectId: string;
   @ApiPropertyOptional() @IsString() @IsOptional() enquiryNo?: string;
+  @ApiPropertyOptional() @IsString() @IsOptional() materialRequirementNo?: string;
   @ApiPropertyOptional() @IsString() @IsOptional() paymentTerms?: string;
   @ApiPropertyOptional() @IsString() @IsOptional() billFileUrl?: string;
   @ApiPropertyOptional() @IsString() @IsOptional() billFileKey?: string;

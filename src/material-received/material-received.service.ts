@@ -96,6 +96,12 @@ export class MaterialReceivedService {
     return this.repo.save(entry);
   }
 
+  async updateStatus(id: string, status: string): Promise<MaterialReceived> {
+    const entry = await this.findOne(id);
+    entry.status = status;
+    return this.repo.save(entry);
+  }
+
   async remove(id: string): Promise<void> {
     const entry = await this.findOne(id);
     entry.isDeleted = true;

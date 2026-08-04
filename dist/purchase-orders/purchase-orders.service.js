@@ -58,6 +58,7 @@ let PurchaseOrdersService = class PurchaseOrdersService {
             vendorId: dto.vendorId,
             projectId: dto.projectId,
             enquiryNo: dto.enquiryNo,
+            materialRequirementNo: dto.materialRequirementNo,
             paymentTerms: dto.paymentTerms,
             billFileUrl: dto.billFileUrl,
             billFileKey: dto.billFileKey,

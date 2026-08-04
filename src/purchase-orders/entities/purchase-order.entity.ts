@@ -38,6 +38,9 @@ export class PurchaseOrder {
   @Column({ nullable: true })
   enquiryNo: string;
 
+  @Column({ nullable: true })
+  materialRequirementNo: string;
+
   @Column({ type: 'text', nullable: true })
   paymentTerms: string;
 

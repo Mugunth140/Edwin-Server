@@ -102,6 +102,11 @@ export enum ExpenseCategory {
   TRAVEL = 'travel',
 }
 
+export enum MaterialReceivedStatus {
+  PENDING = 'pending',
+  VERIFIED = 'verified',
+}
+
 export enum ExpenseStatus {
   PENDING = 'pending',
   ADMIN_APPROVED = 'admin_approved',

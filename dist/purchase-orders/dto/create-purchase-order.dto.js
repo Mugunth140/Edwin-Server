@@ -45,6 +45,7 @@ class CreatePurchaseOrderDto {
     vendorId;
     projectId;
     enquiryNo;
+    materialRequirementNo;
     paymentTerms;
     billFileUrl;
     billFileKey;
@@ -68,6 +69,12 @@ __decorate([
     (0, class_validator_1.IsOptional)(),
     __metadata("design:type", String)
 ], CreatePurchaseOrderDto.prototype, "enquiryNo", void 0);
+__decorate([
+    (0, swagger_1.ApiPropertyOptional)(),
+    (0, class_validator_1.IsString)(),
+    (0, class_validator_1.IsOptional)(),
+    __metadata("design:type", String)
+], CreatePurchaseOrderDto.prototype, "materialRequirementNo", void 0);
 __decorate([
     (0, swagger_1.ApiPropertyOptional)(),
     (0, class_validator_1.IsString)(),

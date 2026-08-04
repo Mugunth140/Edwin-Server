@@ -1,6 +1,6 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.WorkCategory = exports.JobStatus = exports.JobType = exports.ProjectNature = exports.ProjectStatus = exports.AdvanceEntityType = exports.PaymentType = exports.ExpenseStatus = exports.ExpenseCategory = exports.DrawingCategory = exports.SeverityLevel = exports.RfiStatus = exports.SnagStatus = exports.MilestoneStatus = exports.InvoiceStatus = exports.PaymentMode = exports.BillStatus = exports.PurchaseOrderStatus = exports.SubcontractWorkOrderStatus = exports.WorkOrderStatus = exports.OfficeStaffType = exports.Role = void 0;
+exports.WorkCategory = exports.JobStatus = exports.JobType = exports.ProjectNature = exports.ProjectStatus = exports.AdvanceEntityType = exports.PaymentType = exports.ExpenseStatus = exports.MaterialReceivedStatus = exports.ExpenseCategory = exports.DrawingCategory = exports.SeverityLevel = exports.RfiStatus = exports.SnagStatus = exports.MilestoneStatus = exports.InvoiceStatus = exports.PaymentMode = exports.BillStatus = exports.PurchaseOrderStatus = exports.SubcontractWorkOrderStatus = exports.WorkOrderStatus = exports.OfficeStaffType = exports.Role = void 0;
 var Role;
 (function (Role) {
     Role["ADMIN"] = "admin";
@@ -105,6 +105,11 @@ var ExpenseCategory;
     ExpenseCategory["TRANSPORT"] = "transport";
     ExpenseCategory["TRAVEL"] = "travel";
 })(ExpenseCategory || (exports.ExpenseCategory = ExpenseCategory = {}));
+var MaterialReceivedStatus;
+(function (MaterialReceivedStatus) {
+    MaterialReceivedStatus["PENDING"] = "pending";
+    MaterialReceivedStatus["VERIFIED"] = "verified";
+})(MaterialReceivedStatus || (exports.MaterialReceivedStatus = MaterialReceivedStatus = {}));
 var ExpenseStatus;
 (function (ExpenseStatus) {
     ExpenseStatus["PENDING"] = "pending";

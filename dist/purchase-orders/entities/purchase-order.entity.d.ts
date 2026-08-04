@@ -10,6 +10,7 @@ export declare class PurchaseOrder {
     project: Project;
     projectId: string;
     enquiryNo: string;
+    materialRequirementNo: string;
     paymentTerms: string;
     status: PurchaseOrderStatus;
     totalAmount: number;

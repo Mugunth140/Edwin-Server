@@ -88,6 +88,10 @@ export declare enum ExpenseCategory {
     TRANSPORT = "transport",
     TRAVEL = "travel"
 }
+export declare enum MaterialReceivedStatus {
+    PENDING = "pending",
+    VERIFIED = "verified"
+}
 export declare enum ExpenseStatus {
     PENDING = "pending",
     ADMIN_APPROVED = "admin_approved",

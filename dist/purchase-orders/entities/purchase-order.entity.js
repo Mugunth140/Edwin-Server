@@ -23,6 +23,7 @@ let PurchaseOrder = class PurchaseOrder {
     project;
     projectId;
     enquiryNo;
+    materialRequirementNo;
     paymentTerms;
     status;
     totalAmount;
@@ -69,6 +70,10 @@ __decorate([
     (0, typeorm_1.Column)({ nullable: true }),
     __metadata("design:type", String)
 ], PurchaseOrder.prototype, "enquiryNo", void 0);
+__decorate([
+    (0, typeorm_1.Column)({ nullable: true }),
+    __metadata("design:type", String)
+], PurchaseOrder.prototype, "materialRequirementNo", void 0);
 __decorate([
     (0, typeorm_1.Column)({ type: 'text', nullable: true }),
     __metadata("design:type", String)

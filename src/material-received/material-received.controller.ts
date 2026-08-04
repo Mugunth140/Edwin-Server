@@ -7,6 +7,7 @@ import {
   UseGuards,
   Request,
   Put,
+  Patch,
   Delete,
   UploadedFile,
   UseInterceptors,
@@ -27,6 +28,7 @@ import { Roles } from '../auth/roles.decorator.js';
 import { Role } from '../common/enums.js';
 import { MaterialReceivedService } from './material-received.service.js';
 import { CreateMaterialReceivedDto } from './dto/create-material-received.dto.js';
+import { UpdateMaterialReceivedStatusDto } from './dto/update-material-received-status.dto.js';
 
 @ApiTags('Material Received')
 @Controller({ path: 'material-received', version: '1' })
@@ -85,6 +87,16 @@ export class MaterialReceivedController {
     @Request() req: any,
   ) {
     return this.service.update(id, dto, req.user.id);
+  }
+
+  @Patch(':id/status')
+  @Roles(Role.ADMIN, Role.ACCOUNTS_MANAGER, Role.PURCHASE_TEAM)
+  @ApiOperation({ summary: 'Update material received status' })
+  updateStatus(
+    @Param('id') id: string,
+    @Body() dto: UpdateMaterialReceivedStatusDto,
+  ) {
+    return this.service.updateStatus(id, dto.status);
   }
 
   @Post('upload')

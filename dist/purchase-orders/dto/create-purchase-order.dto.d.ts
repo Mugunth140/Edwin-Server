@@ -8,6 +8,7 @@ export declare class CreatePurchaseOrderDto {
     vendorId: string;
     projectId: string;
     enquiryNo?: string;
+    materialRequirementNo?: string;
     paymentTerms?: string;
     billFileUrl?: string;
     billFileKey?: string;
