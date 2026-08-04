@@ -38,27 +38,48 @@ export declare class DashboardController {
             party: string;
         }[];
     }>;
-    getPurchase(): Promise<{
+    getPurchase(req: any): Promise<{
         pendingPOs: {
             id: string;
             poNumber: string;
             vendorName: string;
             projectName: string;
-            totalAmount: number;
             fulfillment: number;
             createdAt: Date;
         }[];
         kpis: {
-            totalPayable: number;
-            unpaidBillCount: number;
+            assignedProjectCount: number;
+            materialRequirementCount: number;
+            materialReceivedCount: number;
             activePOCount: number;
-            totalPOValue: number;
+            unpaidBillCount: number;
         };
         recentActivity: {
-            pos: import("../purchase-orders/entities/purchase-order.entity.js").PurchaseOrder[];
-            bills: import("../accounts/entities/purchase-bill.entity.js").PurchaseBill[];
+            pos: {
+                id: string;
+                poNumber: string;
+                vendorName: string;
+                status: import("../common/enums.js").PurchaseOrderStatus;
+                createdAt: Date;
+            }[];
+            bills: {
+                id: string;
+                billNumber: string;
+                vendorName: string;
+                status: import("../common/enums.js").BillStatus;
+                billDate: Date;
+            }[];
         };
     }>;
+    getPurchaseAssignedProjects(req: any): Promise<{
+        id: string;
+        name: string;
+        projectCode: string;
+        status: import("../common/enums.js").ProjectStatus;
+        completionPct: number;
+        location: string;
+        clientName: string;
+    }[]>;
     getEngineer(req: any): Promise<{
         totalProjects: number;
         projects: {

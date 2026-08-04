@@ -11,6 +11,7 @@ import { Payment } from '../payments/entities/payment.entity.js';
 import { User } from '../users/entities/user.entity.js';
 import { PurchaseOrder } from '../purchase-orders/entities/purchase-order.entity.js';
 import { PurchaseEnquiry } from '../purchase-enquiries/entities/purchase-enquiry.entity.js';
+import { MaterialReceived } from '../material-received/entities/material-received.entity.js';
 import { WeeklyTimesheet } from '../timesheet-attendance/entities/weekly-timesheet.entity.js';
 import { InvoiceStatus, PurchaseOrderStatus } from '../common/enums.js';
 
@@ -31,11 +32,37 @@ export class DashboardService {
     @InjectRepository(PurchaseOrder) private poRepo: Repository<PurchaseOrder>,
     @InjectRepository(PurchaseEnquiry)
     private enquiryRepo: Repository<PurchaseEnquiry>,
+    @InjectRepository(MaterialReceived)
+    private materialReceivedRepo: Repository<MaterialReceived>,
     @InjectRepository(WeeklyTimesheet)
     private tsRepo: Repository<WeeklyTimesheet>,
   ) {}
 
-  async getPurchaseDashboard() {
+  async getPurchaseAssignedProjects(userId: string) {
+    const user = await this.usersRepo.findOne({
+      where: { id: userId },
+      relations: ['projects'],
+    });
+    if (!user) throw new NotFoundException('User not found');
+    return (user.projects || []).map((p) => ({
+      id: p.id,
+      name: p.name,
+      projectCode: p.projectCode,
+      status: p.status,
+      completionPct: Number(p.completionPct),
+      location: p.location,
+      clientName: p.clientName,
+    }));
+  }
+
+  async getPurchaseDashboard(userId: string) {
+    // 0. Projects assigned to this purchase team member
+    const user = await this.usersRepo.findOne({
+      where: { id: userId },
+      relations: ['projects'],
+    });
+    const assignedProjectCount = user?.projects?.length || 0;
+
     // 1. Pending POs (Approved but not fully billed)
     const pendingPOs = await this.poRepo.find({
       where: {
@@ -46,22 +73,27 @@ export class DashboardService {
       order: { createdAt: 'DESC' },
     });
 
-    // 2. Total Payables (Unpaid or partially paid bills)
+    // 2. Unpaid bill count (no amounts — that's Accounts' concern)
     const bills = await this.billRepo.find({
       where: { isDeleted: false },
-      relations: ['vendor', 'payments'],
+      relations: ['vendor'],
     });
-
-    const totalPayable = bills.reduce((sum, bill) => {
-      const balance = Number(bill.amount) - Number(bill.paidAmount || 0);
-      return sum + balance;
-    }, 0);
 
     const unpaidBillCount = bills.filter(
       (b) => Number(b.amount) - Number(b.paidAmount || 0) > 0,
     ).length;
 
-    // 3. Recent Activity (Latest POs and Bills)
+    // 3. Material Requirements raised by Site Engineers, awaiting purchase action
+    const materialRequirementCount = await this.enquiryRepo.count({
+      where: { isDeleted: false },
+    });
+
+    // 4. Material Received records logged so far
+    const materialReceivedCount = await this.materialReceivedRepo.count({
+      where: { isDeleted: false },
+    });
+
+    // 5. Recent Activity (Latest POs and Bills — no amounts)
     const recentPOs = await this.poRepo.find({
       where: { isDeleted: false },
       relations: ['vendor'],
@@ -87,21 +119,33 @@ export class DashboardService {
           poNumber: po.poNumber,
           vendorName: po.vendor?.name,
           projectName: po.project?.name,
-          totalAmount: po.totalAmount,
           fulfillment:
             totalQty > 0 ? Math.round((totalBilled / totalQty) * 100) : 0,
           createdAt: po.createdAt,
         };
       }),
       kpis: {
-        totalPayable,
-        unpaidBillCount,
+        assignedProjectCount,
+        materialRequirementCount,
+        materialReceivedCount,
         activePOCount: pendingPOs.length,
-        totalPOValue: recentPOs.reduce((s, p) => s + Number(p.totalAmount), 0), // Simplification for demo
+        unpaidBillCount,
       },
       recentActivity: {
-        pos: recentPOs,
-        bills: recentBills,
+        pos: recentPOs.map((po) => ({
+          id: po.id,
+          poNumber: po.poNumber,
+          vendorName: po.vendor?.name,
+          status: po.status,
+          createdAt: po.createdAt,
+        })),
+        bills: recentBills.map((bill) => ({
+          id: bill.id,
+          billNumber: bill.billNumber,
+          vendorName: bill.vendor?.name,
+          status: bill.status,
+          billDate: bill.billDate,
+        })),
       },
     };
   }

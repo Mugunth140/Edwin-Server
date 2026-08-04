@@ -30,8 +30,15 @@ export class DashboardController {
   @Get('purchase')
   @Roles(Role.PURCHASE_TEAM)
   @ApiOperation({ summary: 'Get purchase team dashboard KPIs' })
-  getPurchase() {
-    return this.dashboardService.getPurchaseDashboard();
+  getPurchase(@Request() req: any) {
+    return this.dashboardService.getPurchaseDashboard(req.user.id);
+  }
+
+  @Get('purchase/projects')
+  @Roles(Role.PURCHASE_TEAM)
+  @ApiOperation({ summary: 'Get projects assigned to the current purchase team member' })
+  getPurchaseAssignedProjects(@Request() req: any) {
+    return this.dashboardService.getPurchaseAssignedProjects(req.user.id);
   }
 
   @Get('engineer')

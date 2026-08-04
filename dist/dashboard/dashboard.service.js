@@ -26,6 +26,7 @@ const payment_entity_js_1 = require("../payments/entities/payment.entity.js");
 const user_entity_js_1 = require("../users/entities/user.entity.js");
 const purchase_order_entity_js_1 = require("../purchase-orders/entities/purchase-order.entity.js");
 const purchase_enquiry_entity_js_1 = require("../purchase-enquiries/entities/purchase-enquiry.entity.js");
+const material_received_entity_js_1 = require("../material-received/entities/material-received.entity.js");
 const weekly_timesheet_entity_js_1 = require("../timesheet-attendance/entities/weekly-timesheet.entity.js");
 const enums_js_1 = require("../common/enums.js");
 let DashboardService = class DashboardService {
@@ -39,8 +40,9 @@ let DashboardService = class DashboardService {
     usersRepo;
     poRepo;
     enquiryRepo;
+    materialReceivedRepo;
     tsRepo;
-    constructor(projectsRepo, milestonesRepo, attendanceRepo, invoiceRepo, billRepo, expenseRepo, paymentRepo, usersRepo, poRepo, enquiryRepo, tsRepo) {
+    constructor(projectsRepo, milestonesRepo, attendanceRepo, invoiceRepo, billRepo, expenseRepo, paymentRepo, usersRepo, poRepo, enquiryRepo, materialReceivedRepo, tsRepo) {
         this.projectsRepo = projectsRepo;
         this.milestonesRepo = milestonesRepo;
         this.attendanceRepo = attendanceRepo;
@@ -51,9 +53,32 @@ let DashboardService = class DashboardService {
         this.usersRepo = usersRepo;
         this.poRepo = poRepo;
         this.enquiryRepo = enquiryRepo;
+        this.materialReceivedRepo = materialReceivedRepo;
         this.tsRepo = tsRepo;
     }
-    async getPurchaseDashboard() {
+    async getPurchaseAssignedProjects(userId) {
+        const user = await this.usersRepo.findOne({
+            where: { id: userId },
+            relations: ['projects'],
+        });
+        if (!user)
+            throw new common_1.NotFoundException('User not found');
+        return (user.projects || []).map((p) => ({
+            id: p.id,
+            name: p.name,
+            projectCode: p.projectCode,
+            status: p.status,
+            completionPct: Number(p.completionPct),
+            location: p.location,
+            clientName: p.clientName,
+        }));
+    }
+    async getPurchaseDashboard(userId) {
+        const user = await this.usersRepo.findOne({
+            where: { id: userId },
+            relations: ['projects'],
+        });
+        const assignedProjectCount = user?.projects?.length || 0;
         const pendingPOs = await this.poRepo.find({
             where: {
                 status: enums_js_1.PurchaseOrderStatus.APPROVED,
@@ -64,13 +89,15 @@ let DashboardService = class DashboardService {
         });
         const bills = await this.billRepo.find({
             where: { isDeleted: false },
-            relations: ['vendor', 'payments'],
+            relations: ['vendor'],
         });
-        const totalPayable = bills.reduce((sum, bill) => {
-            const balance = Number(bill.amount) - Number(bill.paidAmount || 0);
-            return sum + balance;
-        }, 0);
         const unpaidBillCount = bills.filter((b) => Number(b.amount) - Number(b.paidAmount || 0) > 0).length;
+        const materialRequirementCount = await this.enquiryRepo.count({
+            where: { isDeleted: false },
+        });
+        const materialReceivedCount = await this.materialReceivedRepo.count({
+            where: { isDeleted: false },
+        });
         const recentPOs = await this.poRepo.find({
             where: { isDeleted: false },
             relations: ['vendor'],
@@ -92,20 +119,32 @@ let DashboardService = class DashboardService {
                     poNumber: po.poNumber,
                     vendorName: po.vendor?.name,
                     projectName: po.project?.name,
-                    totalAmount: po.totalAmount,
                     fulfillment: totalQty > 0 ? Math.round((totalBilled / totalQty) * 100) : 0,
                     createdAt: po.createdAt,
                 };
             }),
             kpis: {
-                totalPayable,
-                unpaidBillCount,
+                assignedProjectCount,
+                materialRequirementCount,
+                materialReceivedCount,
                 activePOCount: pendingPOs.length,
-                totalPOValue: recentPOs.reduce((s, p) => s + Number(p.totalAmount), 0),
+                unpaidBillCount,
             },
             recentActivity: {
-                pos: recentPOs,
-                bills: recentBills,
+                pos: recentPOs.map((po) => ({
+                    id: po.id,
+                    poNumber: po.poNumber,
+                    vendorName: po.vendor?.name,
+                    status: po.status,
+                    createdAt: po.createdAt,
+                })),
+                bills: recentBills.map((bill) => ({
+                    id: bill.id,
+                    billNumber: bill.billNumber,
+                    vendorName: bill.vendor?.name,
+                    status: bill.status,
+                    billDate: bill.billDate,
+                })),
             },
         };
     }
@@ -356,8 +395,10 @@ exports.DashboardService = DashboardService = __decorate([
     __param(7, (0, typeorm_1.InjectRepository)(user_entity_js_1.User)),
     __param(8, (0, typeorm_1.InjectRepository)(purchase_order_entity_js_1.PurchaseOrder)),
     __param(9, (0, typeorm_1.InjectRepository)(purchase_enquiry_entity_js_1.PurchaseEnquiry)),
-    __param(10, (0, typeorm_1.InjectRepository)(weekly_timesheet_entity_js_1.WeeklyTimesheet)),
+    __param(10, (0, typeorm_1.InjectRepository)(material_received_entity_js_1.MaterialReceived)),
+    __param(11, (0, typeorm_1.InjectRepository)(weekly_timesheet_entity_js_1.WeeklyTimesheet)),
     __metadata("design:paramtypes", [typeorm_2.Repository,
+        typeorm_2.Repository,
         typeorm_2.Repository,
         typeorm_2.Repository,
         typeorm_2.Repository,

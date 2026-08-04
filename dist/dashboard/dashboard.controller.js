@@ -31,8 +31,11 @@ let DashboardController = class DashboardController {
     getAccounts() {
         return this.dashboardService.getAccountsDashboard();
     }
-    getPurchase() {
-        return this.dashboardService.getPurchaseDashboard();
+    getPurchase(req) {
+        return this.dashboardService.getPurchaseDashboard(req.user.id);
+    }
+    getPurchaseAssignedProjects(req) {
+        return this.dashboardService.getPurchaseAssignedProjects(req.user.id);
     }
     getEngineer(req) {
         return this.dashboardService.getEngineerDashboard(req.user.id);
@@ -62,10 +65,20 @@ __decorate([
     (0, common_1.Get)('purchase'),
     (0, roles_decorator_js_1.Roles)(enums_js_1.Role.PURCHASE_TEAM),
     (0, swagger_1.ApiOperation)({ summary: 'Get purchase team dashboard KPIs' }),
+    __param(0, (0, common_1.Request)()),
     __metadata("design:type", Function),
-    __metadata("design:paramtypes", []),
+    __metadata("design:paramtypes", [Object]),
     __metadata("design:returntype", void 0)
 ], DashboardController.prototype, "getPurchase", null);
+__decorate([
+    (0, common_1.Get)('purchase/projects'),
+    (0, roles_decorator_js_1.Roles)(enums_js_1.Role.PURCHASE_TEAM),
+    (0, swagger_1.ApiOperation)({ summary: 'Get projects assigned to the current purchase team member' }),
+    __param(0, (0, common_1.Request)()),
+    __metadata("design:type", Function),
+    __metadata("design:paramtypes", [Object]),
+    __metadata("design:returntype", void 0)
+], DashboardController.prototype, "getPurchaseAssignedProjects", null);
 __decorate([
     (0, common_1.Get)('engineer'),
     (0, roles_decorator_js_1.Roles)(enums_js_1.Role.SITE_ENGINEER),

@@ -20,6 +20,7 @@ const expense_entity_js_1 = require("../expenses/entities/expense.entity.js");
 const payment_entity_js_1 = require("../payments/entities/payment.entity.js");
 const purchase_order_entity_js_1 = require("../purchase-orders/entities/purchase-order.entity.js");
 const purchase_enquiry_entity_js_1 = require("../purchase-enquiries/entities/purchase-enquiry.entity.js");
+const material_received_entity_js_1 = require("../material-received/entities/material-received.entity.js");
 const weekly_timesheet_entity_js_1 = require("../timesheet-attendance/entities/weekly-timesheet.entity.js");
 const user_entity_js_1 = require("../users/entities/user.entity.js");
 let DashboardModule = class DashboardModule {
@@ -39,6 +40,7 @@ exports.DashboardModule = DashboardModule = __decorate([
                 user_entity_js_1.User,
                 purchase_order_entity_js_1.PurchaseOrder,
                 purchase_enquiry_entity_js_1.PurchaseEnquiry,
+                material_received_entity_js_1.MaterialReceived,
                 weekly_timesheet_entity_js_1.WeeklyTimesheet,
             ]),
         ],

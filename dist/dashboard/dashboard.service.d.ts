@@ -9,7 +9,9 @@ import { Payment } from '../payments/entities/payment.entity.js';
 import { User } from '../users/entities/user.entity.js';
 import { PurchaseOrder } from '../purchase-orders/entities/purchase-order.entity.js';
 import { PurchaseEnquiry } from '../purchase-enquiries/entities/purchase-enquiry.entity.js';
+import { MaterialReceived } from '../material-received/entities/material-received.entity.js';
 import { WeeklyTimesheet } from '../timesheet-attendance/entities/weekly-timesheet.entity.js';
+import { PurchaseOrderStatus } from '../common/enums.js';
 export declare class DashboardService {
     private projectsRepo;
     private milestonesRepo;
@@ -21,27 +23,49 @@ export declare class DashboardService {
     private usersRepo;
     private poRepo;
     private enquiryRepo;
+    private materialReceivedRepo;
     private tsRepo;
-    constructor(projectsRepo: Repository<Project>, milestonesRepo: Repository<ProjectMilestone>, attendanceRepo: Repository<AttendanceLog>, invoiceRepo: Repository<SalesInvoice>, billRepo: Repository<PurchaseBill>, expenseRepo: Repository<Expense>, paymentRepo: Repository<Payment>, usersRepo: Repository<User>, poRepo: Repository<PurchaseOrder>, enquiryRepo: Repository<PurchaseEnquiry>, tsRepo: Repository<WeeklyTimesheet>);
-    getPurchaseDashboard(): Promise<{
+    constructor(projectsRepo: Repository<Project>, milestonesRepo: Repository<ProjectMilestone>, attendanceRepo: Repository<AttendanceLog>, invoiceRepo: Repository<SalesInvoice>, billRepo: Repository<PurchaseBill>, expenseRepo: Repository<Expense>, paymentRepo: Repository<Payment>, usersRepo: Repository<User>, poRepo: Repository<PurchaseOrder>, enquiryRepo: Repository<PurchaseEnquiry>, materialReceivedRepo: Repository<MaterialReceived>, tsRepo: Repository<WeeklyTimesheet>);
+    getPurchaseAssignedProjects(userId: string): Promise<{
+        id: string;
+        name: string;
+        projectCode: string;
+        status: import("../common/enums.js").ProjectStatus;
+        completionPct: number;
+        location: string;
+        clientName: string;
+    }[]>;
+    getPurchaseDashboard(userId: string): Promise<{
         pendingPOs: {
             id: string;
             poNumber: string;
             vendorName: string;
             projectName: string;
-            totalAmount: number;
             fulfillment: number;
             createdAt: Date;
         }[];
         kpis: {
-            totalPayable: number;
-            unpaidBillCount: number;
+            assignedProjectCount: number;
+            materialRequirementCount: number;
+            materialReceivedCount: number;
             activePOCount: number;
-            totalPOValue: number;
+            unpaidBillCount: number;
         };
         recentActivity: {
-            pos: PurchaseOrder[];
-            bills: PurchaseBill[];
+            pos: {
+                id: string;
+                poNumber: string;
+                vendorName: string;
+                status: PurchaseOrderStatus;
+                createdAt: Date;
+            }[];
+            bills: {
+                id: string;
+                billNumber: string;
+                vendorName: string;
+                status: import("../common/enums.js").BillStatus;
+                billDate: Date;
+            }[];
         };
     }>;
     getAccountsDashboard(): Promise<{

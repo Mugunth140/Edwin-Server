@@ -11,6 +11,7 @@ import { Expense } from '../expenses/entities/expense.entity.js';
 import { Payment } from '../payments/entities/payment.entity.js';
 import { PurchaseOrder } from '../purchase-orders/entities/purchase-order.entity.js';
 import { PurchaseEnquiry } from '../purchase-enquiries/entities/purchase-enquiry.entity.js';
+import { MaterialReceived } from '../material-received/entities/material-received.entity.js';
 import { WeeklyTimesheet } from '../timesheet-attendance/entities/weekly-timesheet.entity.js';
 import { User } from '../users/entities/user.entity.js';
 
@@ -27,6 +28,7 @@ import { User } from '../users/entities/user.entity.js';
       User,
       PurchaseOrder,
       PurchaseEnquiry,
+      MaterialReceived,
       WeeklyTimesheet,
     ]),
   ],
