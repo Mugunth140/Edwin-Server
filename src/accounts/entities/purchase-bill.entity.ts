@@ -46,6 +46,12 @@ export class PurchaseBill {
   @Column({ type: 'decimal', precision: 12, scale: 2, default: 0 })
   amount: number;
 
+  @Column({ type: 'decimal', precision: 5, scale: 2, nullable: true })
+  gstPercent: number;
+
+  @Column({ type: 'decimal', precision: 12, scale: 2, nullable: true })
+  gstAmount: number;
+
   @Column({ type: 'varchar', length: 50, default: BillStatus.PENDING })
   status: BillStatus;
 

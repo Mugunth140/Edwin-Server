@@ -121,6 +121,8 @@ class CreateBillDto {
     purchaseOrderId;
     projectId;
     amount;
+    gstPercent;
+    gstAmount;
     billDate;
     dueDate;
     billFileUrl;
@@ -151,6 +153,18 @@ __decorate([
     (0, class_validator_1.IsNumber)(),
     __metadata("design:type", Number)
 ], CreateBillDto.prototype, "amount", void 0);
+__decorate([
+    (0, swagger_1.ApiPropertyOptional)(),
+    (0, class_validator_1.IsNumber)(),
+    (0, class_validator_1.IsOptional)(),
+    __metadata("design:type", Number)
+], CreateBillDto.prototype, "gstPercent", void 0);
+__decorate([
+    (0, swagger_1.ApiPropertyOptional)(),
+    (0, class_validator_1.IsNumber)(),
+    (0, class_validator_1.IsOptional)(),
+    __metadata("design:type", Number)
+], CreateBillDto.prototype, "gstAmount", void 0);
 __decorate([
     (0, swagger_1.ApiPropertyOptional)(),
     (0, class_validator_1.IsDateString)(),

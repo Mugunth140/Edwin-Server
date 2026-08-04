@@ -14,6 +14,8 @@ export declare class PurchaseBill {
     project: Project;
     projectId: string;
     amount: number;
+    gstPercent: number;
+    gstAmount: number;
     status: BillStatus;
     paidAmount: number;
     billDate: Date;

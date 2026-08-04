@@ -45,7 +45,9 @@ export class AccountsService {
     const bill = this.billRepo.create({
       vendorId: po.vendorId,
       projectId: po.projectId,
-      amount: po.totalAmount,
+      amount: po.totalWithGst || po.totalAmount,
+      gstPercent: po.gstPercent,
+      gstAmount: po.gstAmount,
       billDate: new Date(),
       billNumber,
       createdBy: userId,

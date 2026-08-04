@@ -24,6 +24,8 @@ export declare class CreateBillDto {
     purchaseOrderId?: string;
     projectId?: string;
     amount: number;
+    gstPercent?: number;
+    gstAmount?: number;
     billDate?: string;
     dueDate?: string;
     billFileUrl?: string;

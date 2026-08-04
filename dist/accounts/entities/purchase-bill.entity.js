@@ -27,6 +27,8 @@ let PurchaseBill = class PurchaseBill {
     project;
     projectId;
     amount;
+    gstPercent;
+    gstAmount;
     status;
     paidAmount;
     billDate;
@@ -81,6 +83,14 @@ __decorate([
     (0, typeorm_1.Column)({ type: 'decimal', precision: 12, scale: 2, default: 0 }),
     __metadata("design:type", Number)
 ], PurchaseBill.prototype, "amount", void 0);
+__decorate([
+    (0, typeorm_1.Column)({ type: 'decimal', precision: 5, scale: 2, nullable: true }),
+    __metadata("design:type", Number)
+], PurchaseBill.prototype, "gstPercent", void 0);
+__decorate([
+    (0, typeorm_1.Column)({ type: 'decimal', precision: 12, scale: 2, nullable: true }),
+    __metadata("design:type", Number)
+], PurchaseBill.prototype, "gstAmount", void 0);
 __decorate([
     (0, typeorm_1.Column)({ type: 'varchar', length: 50, default: enums_js_1.BillStatus.PENDING }),
     __metadata("design:type", String)

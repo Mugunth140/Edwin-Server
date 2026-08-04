@@ -47,6 +47,8 @@ export class CreateBillDto {
   @ApiPropertyOptional() @IsUUID() @IsOptional() purchaseOrderId?: string;
   @ApiPropertyOptional() @IsUUID() @IsOptional() projectId?: string;
   @ApiProperty() @IsNumber() amount: number;
+  @ApiPropertyOptional() @IsNumber() @IsOptional() gstPercent?: number;
+  @ApiPropertyOptional() @IsNumber() @IsOptional() gstAmount?: number;
   @ApiPropertyOptional() @IsDateString() @IsOptional() billDate?: string;
   @ApiPropertyOptional() @IsDateString() @IsOptional() dueDate?: string;
   @ApiPropertyOptional() @IsString() @IsOptional() billFileUrl?: string;
