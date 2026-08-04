@@ -99,7 +99,7 @@ export class TimesheetAttendanceController {
   @Roles(Role.ADMIN)
   @ApiOperation({ summary: 'Approve timesheet & create payment (admin)' })
   approve(@Param('id') id: string, @Request() req: any) {
-    return this.service.approve(id, req.user.id);
+    return this.service.approve(id, req.user);
   }
 
   @Patch(':id/reject')

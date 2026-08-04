@@ -203,13 +203,16 @@ export class TimesheetAttendanceService {
     return this.tsRepo.save(ts);
   }
 
-  async approve(id: string, userId: string) {
+  async approve(id: string, requester: { id: string; role: string }) {
+    const userId = requester.id;
     const ts = await this.findOne(id);
-    // Admins approving their own timesheet can skip the accounts-manager
-    // verify step (there's no separate approver above them to verify it).
+    // Admins can approve directly — they're the top authority and don't need
+    // an accounts-manager to verify first. Admins approving their own
+    // timesheet can also skip the verify step for the same reason.
     const isSelfApprove =
       ts.siteEngineerId === userId && ts.status === 'submitted';
-    if (ts.status !== 'verified' && !isSelfApprove)
+    const isAdminOverride = requester.role === Role.ADMIN;
+    if (ts.status !== 'verified' && !isSelfApprove && !isAdminOverride)
       throw new BadRequestException('Only verified timesheets can be approved');
 
     const user = await this.userRepo.findOne({
