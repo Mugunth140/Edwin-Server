@@ -23,6 +23,7 @@ const project_entity_js_1 = require("../projects/entities/project.entity.js");
 const purchase_order_entity_js_1 = require("../purchase-orders/entities/purchase-order.entity.js");
 const po_item_entity_js_1 = require("../purchase-orders/entities/po-item.entity.js");
 const bill_item_entity_js_1 = require("./entities/bill-item.entity.js");
+const notifications_module_js_1 = require("../notifications/notifications.module.js");
 let AccountsModule = class AccountsModule {
 };
 exports.AccountsModule = AccountsModule;
@@ -40,6 +41,7 @@ exports.AccountsModule = AccountsModule = __decorate([
                 purchase_order_entity_js_1.PurchaseOrder,
                 po_item_entity_js_1.PoItem,
             ]),
+            notifications_module_js_1.NotificationsModule,
         ],
         controllers: [
             accounts_controller_js_1.AccountsController,

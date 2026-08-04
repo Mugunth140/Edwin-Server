@@ -26,6 +26,7 @@ const purchase_order_entity_js_1 = require("../purchase-orders/entities/purchase
 const po_item_entity_js_1 = require("../purchase-orders/entities/po-item.entity.js");
 const bill_item_entity_js_1 = require("./entities/bill-item.entity.js");
 const enums_js_1 = require("../common/enums.js");
+const notifications_service_js_1 = require("../notifications/notifications.service.js");
 let AccountsService = class AccountsService {
     invoiceRepo;
     invoiceItemRepo;
@@ -36,7 +37,8 @@ let AccountsService = class AccountsService {
     poRepo;
     poItemRepo;
     billItemRepo;
-    constructor(invoiceRepo, invoiceItemRepo, billRepo, boqRepo, advanceRepo, projectRepo, poRepo, poItemRepo, billItemRepo) {
+    notifications;
+    constructor(invoiceRepo, invoiceItemRepo, billRepo, boqRepo, advanceRepo, projectRepo, poRepo, poItemRepo, billItemRepo, notifications) {
         this.invoiceRepo = invoiceRepo;
         this.invoiceItemRepo = invoiceItemRepo;
         this.billRepo = billRepo;
@@ -46,6 +48,7 @@ let AccountsService = class AccountsService {
         this.poRepo = poRepo;
         this.poItemRepo = poItemRepo;
         this.billItemRepo = billItemRepo;
+        this.notifications = notifications;
     }
     async convertPoToBill(poId, userId) {
         const po = await this.poRepo.findOne({
@@ -177,13 +180,13 @@ let AccountsService = class AccountsService {
         }
         return `BILL-${year}-${String(seq).padStart(3, '0')}`;
     }
-    async createBill(dto, userId) {
+    async createBill(dto, user) {
         const billNumber = await this.generateBillNumber();
         const { items, ...billData } = dto;
         const bill = this.billRepo.create({
             ...billData,
             billNumber,
-            createdBy: userId,
+            createdBy: user?.id,
         });
         const savedBill = await this.billRepo.save(bill);
         if (items && items.length > 0) {
@@ -209,6 +212,16 @@ let AccountsService = class AccountsService {
                 }));
             }
             await this.billItemRepo.save(billItems);
+        }
+        if (user?.role === enums_js_1.Role.PURCHASE_TEAM) {
+            await this.notifications.createForRole(enums_js_1.Role.ACCOUNTS_MANAGER, {
+                userId: user.id,
+                type: 'bill_created',
+                title: 'New Bill Created',
+                message: `${savedBill.billNumber} was created`,
+                link: '/dashboard/accounts/bills',
+                entityId: savedBill.id,
+            });
         }
         return this.findOneBill(savedBill.id);
     }
@@ -384,6 +397,7 @@ exports.AccountsService = AccountsService = __decorate([
         typeorm_2.Repository,
         typeorm_2.Repository,
         typeorm_2.Repository,
-        typeorm_2.Repository])
+        typeorm_2.Repository,
+        notifications_service_js_1.NotificationsService])
 ], AccountsService);
 //# sourceMappingURL=accounts.service.js.map

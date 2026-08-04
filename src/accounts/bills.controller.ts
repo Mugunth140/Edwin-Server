@@ -40,7 +40,7 @@ export class BillsController {
   @Roles(Role.ADMIN, Role.ACCOUNTS_MANAGER, Role.PURCHASE_TEAM)
   @ApiOperation({ summary: 'Create purchase bill' })
   createBill(@Body() dto: CreateBillDto, @Request() req: any) {
-    return this.accountsService.createBill(dto, req.user.id);
+    return this.accountsService.createBill(dto, req.user);
   }
 
   @Post('upload')

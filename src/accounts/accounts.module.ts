@@ -14,6 +14,7 @@ import { Project } from '../projects/entities/project.entity.js';
 import { PurchaseOrder } from '../purchase-orders/entities/purchase-order.entity.js';
 import { PoItem } from '../purchase-orders/entities/po-item.entity.js';
 import { BillItem } from './entities/bill-item.entity.js';
+import { NotificationsModule } from '../notifications/notifications.module.js';
 
 @Module({
   imports: [
@@ -28,6 +29,7 @@ import { BillItem } from './entities/bill-item.entity.js';
       PurchaseOrder,
       PoItem,
     ]),
+    NotificationsModule,
   ],
   controllers: [
     AccountsController,

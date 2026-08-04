@@ -10,6 +10,11 @@ import { PoItem } from '../purchase-orders/entities/po-item.entity.js';
 import { BillItem } from './entities/bill-item.entity.js';
 import { CreateInvoiceDto, CreateBillDto, CreateAdvanceDto, CreateBoqDto } from './dto/accounts.dto.js';
 import { InvoiceStatus, BillStatus } from '../common/enums.js';
+import { NotificationsService } from '../notifications/notifications.service.js';
+type RequestUser = {
+    id: string;
+    role: string;
+};
 export declare class AccountsService {
     private invoiceRepo;
     private invoiceItemRepo;
@@ -20,7 +25,8 @@ export declare class AccountsService {
     private poRepo;
     private poItemRepo;
     private billItemRepo;
-    constructor(invoiceRepo: Repository<SalesInvoice>, invoiceItemRepo: Repository<InvoiceItem>, billRepo: Repository<PurchaseBill>, boqRepo: Repository<BoqItem>, advanceRepo: Repository<Advance>, projectRepo: Repository<Project>, poRepo: Repository<PurchaseOrder>, poItemRepo: Repository<PoItem>, billItemRepo: Repository<BillItem>);
+    private readonly notifications;
+    constructor(invoiceRepo: Repository<SalesInvoice>, invoiceItemRepo: Repository<InvoiceItem>, billRepo: Repository<PurchaseBill>, boqRepo: Repository<BoqItem>, advanceRepo: Repository<Advance>, projectRepo: Repository<Project>, poRepo: Repository<PurchaseOrder>, poItemRepo: Repository<PoItem>, billItemRepo: Repository<BillItem>, notifications: NotificationsService);
     convertPoToBill(poId: string, userId?: string): Promise<PurchaseBill>;
     private generateInvoiceNumber;
     createInvoice(dto: CreateInvoiceDto, userId?: string): Promise<SalesInvoice>;
@@ -32,7 +38,7 @@ export declare class AccountsService {
     updateInvoiceStatus(id: string, status: InvoiceStatus): Promise<SalesInvoice>;
     removeInvoice(id: string): Promise<void>;
     private generateBillNumber;
-    createBill(dto: CreateBillDto, userId?: string): Promise<PurchaseBill>;
+    createBill(dto: CreateBillDto, user?: RequestUser): Promise<PurchaseBill>;
     findOneBill(id: string): Promise<PurchaseBill>;
     findBills(): Promise<PurchaseBill[]>;
     updateBill(id: string, dto: CreateBillDto, userId?: string): Promise<PurchaseBill>;
@@ -64,3 +70,4 @@ export declare class AccountsService {
         totalCost: number;
     }>;
 }
+export {};

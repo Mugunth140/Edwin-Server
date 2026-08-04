@@ -16,7 +16,10 @@ import {
   CreateAdvanceDto,
   CreateBoqDto,
 } from './dto/accounts.dto.js';
-import { InvoiceStatus, BillStatus } from '../common/enums.js';
+import { InvoiceStatus, BillStatus, Role } from '../common/enums.js';
+import { NotificationsService } from '../notifications/notifications.service.js';
+
+type RequestUser = { id: string; role: string };
 
 @Injectable()
 export class AccountsService {
@@ -32,6 +35,7 @@ export class AccountsService {
     @InjectRepository(PurchaseOrder) private poRepo: Repository<PurchaseOrder>,
     @InjectRepository(PoItem) private poItemRepo: Repository<PoItem>,
     @InjectRepository(BillItem) private billItemRepo: Repository<BillItem>,
+    private readonly notifications: NotificationsService,
   ) {}
 
   async convertPoToBill(poId: string, userId?: string): Promise<PurchaseBill> {
@@ -180,13 +184,13 @@ export class AccountsService {
     return `BILL-${year}-${String(seq).padStart(3, '0')}`;
   }
 
-  async createBill(dto: CreateBillDto, userId?: string): Promise<PurchaseBill> {
+  async createBill(dto: CreateBillDto, user?: RequestUser): Promise<PurchaseBill> {
     const billNumber = await this.generateBillNumber();
     const { items, ...billData } = dto;
     const bill = this.billRepo.create({
       ...billData,
       billNumber,
-      createdBy: userId,
+      createdBy: user?.id,
     });
     const savedBill = await this.billRepo.save(bill);
 
@@ -216,6 +220,18 @@ export class AccountsService {
       }
       await this.billItemRepo.save(billItems);
     }
+
+    if (user?.role === Role.PURCHASE_TEAM) {
+      await this.notifications.createForRole(Role.ACCOUNTS_MANAGER, {
+        userId: user.id,
+        type: 'bill_created',
+        title: 'New Bill Created',
+        message: `${savedBill.billNumber} was created`,
+        link: '/dashboard/accounts/bills',
+        entityId: savedBill.id,
+      });
+    }
+
     return this.findOneBill(savedBill.id);
   }
 
