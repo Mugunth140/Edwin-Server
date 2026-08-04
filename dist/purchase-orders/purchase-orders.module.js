@@ -13,12 +13,17 @@ const purchase_orders_controller_js_1 = require("./purchase-orders.controller.js
 const purchase_orders_service_js_1 = require("./purchase-orders.service.js");
 const purchase_order_entity_js_1 = require("./entities/purchase-order.entity.js");
 const po_item_entity_js_1 = require("./entities/po-item.entity.js");
+const purchase_enquiry_entity_js_1 = require("../purchase-enquiries/entities/purchase-enquiry.entity.js");
+const notifications_module_js_1 = require("../notifications/notifications.module.js");
 let PurchaseOrdersModule = class PurchaseOrdersModule {
 };
 exports.PurchaseOrdersModule = PurchaseOrdersModule;
 exports.PurchaseOrdersModule = PurchaseOrdersModule = __decorate([
     (0, common_1.Module)({
-        imports: [typeorm_1.TypeOrmModule.forFeature([purchase_order_entity_js_1.PurchaseOrder, po_item_entity_js_1.PoItem])],
+        imports: [
+            typeorm_1.TypeOrmModule.forFeature([purchase_order_entity_js_1.PurchaseOrder, po_item_entity_js_1.PoItem, purchase_enquiry_entity_js_1.PurchaseEnquiry]),
+            notifications_module_js_1.NotificationsModule,
+        ],
         controllers: [purchase_orders_controller_js_1.PurchaseOrdersController],
         providers: [purchase_orders_service_js_1.PurchaseOrdersService],
         exports: [purchase_orders_service_js_1.PurchaseOrdersService],

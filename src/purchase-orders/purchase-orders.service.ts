@@ -5,12 +5,19 @@ import { PurchaseOrder } from './entities/purchase-order.entity.js';
 import { PoItem } from './entities/po-item.entity.js';
 import { CreatePurchaseOrderDto } from './dto/create-purchase-order.dto.js';
 import { PurchaseOrderStatus } from '../common/enums.js';
+import { PurchaseEnquiry } from '../purchase-enquiries/entities/purchase-enquiry.entity.js';
+import { NotificationsService } from '../notifications/notifications.service.js';
+
+type RequestUser = { id: string; role: string; name?: string };
 
 @Injectable()
 export class PurchaseOrdersService {
   constructor(
     @InjectRepository(PurchaseOrder) private poRepo: Repository<PurchaseOrder>,
     @InjectRepository(PoItem) private poItemRepo: Repository<PoItem>,
+    @InjectRepository(PurchaseEnquiry)
+    private purchaseEnquiryRepo: Repository<PurchaseEnquiry>,
+    private readonly notifications: NotificationsService,
   ) {}
 
   private async generatePoNumber(): Promise<string> {
@@ -86,11 +93,30 @@ export class PurchaseOrdersService {
   async updateStatus(
     id: string,
     status: PurchaseOrderStatus,
+    user?: RequestUser,
   ): Promise<PurchaseOrder> {
     try {
       const po = await this.findOne(id);
       po.status = status;
-      return await this.poRepo.save(po);
+      const saved = await this.poRepo.save(po);
+
+      if (status === PurchaseOrderStatus.APPROVED && saved.materialRequirementNo) {
+        const mr = await this.purchaseEnquiryRepo.findOne({
+          where: { enquiryNo: saved.materialRequirementNo, isDeleted: false },
+        });
+        if (mr?.createdBy) {
+          await this.notifications.createForUser(mr.createdBy, {
+            userId: user?.id,
+            type: 'purchase_order_approved',
+            title: 'Purchase Order Approved',
+            message: `${mr.enquiryNo} against ${saved.poNumber} — purchase order created and approved${user?.name ? ` by ${user.name}` : ''}`,
+            link: '/dashboard/material-requirement',
+            entityId: saved.id,
+          });
+        }
+      }
+
+      return saved;
     } catch (error) {
       console.error('Error updating PO status:', error);
       if (error.code === '22P02') {

@@ -18,12 +18,19 @@ const typeorm_1 = require("@nestjs/typeorm");
 const typeorm_2 = require("typeorm");
 const purchase_order_entity_js_1 = require("./entities/purchase-order.entity.js");
 const po_item_entity_js_1 = require("./entities/po-item.entity.js");
+const enums_js_1 = require("../common/enums.js");
+const purchase_enquiry_entity_js_1 = require("../purchase-enquiries/entities/purchase-enquiry.entity.js");
+const notifications_service_js_1 = require("../notifications/notifications.service.js");
 let PurchaseOrdersService = class PurchaseOrdersService {
     poRepo;
     poItemRepo;
-    constructor(poRepo, poItemRepo) {
+    purchaseEnquiryRepo;
+    notifications;
+    constructor(poRepo, poItemRepo, purchaseEnquiryRepo, notifications) {
         this.poRepo = poRepo;
         this.poItemRepo = poItemRepo;
+        this.purchaseEnquiryRepo = purchaseEnquiryRepo;
+        this.notifications = notifications;
     }
     async generatePoNumber() {
         const year = new Date().getFullYear();
@@ -86,11 +93,27 @@ let PurchaseOrdersService = class PurchaseOrdersService {
             throw new common_1.NotFoundException('Purchase Order not found');
         return po;
     }
-    async updateStatus(id, status) {
+    async updateStatus(id, status, user) {
         try {
             const po = await this.findOne(id);
             po.status = status;
-            return await this.poRepo.save(po);
+            const saved = await this.poRepo.save(po);
+            if (status === enums_js_1.PurchaseOrderStatus.APPROVED && saved.materialRequirementNo) {
+                const mr = await this.purchaseEnquiryRepo.findOne({
+                    where: { enquiryNo: saved.materialRequirementNo, isDeleted: false },
+                });
+                if (mr?.createdBy) {
+                    await this.notifications.createForUser(mr.createdBy, {
+                        userId: user?.id,
+                        type: 'purchase_order_approved',
+                        title: 'Purchase Order Approved',
+                        message: `${mr.enquiryNo} against ${saved.poNumber} — purchase order created and approved${user?.name ? ` by ${user.name}` : ''}`,
+                        link: '/dashboard/material-requirement',
+                        entityId: saved.id,
+                    });
+                }
+            }
+            return saved;
         }
         catch (error) {
             console.error('Error updating PO status:', error);
@@ -141,7 +164,10 @@ exports.PurchaseOrdersService = PurchaseOrdersService = __decorate([
     (0, common_1.Injectable)(),
     __param(0, (0, typeorm_1.InjectRepository)(purchase_order_entity_js_1.PurchaseOrder)),
     __param(1, (0, typeorm_1.InjectRepository)(po_item_entity_js_1.PoItem)),
+    __param(2, (0, typeorm_1.InjectRepository)(purchase_enquiry_entity_js_1.PurchaseEnquiry)),
     __metadata("design:paramtypes", [typeorm_2.Repository,
-        typeorm_2.Repository])
+        typeorm_2.Repository,
+        typeorm_2.Repository,
+        notifications_service_js_1.NotificationsService])
 ], PurchaseOrdersService);
 //# sourceMappingURL=purchase-orders.service.js.map

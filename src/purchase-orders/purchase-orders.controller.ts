@@ -64,8 +64,9 @@ export class PurchaseOrdersController {
   updateStatus(
     @Param('id') id: string,
     @Body() dto: UpdatePurchaseOrderStatusDto,
+    @Request() req: any,
   ) {
-    return this.poService.updateStatus(id, dto.status);
+    return this.poService.updateStatus(id, dto.status, req.user);
   }
 
   @Put(':id')

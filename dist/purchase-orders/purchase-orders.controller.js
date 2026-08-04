@@ -73,8 +73,8 @@ let PurchaseOrdersController = class PurchaseOrdersController {
     findOne(id) {
         return this.poService.findOne(id);
     }
-    updateStatus(id, dto) {
-        return this.poService.updateStatus(id, dto.status);
+    updateStatus(id, dto, req) {
+        return this.poService.updateStatus(id, dto.status, req.user);
     }
     update(id, dto, req) {
         return this.poService.update(id, dto, req.user.id);
@@ -125,8 +125,9 @@ __decorate([
     (0, swagger_1.ApiOperation)({ summary: 'Update purchase order status' }),
     __param(0, (0, common_1.Param)('id')),
     __param(1, (0, common_1.Body)()),
+    __param(2, (0, common_1.Request)()),
     __metadata("design:type", Function),
-    __metadata("design:paramtypes", [String, update_purchase_order_status_dto_js_1.UpdatePurchaseOrderStatusDto]),
+    __metadata("design:paramtypes", [String, update_purchase_order_status_dto_js_1.UpdatePurchaseOrderStatusDto, Object]),
     __metadata("design:returntype", void 0)
 ], PurchaseOrdersController.prototype, "updateStatus", null);
 __decorate([
