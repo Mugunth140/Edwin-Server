@@ -198,7 +198,7 @@ ALTER TABLE users
     description: 'Vendor quotation bills uploaded by purchase team for material enquiries',
     columns: {
       id: { description: 'Primary key' },
-      enquiryNo: { description: 'Unique enquiry number' },
+      groupId: { description: 'Groups quotations submitted together as one purchase enquiry (not shown to users)' },
       projectId: { description: 'FK to projects.id' },
       vendorId: { description: 'FK to vendors.id' },
       items: { description: 'Array of { description, quantity }' },
@@ -211,7 +211,7 @@ ALTER TABLE users
     },
     createSql: `CREATE TABLE vendor_quotations (
   id              UUID PRIMARY KEY DEFAULT gen_random_uuid(),
-  "enquiryNo"     VARCHAR NOT NULL UNIQUE,
+  "groupId"       UUID NOT NULL,
   "projectId"     UUID NOT NULL REFERENCES projects(id),
   "vendorId"      UUID NOT NULL REFERENCES vendors(id),
   items           JSONB NOT NULL DEFAULT '[]',

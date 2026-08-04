@@ -9,7 +9,6 @@ export declare class PurchaseOrder {
     vendorId: string;
     project: Project;
     projectId: string;
-    enquiryNo: string;
     materialRequirementNo: string;
     paymentTerms: string;
     status: PurchaseOrderStatus;

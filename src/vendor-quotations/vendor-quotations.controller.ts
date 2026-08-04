@@ -26,7 +26,7 @@ export class VendorQuotationsController {
   @Roles(Role.ADMIN, Role.PURCHASE_TEAM)
   @ApiOperation({ summary: 'Create a vendor quotation' })
   create(@Body() dto: CreateVendorQuotationDto) {
-    return this.service.create(dto, dto.enquiryNo);
+    return this.service.create(dto, dto.groupId);
   }
 
   @Post(':id/upload')

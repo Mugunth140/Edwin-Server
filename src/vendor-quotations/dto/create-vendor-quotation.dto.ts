@@ -25,5 +25,5 @@ export class CreateVendorQuotationDto {
   @Type(() => QuotationItemDto)
   items: QuotationItemDto[];
   @ApiPropertyOptional() @IsString() @IsOptional() notes?: string;
-  @ApiPropertyOptional() @IsString() @IsOptional() enquiryNo?: string;
+  @ApiPropertyOptional() @IsUUID() @IsOptional() groupId?: string;
 }

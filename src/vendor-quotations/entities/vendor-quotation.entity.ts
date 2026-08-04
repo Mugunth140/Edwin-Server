@@ -17,7 +17,7 @@ export class VendorQuotation {
   id: string;
 
   @Column()
-  enquiryNo: string;
+  groupId: string;
 
   @ManyToOne(() => Project)
   @JoinColumn({ name: 'projectId' })

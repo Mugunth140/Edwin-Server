@@ -1,6 +1,7 @@
 import { Injectable, NotFoundException } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
+import { randomUUID } from 'crypto';
 import { VendorQuotation } from './entities/vendor-quotation.entity.js';
 import { CreateVendorQuotationDto } from './dto/create-vendor-quotation.dto.js';
 import { UpdateVendorQuotationDto } from './dto/update-vendor-quotation.dto.js';
@@ -12,29 +13,10 @@ export class VendorQuotationsService {
     private repo: Repository<VendorQuotation>,
   ) {}
 
-  async generateNextEnquiryNo(): Promise<string> {
-    return this.generateEnquiryNo();
-  }
-
-  private async generateEnquiryNo(): Promise<string> {
-    const year = new Date().getFullYear();
-    const last = await this.repo
-      .createQueryBuilder('vq')
-      .where('vq.enquiryNo LIKE :prefix', { prefix: `PE-${year}-%` })
-      .orderBy('vq.enquiryNo', 'DESC')
-      .getOne();
-    let seq = 1;
-    if (last) {
-      const parts = last.enquiryNo.split('-');
-      seq = parseInt(parts[2], 10) + 1;
-    }
-    return `PE-${year}-${String(seq).padStart(3, '0')}`;
-  }
-
-  async create(dto: CreateVendorQuotationDto, enquiryNo?: string): Promise<VendorQuotation> {
-    if (!enquiryNo) enquiryNo = await this.generateEnquiryNo();
+  async create(dto: CreateVendorQuotationDto, groupId?: string): Promise<VendorQuotation> {
+    if (!groupId) groupId = randomUUID();
     const quotation = this.repo.create({
-      enquiryNo,
+      groupId,
       projectId: dto.projectId,
       vendorId: dto.vendorId,
       items: dto.items,

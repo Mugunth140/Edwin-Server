@@ -22,7 +22,6 @@ let PurchaseOrder = class PurchaseOrder {
     vendorId;
     project;
     projectId;
-    enquiryNo;
     materialRequirementNo;
     paymentTerms;
     status;
@@ -66,10 +65,6 @@ __decorate([
     (0, typeorm_1.Column)(),
     __metadata("design:type", String)
 ], PurchaseOrder.prototype, "projectId", void 0);
-__decorate([
-    (0, typeorm_1.Column)({ nullable: true }),
-    __metadata("design:type", String)
-], PurchaseOrder.prototype, "enquiryNo", void 0);
 __decorate([
     (0, typeorm_1.Column)({ nullable: true }),
     __metadata("design:type", String)
